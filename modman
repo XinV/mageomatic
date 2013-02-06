@@ -1,4 +1,4 @@
-SalsifyConnect/etc/modules/*               app/etc/modules/
+SalsifyConnect/app/etc/modules/*           app/etc/modules/
 SalsifyConnect/app/code/local/Salsify/*    app/code/local/Salsify/
 
 # FIXME maybe this is only in development mode?
