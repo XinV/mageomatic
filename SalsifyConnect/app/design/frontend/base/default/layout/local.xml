@@ -9,7 +9,7 @@
   <salsify_connect_index_index>
     <reference name="root">
       <action method="setTemplate">
-        <salsify_template>salsify/connect/connect_config.phtml</salsify_template>
+        <salsify_template>salsify/connect/connect_configuration.phtml</salsify_template>
       </action>
     </reference>
   </salsify_connect_index_index>
