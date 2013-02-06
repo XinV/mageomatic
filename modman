@@ -2,4 +2,5 @@ SalsifyConnect/etc/modules/*               etc/modules/
 SalsifyConnect/app/code/local/Salsify/*    app/code/local/Salsify/
 
 # FIXME maybe this is only in development mode?
-SalsifyConnect/app/design/frontend/base/*  app/design/frontent/base/*
+SalsifyConnect/app/design/frontend/base/default/template/*  app/design/frontent/base/default/template/
+SalsifyConnect/app/design/frontend/base/default/layout/*  app/design/frontent/base/default/layout/
