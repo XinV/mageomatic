@@ -8,14 +8,35 @@
       <version>0.0.1</version>
     </Salsify_Connect>
   </modules>
-  
+
 
   <global>
     <models>
       <salsify_connect>
         <class>Salsify_Connect_Model</class>
+        <resourceModel>salsify_connect_resource</resourceModel>
       </salsify_connect>
+      <salsify_connect_resource>
+        <class>Salsify_Connect_Model_Resource</class>
+        <entities>
+          <configuration>
+            <table>salsify_connect_configuration</table>
+          </configuration>
+          <import_run>
+            <table>salsify_connect_import_run</table>
+          </import_run>
+        </entities>
+      </salsify_connect_resource>
     </models>
+
+    <resources>
+      <salsify_connect_setup>
+        <setup>
+          <module>Salsify_Connect</module>
+          <class>Salsify_Connect_Model_Resource_Setup</class>
+        </setup>
+      </salsify_connect_setup>
+    </resources>
 
     <events>
       <catalog_product_save_after>
