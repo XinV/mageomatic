@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <modules>
+    <Salsify_Connect>
+      <active>true</active>
+      <codePool>local</codePool>
+    </Salsify_Connect>
+  </modules>
+</config>

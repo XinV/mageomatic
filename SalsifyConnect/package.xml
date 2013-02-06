@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!-- FIXME need to update this -->
+<package>
+    <name>Salsify Connect</name>
+    <version>0.0.1</version>
+    <stability>beta</stability>
+    <license>FIXME</license>
+    
+    <channel>community</channel>
+
+    <extends/>
+
+    <summary>Magento Connector for Salsify Product Content Management System</summary>
+    <description>FIXME</description>
+    <notes>FIXME</notes>
+
+    <authors>
+      <author>
+        <name>Salsify, Inc.</name>
+        <user>Salsify</user>
+        <email>info@salsify.com</email>
+      </author>
+    </authors>
+
+    <date>2013-02-28</date>
+    <time>00:00:00</time>
+
+    <contents>
+      <target name="magelocal">
+        <dir name="Salsify">
+          <dir name="Connect">
+          </dir>
+        </dir>
+      </target>
+    </contents>
+
+    <compatible/>
+
+    <dependencies>
+      <required>
+        <php><min>5.2.0</min><max>6.0.0</max></php>
+      </required>
+    </dependencies>
+
+</package>

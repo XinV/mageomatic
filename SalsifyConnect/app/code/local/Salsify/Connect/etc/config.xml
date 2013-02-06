@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+  <!-- FIXME need to add dependencies for ApiImport -->
+
+  <modules>
+    <Salsify_Connect>
+      <version>0.0.1</version>
+    </Salsify_Connect>
+  </modules>
+  
+
+  <global>
+    <models>
+      <salsify_connect>
+        <class>Salsify_Connect_Model</class>
+      </salsify_connect>
+    </models>
+
+    <events>
+      <catalog_product_save_after>
+        <observers>
+          <salsify_connect>
+            <class>salsify_connect/observer</class>
+            <method>logUpdate</method>
+            <type>singleton</type>
+          </salsify_connect>
+        </observers>
+      </catalog_product_save_after>
+    </events>
+
+    <blocks>
+      <adminhtml>
+        <rewrite>
+        </rewrite>
+      </adminhtml>
+    </blocks>
+
+  </global>
+
+
+  <frontend>
+    <routers>
+      <salsify_connect>
+        <use>standard</use>
+        <args>
+          <module>Salsify_Connect</module>
+          <frontName>salsify</frontName>
+        </args>
+      </salsify_connect>
+    </routers>
+  </frontend>
+
+</config>
