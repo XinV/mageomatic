@@ -1,0 +1,5 @@
+etc/modules/*               etc/modules/
+app/code/local/Salsify/*    app/code/local/Salsify/
+
+# FIXME maybe this is only in development mode?
+app/design/frontend/base/*  app/design/frontent/base/*
