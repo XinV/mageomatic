@@ -24,20 +24,16 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
 
   public function load_data($file) {
-    echo '<br/>opening file...';
     $stream = fopen($file, 'r');
     try {
-      echo '<br/>creating loader...';
       $loader = Mage::helper('salsify_connect/loader');
-      echo '<br/>creating parser...';
       $parser = new \JsonStreamingParser\Parser($stream, $loader);
-      echo '<br/>parsing...';
       $parser->parse();
     } catch (Exception $e) {
       fclose($stream);
       throw $e;
     }
 
-    // TODO return some stats about the amount of data loaded.
+    // FIXME return some stats about the amount of data loaded.
   }
 }
