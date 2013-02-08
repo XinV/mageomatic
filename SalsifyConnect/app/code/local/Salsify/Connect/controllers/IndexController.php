@@ -9,13 +9,13 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   public function testAction() {
     $downloader = Mage::helper('salsify_connect/downloader');
     $file = $downloader->download();
-    echo '\nTemp file for uploading: ' . $file;
+    echo '<br/>Temp file for uploading: ' . $file;
 
-    echo '\nGetting helper...';
+    echo '<br/>Getting helper...';
     $salsify = Mage::helper('salsify_connect');
-    echo '\nLoading file...';
+    echo '<br/>Loading file...';
     $salsify->load_data($file);
-    echo '\nData loaded!';
+    echo '<br/>Data loaded!';
   }
 
 }
