@@ -46,7 +46,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     $importdir = BP.DS.'media'.DS.'import';
     if (!file_exists($importdir)) {
       mkdir($importdir);
-      chmod($importdir, '0755');
+      chmod($importdir, 0777);
     }
   }
 }
