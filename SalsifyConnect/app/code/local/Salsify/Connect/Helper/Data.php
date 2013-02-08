@@ -1,5 +1,5 @@
 <?php
-require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
+// require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
 
 /**
  * Helper class for Salsify Connect that does the heavy lifting, including
