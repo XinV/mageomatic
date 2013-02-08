@@ -11,9 +11,9 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $file = $downloader->download();
     echo 'Temp file for uploading: ' . $file;
 
-    echo 'Getting helper...'
+    echo 'Getting helper...';
     $salsify = Mage::helper('salsify_connect');
-    echo 'Loading file...'
+    echo 'Loading file...';
     $salsify->load_data($file);
     echo 'Data loaded!';
   }
