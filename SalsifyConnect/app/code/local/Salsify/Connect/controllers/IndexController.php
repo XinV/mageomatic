@@ -7,7 +7,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   }
 
   public function testAction() {
-    $downloader = Salsify_Downloader.new();
+    $downloader = Mage::helper('salsify_connect/downloader')
     echo 'Magento root: ' . $downloader->download();
   }
 
