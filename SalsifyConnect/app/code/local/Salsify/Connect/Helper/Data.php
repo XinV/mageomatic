@@ -25,6 +25,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
 
   public function load_data($file) {
+    echo '<br/>opening file...';
     $stream = fopen($file, 'r');
     try {
       $loader = Mage::helper('salsify_connect/loader');

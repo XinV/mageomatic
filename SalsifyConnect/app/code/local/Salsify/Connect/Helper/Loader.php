@@ -1,13 +1,13 @@
 <?php
 
 
-require_once Mage::getBaseDir('lib').DS.'JsonDataStreamer'.DS.'Listener.php';
+require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 
 /**
  * Parser of Salsify data. Also loads into the Magento database.
  */
-class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Parser implements \JsonDataStreamer\Listener {
+class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Parser implements \JsonStreamingParser\Listener {
 
   // Number of products in a batch
   const BATCH_SIZE = 1000;
