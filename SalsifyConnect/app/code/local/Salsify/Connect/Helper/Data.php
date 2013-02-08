@@ -32,7 +32,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
       echo '<br/>creating parser...';
       $parser = new \JsonStreamingParser\Parser($stream, $loader);
       echo '<br/>parsing...';
-      // $parser->parse();
+      $parser->parse();
     } catch (Exception $e) {
       fclose($stream);
       throw $e;
