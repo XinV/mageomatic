@@ -12,8 +12,11 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   private $_base_url;
   private $_api_token;
 
-  public function __construct($baseurl, $apitoken) {
+  public function set_base_url($baseurl) {
     $this->_base_url = $baseurl;
+  }
+
+  public funciton set_api_token($apitoken) {
     $this->$_api_token = $apitoken;
   }
 
