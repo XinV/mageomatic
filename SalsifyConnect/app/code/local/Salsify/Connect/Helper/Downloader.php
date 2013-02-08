@@ -22,7 +22,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   }
 
   private function _ensure_temp_directory() {
-    $magento_root = dirname(dirname(__FILE__)).'/../../../../../../'
+    $magento_root = dirname(dirname(__FILE__)).'/../../../../../../';
     return $magento_root;
   }
 
