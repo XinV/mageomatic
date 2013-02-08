@@ -27,7 +27,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   private function _get_temp_file($extension) {
     $dir = $this->_get_temp_directory();
-    $file = $dir . '/data-' . date('Y-m-d') . '-' . microtime(true) . '.' . $extension;
+    $file = $dir . '/data-' . date('Y-m-d') . '-' . round(microtime(true)) . '.' . $extension;
     return $file;
   }
 
