@@ -31,7 +31,7 @@
 
     <helpers>
       <salsify_connect>
-          <class>Salsify_Connect_Helper_Downloader</class>
+          <class>Salsify_Connect_Helper</class>
       </salsify_connect>
     </helpers>
 
