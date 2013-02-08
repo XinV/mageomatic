@@ -30,7 +30,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function start_object() {
-    if ($_product) {
+    if ($this->_product) {
       $this->_in_nested++;
     } else {
       $this->_product = array();
