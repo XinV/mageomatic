@@ -1,23 +1,29 @@
 <?php
 
-// TODO clear out temp directory
-// TODO save file location in data model?
-
 /**
  * Helper class that takes care of downloading a data dump from Salsify to a
  * local Magento directory.
+ *
+ * TODO clean out the temp directory every so often (maybe once it has, say, 3
+ *      files in it? could make that configurable).
  */
 class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
 
-  public function __construct() {
-    // FIXME accept an API token
+  private $_base_url;
+  private $_api_token;
+
+  public function __construct($baseurl, $apitoken) {
+    $this->_base_url = $baseurl;
+    $this->$_api_token = $apitoken;
   }
 
   /**
    * Returns the path to the locally downloaded file.
    */
   public function download() {
-    // FIXME
+
+    // FIXME need to download from salsify :)
+
     return $this->_get_temp_file('json');
   }
 
@@ -27,7 +33,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   private function _get_temp_file($extension) {
     $dir = $this->_get_temp_directory();
-    $file = $dir . '/data-' . date('Y-m-d') . '-' . round(microtime(true)) . '.' . $extension;
+    $file = $dir . DS . 'data-' . date('Y-m-d') . '-' . round(microtime(true)) . '.' . $extension;
     return $file;
   }
 
@@ -36,7 +42,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   private function _get_temp_directory() {
     // thanks http://stackoverflow.com/questions/8708718/whats-the-best-place-to-put-additional-non-xml-files-within-the-module-file-str/8709462#8709462
-    $dir = Mage::getBaseDir('var') . '/salsify';
+    $dir = Mage::getBaseDir('var') . DS . 'salsify';
     if (!file_exists($dir)) {
       mkdir($dir);
       chmod($dir, 0777);
