@@ -18,7 +18,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   public function download() {
     // FIXME
-    return $this->_get_temp_file();
+    return $this->_get_temp_file('json');
   }
 
   /**
