@@ -79,6 +79,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _flush_batch() {
+    echo($this->_batch);
     // FIXME
   }
 }
