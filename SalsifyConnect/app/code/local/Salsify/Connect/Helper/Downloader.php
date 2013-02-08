@@ -18,13 +18,32 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   public function download() {
     // FIXME
-    return $this->_ensure_temp_directory();
+    return $this->_get_temp_file();
   }
 
-  private function _ensure_temp_directory() {
-    $magento_root = dirname(dirname(__FILE__)).'/../../../../../../';
-    return $magento_root;
+  /**
+   * Returns the name of a temp file that does not exist and so can be used for
+   * storing data.
+   */
+  private function _get_temp_file($extension) {
+    $dir = $this->_get_temp_directory();
+    $file = tempnam($dir, 'data-') . '.' . $extension;
+    return $file;
   }
 
+  /**
+   * Ensures that the Salsify temp directory exists in var/
+   */
+  private function _get_temp_directory() {
+    // thanks http://stackoverflow.com/questions/8708718/whats-the-best-place-to-put-additional-non-xml-files-within-the-module-file-str/8709462#8709462
+    $dir = Mage::getBaseDir('var') . '/salsify';
+    if (!file_exists($dir)) {
+      mkdir($dir);
+      chmod($dir, 0777);
+    } elseif (!is_dir($dir)) {
+      throw new Exception($dir . " already exists and is not a directory. Cannot proceed.");
+    }
+    return $dir;
+  }
 
 }
