@@ -18,7 +18,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   public function download() {
     // FIXME
-    return $this->_get_temp_file('json');
+    return $this->_get_temp_file('.json');
   }
 
   /**
@@ -27,7 +27,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    */
   private function _get_temp_file($extension) {
     $dir = $this->_get_temp_directory();
-    $file = tempnam($dir, 'data-') . '.' . $extension;
+    $file = $dir . '/data-' . date('Y-m-d') . '.' . $extension;
     return $file;
   }
 
