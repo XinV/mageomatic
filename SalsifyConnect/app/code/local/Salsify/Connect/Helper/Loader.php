@@ -79,7 +79,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _flush_batch() {
-    echo(var_dump($this->_batch));
-    // FIXME
+    Mage::getSingleton('fastsimpleimport/import')
+        ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+        ->processProductImport($this->_batch);
+    $this->_batch = array();
   }
 }
