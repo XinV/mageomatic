@@ -1,4 +1,5 @@
 <?php
+require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
 require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 /**
