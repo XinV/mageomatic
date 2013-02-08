@@ -24,17 +24,17 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   // FIXME need more complete API
 
 
-  // public function load_data($file) {
-  //   $stream = fopen($file, 'r');
-  //   try {
-  //     $loader = Mage::helper('salsify_connect/loader');
-  //     $parser = new \JsonStreamingParser\Parser($stream, $loader);
-  //     $parser->parse();
-  //   } catch (Exception $e) {
-  //     fclose($file);
-  //     throw $e;
-  //   }
+  public function load_data($file) {
+    $stream = fopen($file, 'r');
+    try {
+      $loader = Mage::helper('salsify_connect/loader');
+      $parser = new \JsonStreamingParser\Parser($stream, $loader);
+      $parser->parse();
+    } catch (Exception $e) {
+      fclose($file);
+      throw $e;
+    }
 
-  //   // TODO return some stats about the amount of data loaded.
-  // }
+    // TODO return some stats about the amount of data loaded.
+  }
 }
