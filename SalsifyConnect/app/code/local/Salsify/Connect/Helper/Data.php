@@ -1,6 +1,6 @@
 <?php
 
-// require_once BP.DS.'lib'.DS.'JsonDataStreamer'.DS.'Parser.php';
+require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
 
 /**
  * Helper class for Salsify Connect that does the heavy lifting, including
@@ -28,7 +28,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   //   $stream = fopen($file, 'r');
   //   try {
   //     $loader = Mage::helper('salsify_connect/loader');
-  //     $parser = new \JsonDataStreamer\Parser($stream, $loader);
+  //     $parser = new \JsonStreamingParser\Parser($stream, $loader);
   //     $parser->parse();
   //   } catch (Exception $e) {
   //     fclose($file);
