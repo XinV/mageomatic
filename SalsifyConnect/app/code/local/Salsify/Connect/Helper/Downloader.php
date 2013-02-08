@@ -24,10 +24,13 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
    * Returns the path to the locally downloaded file.
    */
   public function download() {
+    $file = $this->_get_temp_file('json');
 
     // FIXME need to download from salsify :)
+    // For now, we're mimicking the upload...
+    copy($this->_get_temp_directory . DS . 'product.json', $file);
 
-    return $this->_get_temp_file('json');
+    return $file;
   }
 
   /**
