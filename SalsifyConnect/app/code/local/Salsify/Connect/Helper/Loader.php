@@ -4,8 +4,7 @@
 /**
  * Parser of Salsify data. Also loads into the Magento database.
  */
-class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Parser {
-// implements \JsonStreamingParser\Listener {
+class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements JsonStreamingParser_Listener {
 
   // Number of products in a batch
   const BATCH_SIZE = 1000;
