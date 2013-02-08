@@ -29,6 +29,12 @@
       </salsify_connect_resource>
     </models>
 
+    <helpers>
+      <salsify_connect>
+          <class>Salsify_Connect_Helper_Downloader</class>
+      </salsify_connect>
+    </helpers>
+
     <resources>
       <salsify_connect_setup>
         <setup>

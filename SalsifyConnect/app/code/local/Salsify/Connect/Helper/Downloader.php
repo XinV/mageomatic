@@ -7,8 +7,7 @@
  * Helper class that takes care of downloading a data dump from Salsify to a
  * local Magento directory.
  */
-class Salsify_Connect_Helper_Downloader {
-
+class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
 
   public function __construct() {
     // FIXME accept an API token
