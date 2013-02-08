@@ -74,11 +74,40 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function value($value) {
     if ($this->_in_nested == 0 && $this->_key) {
       $this->_product[$this->_key] = $value;
+      $this->_create_attribute_if_needed($this->_key);
       $this->_key = null;
     }
   }
 
+  private function _create_attribute_if_needed($name) {
+    $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+
+
+    $setup->addAttribute('catalog_product', 'product_type', array(
+      // 'group'             => 'Product Options',
+      // 'label'             => 'Product Type',
+      'label'             => $name,
+      'note'              => 'Added automatically during Salsify import',
+      'type'              => 'text',    //backend_type
+      // 'input'             => 'text',  //frontend_input
+      // 'frontend_class'    => '',
+      // 'source'            => 'sourcetype/attribute_source_type',
+      // 'backend'           => '',
+      // 'frontend'          => '',
+      'global'            => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+      'required'          => false,
+      'visible_on_front'  => false,
+      // 'apply_to'          => 'simple',
+      // 'is_configurable'   => false,
+      'used_in_product_listing' => true
+      // 'sort_order'        => 5,
+    ));
+  }
+
   private function _flush_batch() {
+
+    // FIXME need to create new column names if they don't already exist
+
     Mage::getSingleton('fastsimpleimport/import')
         ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
         ->processProductImport($this->_batch);
