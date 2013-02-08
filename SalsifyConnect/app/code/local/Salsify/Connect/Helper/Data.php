@@ -1,6 +1,6 @@
 <?php
 
-// require_once Mage::getBaseDir('lib').DS.'JsonDataStreamer'.DS.'Parser.php';
+require_once Mage::getBaseDir('lib').DS.'JsonDataStreamer'.DS.'Parser.php';
 
 /**
  * Helper class for Salsify Connect that does the heavy lifting, including
