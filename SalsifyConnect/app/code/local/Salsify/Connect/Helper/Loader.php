@@ -1,5 +1,6 @@
 <?php
-require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
+// require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
+require_once BP.DS.'lib'.DS.'JsonStreamingParser';
 
 /**
  * Parser of Salsify data. Also loads into the Magento database.
