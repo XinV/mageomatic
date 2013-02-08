@@ -24,6 +24,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
 
   public function load_data($file) {
+    $this->_ensure_import_dir();
+
     $stream = fopen($file, 'r');
     try {
       $loader = Mage::helper('salsify_connect/loader');
@@ -35,5 +37,16 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     // FIXME return some stats about the amount of data loaded.
+  }
+
+
+  // It is so silly that Magento doesn't create this itself when it's core
+  // Import/Export library requires it.
+  private function _ensure_import_dir() {
+    $importdir = BP.DS.'media'.DS.'import';
+    if (!file_exists($importdir)) {
+      mkdir($importdir);
+      chmod($importdir, '0755');
+    }
   }
 }
