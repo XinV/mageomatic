@@ -104,7 +104,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $code);
     // TODO not sure if this is the best way to see if an attribute has already
     //      been created.
-    if (!$attribute->getStoreId()) {
+    if ($attribute->getStoreId()) {
       return $attribute;
     } else {
       return $this->_create_attribute($code, $name, $type, $product_type);
