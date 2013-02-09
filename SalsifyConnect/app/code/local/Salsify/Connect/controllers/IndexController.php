@@ -22,7 +22,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>getting loader';
     $loader = Mage::helper('salsify_connect/loader');
     echo '<br/>creating attribute';
-    // $laoder->_create_attribute("RobAttribute", 'text', 'simple');
+    $loader->_create_attribute("RobAttribute", 'text', 'simple');
   }
 
 }
