@@ -124,6 +124,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.md5($name);
     $code = substr($code, 0, 30);
     echo '<br/>code: '.$code;
+    return $code;
   }
 
 
