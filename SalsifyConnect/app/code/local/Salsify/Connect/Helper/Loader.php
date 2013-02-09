@@ -104,7 +104,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $code);
     if ($attribute) {
       echo '<br/> HERE';
+      $id = $attribute->getStoreId();
       echo '<br/>'.$attribute->getStoreId();
+      if ($id) {
+        echo '<br/>THERE';
+      }
       echo '<br/>';
       echo var_dump($attribute);
       return $attribute;
