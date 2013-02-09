@@ -98,13 +98,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO enable product type configuration here when relevant. For now we're
     //      just supporting simple products anyway (not grouped, configurable,
     //      etc.).
+    $product_type = 'simple';
 
-    $code = $this->_attribute_code($name);
+    $code = $this->_attribute_code($name, $product_type);
     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $code);
     if ($attribute) {
       return $attribute;
     } else {
-      return $this->_create_attribute($code, $name, $type, 'simple');
+      return $this->_create_attribute($code, $name, $type, $product_type);
     }
   }
 
