@@ -151,22 +151,28 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     );
     echo '<br/>getting model';
     $model = Mage::getModel('catalog/resource_eav_attribute');
+    echo '<br/>setting is_configurable';
     if (!isset($_attribute_data['is_configurable'])) {
       $_attribute_data['is_configurable'] = 0;
     }
+    echo '<br/>setting is_filterable';
     if (!isset($_attribute_data['is_filterable'])) {
       $_attribute_data['is_filterable'] = 0;
     }
+    echo '<br/>setting is_filterable_in_search';
     if (!isset($_attribute_data['is_filterable_in_search'])) {
       $_attribute_data['is_filterable_in_search'] = 0;
     }
+    echo '<br/>setting backend_type';
     if (is_null($model->getIsUserDefined()) || $model->getIsUserDefined() != 0) {
       $_attribute_data['backend_type'] = $model->getBackendTypeByInput($_attribute_data['frontend_input']);
     }
+    echo '<br/>setting default_value';
     $defaultValueField = $model->getDefaultValueByInput($_attribute_data['frontend_input']);
     if ($defaultValueField) {
       $_attribute_data['default_value'] = $this->getRequest()->getParam($defaultValueField);
     }
+    echo '<br/>adding data';
     $model->addData($_attribute_data);
     $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
     $model->setIsUserDefined(1);
