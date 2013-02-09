@@ -121,27 +121,30 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // Thanks http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
+  // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
+  // as a starting point.
   public function _create_attribute($label, $attribute_type, $product_type) {
-    // FIXME need to create a whitespace-free version of $label for the attribute_code
-
-    $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.$label;
+    // code can only be 30 characters at most and cannot contain spaces
+    // creating a checksum seemed to be the easiest way to accomplish that,
+    // though it has the downside of creating opaque atttribute_ids which do
+    // show up in the admin panel...
+    $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.md5($label);
+    $code = substr($code, 0, 30);
     echo '<br/>code: '.$code;
 
-    echo '<br/>creating attribute data';
     $_attribute_data = array(
       'attribute_code' => $code,
-      'is_global' => '1',
-      'frontend_input' => $attribute_type, //'boolean',
       'default_value_text' => '',
       'default_value_yesno' => '0',
       'default_value_date' => '',
       'default_value_textarea' => '',
-      'is_unique' => '0',
+      'is_global' => '1',
+      'is_unique' => 0,
       'is_required' => '0',
-      'apply_to' => array($product_type), //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
-      'is_configurable' => '0',
-      'is_searchable' => '0',
+      'is_configurable' => 0,
+      'is_searchable' => 0,
+      'is_filterable' => 0,
+      'is_filterable_in_search' => 0,
       'is_visible_in_advanced_search' => '0',
       'is_comparable' => '0',
       'is_used_for_price_rules' => '0',
@@ -150,45 +153,35 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'is_visible_on_front' => '0',
       'used_in_product_listing' => '0',
       'used_for_sort_by' => '0',
-      'frontend_label' => array('Salsify Attribute '.(($product_type) ? $product_type : 'joint').' '.$label)
+      'frontend_input' => $attribute_type, //'boolean','text', etc.
+      'frontend_label' => array('Salsify Attribute '.(($product_type) ? $product_type : 'joint').' '.$label),
+      'apply_to' => array($product_type), //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
     );
-    echo '<br/>getting model';
+
     $model = Mage::getModel('catalog/resource_eav_attribute');
-    echo '<br/>setting is_configurable';
-    if (!isset($_attribute_data['is_configurable'])) {
-      $_attribute_data['is_configurable'] = 0;
-    }
-    echo '<br/>setting is_filterable';
-    if (!isset($_attribute_data['is_filterable'])) {
-      $_attribute_data['is_filterable'] = 0;
-    }
-    echo '<br/>setting is_filterable_in_search';
-    if (!isset($_attribute_data['is_filterable_in_search'])) {
-      $_attribute_data['is_filterable_in_search'] = 0;
-    }
-    echo '<br/>setting backend_type';
+
     if (is_null($model->getIsUserDefined()) || $model->getIsUserDefined() != 0) {
+      echo '<br/>HERE';
       $_attribute_data['backend_type'] = $model->getBackendTypeByInput($_attribute_data['frontend_input']);
     }
-    echo '<br/>setting default_value';
+
     $defaultValueField = $model->getDefaultValueByInput($_attribute_data['frontend_input']);
-    echo '<br/> defaultValueField: ' . $defaultValueField;
     if ($defaultValueField) {
-      // FIXME getRequest will be null here
-      // $_attribute_data['default_value'] = $this->getRequest()->getParam($defaultValueField);
       $_attribute_data['default_value'] = $_attribute_data[$defaultValueField];
     }
-    echo '<br/>adding data';
+
     $model->addData($_attribute_data);
-    echo '<br/>setting entity type';
     $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
-    echo '<br/>setting setIsUserDefined';
     $model->setIsUserDefined(1);
     try {
-      echo '<br/>saving model';
       $model->save();
     } catch (Exception $e) {
-      echo '<p>Sorry, error occured while trying to save the attribute. Error: '.$e->getMessage().'</p>';
+      Mage::log(
+        'ERROR: could not create attribute <'.$label.'>: '.$e->getMessage(),
+        null, 
+        'salsify.log',
+        true
+      );
     }
   }
 }
