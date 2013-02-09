@@ -38,14 +38,20 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     } else {
       $this->_product = array();
 
-      // required by Magento
+      // Add fields required by Magento.
+
       // TODO Salsify only supports simple products right now
       $this->_product['_type'] = 'simple';
-      $this->_product['_attribute_set'] = 'Default';
-      $this->_product['_product_websites'] = 'base';
-      $this->_product['price'] = 0.01;
 
-      // TODO get these from Salsify
+      // TODO we should be able to get the attribute set from the category
+      //      somehow
+      $this->_product['_attribute_set'] = 'Default';
+
+      $this->_product['_product_websites'] = 'base';
+
+      // TODO get these from Salsify, but need more metadata in the export to
+      //      get them.
+      $this->_product['price'] = 0.01;
       $this->_product['description'] = 'IMPORTED FROM SALSIFY';
       $this->_product['short_description'] = 'IMPORTED FROM SALSIFY';
       $this->_product['weight'] = 0;
@@ -54,7 +60,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $this->_product['status'] = 1;
       $this->_product['visibility'] = 4;
 
-      // TODO ???
+      // TODO seriously?
       $this->_product['tax_class_id'] = 2;
       $this->_product['qty'] = 0;
     }
@@ -103,8 +109,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         // TODO non-text types
         $this->_attributes[$code] = $this->_create_attribute_if_needed($this->_key, 'text');
       }
-
-      // FIXME need to create the attribute value as well if needed?
 
       $this->_key = null;
     }
