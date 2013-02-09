@@ -95,73 +95,75 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   private function _create_attribute_if_needed($name) {
-    // $setup->addAttribute('catalog_product', 'product_type', array(
-    //   // 'group'             => 'Product Options',
-    //   // 'label'             => 'Product Type',
-    //   'label'             => $name,
-    //   'note'              => 'Added automatically during Salsify import',
-    //   'type'              => 'text',    //backend_type
-    //   // 'input'             => 'text',  //frontend_input
-    //   // 'frontend_class'    => '',
-    //   // 'source'            => 'sourcetype/attribute_source_type',
-    //   // 'backend'           => '',
-    //   // 'frontend'          => '',
-    //   'global'            => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    //   'required'          => false,
-    //   'visible_on_front'  => false,
-    //   // 'apply_to'          => 'simple',
-    //   // 'is_configurable'   => false,
-    //   'used_in_product_listing' => true
-    //   // 'sort_order'        => 5,
-    // ));
+    $code = _attribute_code($name);
+    $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $code);
+    if ($attribute) {
+      return $attribute;
+    } else {
+      return $this->_create_attribute($code, $name, 'text', 'simple');
+    }
+  }
 
-    // FIXME need to figure out if the attribute already exists.
 
-    $this->_create_attribute($name, 'text', 'simple');
+  public function _attribute_code($name) {
+    // FIXME are there default product attributes that ship with Magento that we
+    //       should be mapping to? Otherwise we'll be creating a new Salsify
+    //       attribute for every single attriubte imported.
+
+    // code can only be 30 characters at most and cannot contain spaces
+    // creating a checksum seemed to be the easiest way to accomplish that,
+    // though it has the downside of creating opaque atttribute_ids which do
+    // show up in the admin panel...
+    $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.md5($name);
+    $code = substr($code, 0, 30);
+    echo '<br/>code: '.$code;
   }
 
 
   // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
   // as a starting point.
-  public function _create_attribute($label, $attribute_type, $product_type) {
-    // code can only be 30 characters at most and cannot contain spaces
-    // creating a checksum seemed to be the easiest way to accomplish that,
-    // though it has the downside of creating opaque atttribute_ids which do
-    // show up in the admin panel...
-    $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.md5($label);
-    $code = substr($code, 0, 30);
-    echo '<br/>code: '.$code;
+  public function _create_attribute($code, $name, $attribute_type, $product_type) {
+    // There are even more options that we're not setting here. For example:
+    // http://alanstorm.com/magento_attribute_migration_generator
+
+    // TODO are there other options we should be setting?
+    // TODO should we be flexible on global vs. store? what elements here should
+    //      be configurable during an import?
 
     $_attribute_data = array(
       'attribute_code' => $code,
+      'note' => 'Added automatically during Salsify import',
       'default_value_text' => '',
-      'default_value_yesno' => '0',
+      'default_value_yesno' => 0,
       'default_value_date' => '',
       'default_value_textarea' => '',
-      'is_global' => '1',
+      'is_global' => 1,
       'is_unique' => 0,
-      'is_required' => '0',
+      'is_required' => 0,
       'is_configurable' => 0,
       'is_searchable' => 0,
       'is_filterable' => 0,
       'is_filterable_in_search' => 0,
-      'is_visible_in_advanced_search' => '0',
-      'is_comparable' => '0',
-      'is_used_for_price_rules' => '0',
-      'is_wysiwyg_enabled' => '0',
-      'is_html_allowed_on_front' => '1',
-      'is_visible_on_front' => '0',
-      'used_in_product_listing' => '0',
-      'used_for_sort_by' => '0',
+      'is_visible_in_advanced_search' => 0,
+      'is_comparable' => 0,
+      'is_used_for_price_rules' => 0,
+      'is_wysiwyg_enabled' => 0,
+      'is_html_allowed_on_front' => 1,
+      'is_visible_on_front' => 0,
+      'used_in_product_listing' => 0,
+      'used_for_sort_by' => 0,
+      'type' => $attribute_type,
       'frontend_input' => $attribute_type, //'boolean','text', etc.
-      'frontend_label' => array('Salsify Attribute '.(($product_type) ? $product_type : 'joint').' '.$label),
+      'frontend_label' => array('Salsify Attribute '.(($product_type) ? $product_type : 'joint').' '.$name),
+      // TODO apply_to multiple types by default?
       'apply_to' => array($product_type), //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
     );
 
     $model = Mage::getModel('catalog/resource_eav_attribute');
 
     if (is_null($model->getIsUserDefined()) || $model->getIsUserDefined() != 0) {
-      echo '<br/>HERE';
+      // required to let Magento know how to store the values for this attribute
+      // in their EAV setup.
       $_attribute_data['backend_type'] = $model->getBackendTypeByInput($_attribute_data['frontend_input']);
     }
 
@@ -177,11 +179,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $model->save();
     } catch (Exception $e) {
       Mage::log(
-        'ERROR: could not create attribute <'.$label.'>: '.$e->getMessage(),
+        'ERROR: could not create attribute <'.$name.'>: '.$e->getMessage(),
         null, 
         'salsify.log',
         true
       );
     }
+
+    return $model;
   }
 }
