@@ -174,7 +174,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     echo '<br/>adding data';
     $model->addData($_attribute_data);
+    echo '<br/>setting entity type';
     $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
+    echo '<br/>setting setIsUserDefined';
     $model->setIsUserDefined(1);
     try {
       echo '<br/>saving model';
