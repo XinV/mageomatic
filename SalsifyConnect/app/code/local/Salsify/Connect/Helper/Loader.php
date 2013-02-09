@@ -129,8 +129,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO if another property is used by Salsify for ID we're going to have
     //      to do something else here, since evidently sku is required in
     //      Magento.
+    // TODO same goes for the Salsify name property.
     if ($name === 'sku') {
       return $name;
+    } elseif ($name === 'ProductName') {
+      return 'name';
     }
 
     // code can only be 30 characters at most and cannot contain spaces
