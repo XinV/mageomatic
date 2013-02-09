@@ -101,10 +101,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $product_type = 'simple';
 
     $code = $this->_attribute_code($name, $product_type);
-    $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $code);
-    // TODO not sure if this is the best way to see if an attribute has already
-    //      been created.
-    if ($attribute->getStoreId()) {
+    $attribute = $this->_get_attribute_from_code($code);
+    if ($attribute) {
       return $attribute;
     } else {
       return $this->_create_attribute($code, $name, $type, $product_type);
@@ -125,6 +123,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $code = substr($code, 0, 30);
     echo '<br/>code: '.$code;
     return $code;
+  }
+
+
+  private function _get_attribute_from_code($code) {
+    $attributeId = Mage::getResourceModel('eav/entity_attribute')
+                       ->getIdByCode('catalog_product', $code);
+    $attribute = Mage::getModel('catalog/resource_eav_attribute')
+                     ->load($attributeId);
+    return $attribute;
   }
 
 
@@ -194,6 +201,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       );
     }
 
-    return $model;
+    // should be in the DB now
+    return $this->_get_attribute_from_code($code);
   }
 }
