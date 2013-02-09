@@ -22,7 +22,8 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>getting loader';
     $loader = Mage::helper('salsify_connect/loader');
     echo '<br/>creating attribute';
-    $loader->_create_attribute_if_needed("Rob Attribute of Awesomeness", 'text');
+    $attribute = $loader->_create_attribute_if_needed("Rob Attribute of Awesomeness", 'text');
+    echo '<br/>' . var_dump($attribute);
   }
 
 }
