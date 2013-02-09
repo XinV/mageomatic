@@ -18,4 +18,9 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>Data loaded!';
   }
 
+  public function createAction(){
+    $loader = Mage::helper('salsify_connect/loader');
+    $laoder->_create_attribute("RobAttribute", 'text', 'simple');
+  }
+
 }
