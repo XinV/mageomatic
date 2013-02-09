@@ -94,7 +94,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  private function _create_attribute_if_needed($name, $type) {
+  public function _create_attribute_if_needed($name, $type) {
     // TODO enable product type configuration here when relevant. For now we're
     //      just supporting simple products anyway (not grouped, configurable,
     //      etc.).
@@ -109,7 +109,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  public function _attribute_code($name) {
+  private function _attribute_code($name) {
     // FIXME are there default product attributes that ship with Magento that we
     //       should be mapping to? Otherwise we'll be creating a new Salsify
     //       attribute for every single attriubte imported.
@@ -126,7 +126,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
   // as a starting point.
-  public function _create_attribute($code, $name, $attribute_type, $product_type) {
+  private function _create_attribute($code, $name, $attribute_type, $product_type) {
     // There are even more options that we're not setting here. For example:
     // http://alanstorm.com/magento_attribute_migration_generator
 
