@@ -106,7 +106,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //      etc.).
     $product_type = 'simple';
 
-    $code = $this->_attribute_code($name, $product_type);
+    $code = $this->_attribute_code($name);
     $attribute = $this->_get_attribute_from_code($code);
     if ($attribute) {
       return $attribute;
@@ -116,7 +116,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  private function _attribute_code($name, $product_type) {
+  private function _attribute_code($name) {
     // TODO are there default product attributes that ship with Magento that we
     //      should be mapping to? Otherwise we'll be creating a new Salsify
     //      attribute for every single attriubte imported.
@@ -125,7 +125,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // creating a checksum seemed to be the easiest way to accomplish that,
     // though it has the downside of creating opaque atttribute_ids which do
     // show up in the admin panel...
-    $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.md5($name);
+    $code = 'salsify_'.md5($name);
     $code = substr($code, 0, 30);
     return $code;
   }
