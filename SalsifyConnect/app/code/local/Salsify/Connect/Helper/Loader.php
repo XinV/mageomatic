@@ -125,6 +125,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function _create_attribute($label, $attribute_type, $product_type) {
     // FIXME need to create a whitespace-free version of $label for the attribute_code
 
+    echo '<br/>creating attribute data';
     $_attribute_data = array(
       'attribute_code' => 'salsify_attribute_'.(($product_type) ? $product_type : 'joint').'_'.$label,
       'is_global' => '1',
@@ -148,6 +149,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'used_for_sort_by' => '0',
       'frontend_label' => array('Salsify Attribute '.(($product_type) ? $product_type : 'joint').' '.$label)
     );
+    echo '<br/>getting model';
     $model = Mage::getModel('catalog/resource_eav_attribute');
     if (!isset($_attribute_data['is_configurable'])) {
       $_attribute_data['is_configurable'] = 0;
@@ -169,6 +171,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
     $model->setIsUserDefined(1);
     try {
+      echo '<br/>saving model';
       $model->save();
     } catch (Exception $e) {
       echo '<p>Sorry, error occured while trying to save the attribute. Error: '.$e->getMessage().'</p>';
