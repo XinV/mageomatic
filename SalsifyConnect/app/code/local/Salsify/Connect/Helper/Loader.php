@@ -79,8 +79,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $code = $this->_attribute_code($this->_key);
       $this->_product[$code] = $value;
 
-      $attribute = $this->_attributes[$code];
-      if (!$attribute) {
+      if (!array_key_exists($code, $this->_attributes)) {
         // TODO non-text types
         $this->_attributes[$code] = $this->_create_attribute_if_needed($this->_key, 'text');
       }
