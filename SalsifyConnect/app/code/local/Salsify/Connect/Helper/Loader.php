@@ -125,9 +125,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function _create_attribute($label, $attribute_type, $product_type) {
     // FIXME need to create a whitespace-free version of $label for the attribute_code
 
+    $code = 'salsify_'.(($product_type) ? $product_type : 'joint').'_'.$label;
+    echo '<br/>code: '.$code;
+
     echo '<br/>creating attribute data';
     $_attribute_data = array(
-      'attribute_code' => 'salsify_attribute_'.(($product_type) ? $product_type : 'joint').'_'.$label,
+      'attribute_code' => $code,
       'is_global' => '1',
       'frontend_input' => $attribute_type, //'boolean',
       'default_value_text' => '',
