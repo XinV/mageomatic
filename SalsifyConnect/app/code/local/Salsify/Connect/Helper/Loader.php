@@ -120,6 +120,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //      should be mapping to? Otherwise we'll be creating a new Salsify
     //      attribute for every single attriubte imported.
 
+    // TODO if another property is used by Salsify for ID we're going to have
+    //      to do something else here, since evidently sku is required in
+    //      Magento.
+    if ($name === 'sku') {
+      return $name;
+    }
+
     // code can only be 30 characters at most and cannot contain spaces
     // creating a checksum seemed to be the easiest way to accomplish that,
     // though it has the downside of creating opaque atttribute_ids which do
