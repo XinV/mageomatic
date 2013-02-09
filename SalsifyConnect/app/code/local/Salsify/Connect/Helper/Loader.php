@@ -75,7 +75,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if ($this->_in_nested == 0 && $this->_key) {
       $this->_product[$this->_key] = $value;
 
-      $attribute = $this->_create_attribute_if_needed($this->_key);
+      // TODO non-text types
+      $attribute = $this->_create_attribute_if_needed($this->_key, 'text');
       // FIXME need to create the attribute value as well if needed?
 
       $this->_key = null;
