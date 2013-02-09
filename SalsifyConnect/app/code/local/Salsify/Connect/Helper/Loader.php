@@ -129,6 +129,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $attributeId = Mage::getResourceModel('eav/entity_attribute')
                        ->getIdByCode('catalog_product', $code);
     echo "<br/> ID: " . $attributeId;
+    if ($attributeId) {
+      echo '<br/> IT WORKS';
+    } else {
+      echo '<br/> none of this makes any sense.';
+    }
     $attribute = Mage::getModel('catalog/resource_eav_attribute')
                      ->load($attributeId);
     return $attribute;
