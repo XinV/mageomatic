@@ -43,6 +43,20 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $this->_product['_type'] = 'simple';
       $this->_product['_attribute_set'] = 'Default';
       $this->_product['_product_websites'] = 'base';
+      $this->_product['price'] = 0.01;
+
+      // TODO get these from Salsify
+      $this->_product['description'] = 'IMPORTED FROM SALSIFY';
+      $this->_product['short_description'] = 'IMPORTED FROM SALSIFY';
+      $this->_product['weight'] = 0;
+
+      // TODO what are status 1 and visibility 4?
+      $this->_product['status'] = 1;
+      $this->_product['visibility'] = 4;
+
+      // TODO ???
+      $this->_product['tax_class_id'] = 2;
+      $this->_product['qty'] = 0;
     }
   }
 
