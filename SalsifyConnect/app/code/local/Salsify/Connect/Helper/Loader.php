@@ -41,6 +41,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // required by Magento
       // TODO Salsify only supports simple products right now
       $this->_product['_type'] = 'simple';
+      $this->_product['_attribute_set'] = 'Default';
+      $this->_product['_product_websites'] = 'base';
     }
   }
 
