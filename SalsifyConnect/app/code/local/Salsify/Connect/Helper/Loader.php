@@ -128,11 +128,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _get_attribute_from_code($code) {
     $attributeId = Mage::getResourceModel('eav/entity_attribute')
                        ->getIdByCode('catalog_product', $code);
-    echo "<br/> ID: " . $attributeId;
-    if ($attributeId) {
-      echo '<br/> IT WORKS';
-    } else {
-      echo '<br/> none of this makes any sense.';
+    if (!$attributeId) {
+      return null;
     }
     $attribute = Mage::getModel('catalog/resource_eav_attribute')
                      ->load($attributeId);
