@@ -110,7 +110,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  private function _attribute_code($name) {
+  private function _attribute_code($name, $product_type) {
     // FIXME are there default product attributes that ship with Magento that we
     //       should be mapping to? Otherwise we'll be creating a new Salsify
     //       attribute for every single attriubte imported.
