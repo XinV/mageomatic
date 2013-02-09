@@ -20,7 +20,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //       right now.
   private $_in_nested;
 
+  private $_attributes;
+
   public function start_document() {
+    $this->_attributes = array();
     $this->_batch = array();
     $this->_in_nested = 0;
   }
@@ -73,10 +76,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // Note that value may be a string, integer, boolean, array, etc.
   public function value($value) {
     if ($this->_in_nested == 0 && $this->_key) {
-      $this->_product[$this->_key] = $value;
+      $code = $this->_attribute_code($this->_key);
+      $this->_product[$code] = $value;
 
-      // TODO non-text types
-      $attribute = $this->_create_attribute_if_needed($this->_key, 'text');
+      $attribute = $this->_attributes[$code];
+      if (!$attribute) {
+        // TODO non-text types
+        $this->_attributes[$code] = $this->_create_attribute_if_needed($this->_key, 'text');
+      }
+
       // FIXME need to create the attribute value as well if needed?
 
       $this->_key = null;
@@ -169,7 +177,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'used_for_sort_by' => 0,
       'type' => $attribute_type,
       'frontend_input' => $attribute_type, //'boolean','text', etc.
-      'frontend_label' => array('Salsify Attribute '.(($product_type) ? $product_type : 'joint').' '.$name),
+      'frontend_label' => $name,
 
       // TODO apply_to multiple types by default? right now Salsify itself only
       //      really supports the simple type.
