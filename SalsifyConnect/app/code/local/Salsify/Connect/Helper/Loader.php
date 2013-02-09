@@ -171,7 +171,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $defaultValueField = $model->getDefaultValueByInput($_attribute_data['frontend_input']);
     echo '<br/> defaultValueField: ' . $defaultValueField;
     if ($defaultValueField) {
-      $_attribute_data['default_value'] = $this->getRequest()->getParam($defaultValueField);
+      // FIXME getRequest will be null here
+      // $_attribute_data['default_value'] = $this->getRequest()->getParam($defaultValueField);
+      $_attribute_data['default_value'] = $_attribute_data[$defaultValueField];
     }
     echo '<br/>adding data';
     $model->addData($_attribute_data);
