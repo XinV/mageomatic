@@ -99,7 +99,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //      just supporting simple products anyway (not grouped, configurable,
     //      etc.).
 
-    $code = _attribute_code($name);
+    $code = $this->_attribute_code($name);
     $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $code);
     if ($attribute) {
       return $attribute;
