@@ -28,7 +28,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   }
 
   public function configAction() {
-    echo '<br/>creating export configuration.':
+    echo '<br/>creating export configuration.';
   }
 
   public function exportAction() {
