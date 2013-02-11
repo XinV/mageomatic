@@ -70,7 +70,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if ($this->_in_nested > 0) {
       $this->_in_nested--;
     } else {
-      array_push($this->_batch, $this->_product);
+      if (!$this->_product['sku']) {
+        echo "PRODUCT WITHOUT SKU " . var_dump($this->_product);
+      } else {
+        array_push($this->_batch, $this->_product);
+      }
+
       $this->_product = null;
       if (count($this->_batch) > self::BATCH_SIZE) {
         $this->_flush_batch();
