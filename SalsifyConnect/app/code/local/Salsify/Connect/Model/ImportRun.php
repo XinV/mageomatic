@@ -66,6 +66,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         $status === self::STATUS_LOADING || // TODO remove when async
         $status === self::STATUS_ERROR ||
         $status === self::STATUS_DONE) {
+      echo "1";
       return false;
     }
 
