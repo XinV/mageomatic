@@ -69,7 +69,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/><br/>';
     // $export = $downloader->create_export();
     // $model->setToken($export->id);
-    // $model->save();
+    $model->save();
 
     // echo '<br/>saved model: ' . $model->getId();
 
