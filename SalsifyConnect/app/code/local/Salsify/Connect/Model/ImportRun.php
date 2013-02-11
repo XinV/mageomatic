@@ -26,8 +26,8 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     try {
       echo '3<br/>';
       $downloader = $this->_get_downloader();
-      $export = $downloader->create_export();
       echo '4<br/>';
+      $export = $downloader->create_export();
     } catch (Exception $e) {
       $this->setStatus(self::STATUS_ERROR);
       $this->save();
