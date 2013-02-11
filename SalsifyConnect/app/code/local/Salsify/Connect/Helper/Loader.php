@@ -70,7 +70,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if ($this->_in_nested > 0) {
       $this->_in_nested--;
     } else {
-      if (!array_has_key('sku', $this->_product)) {
+      if (!array_key_exists('sku', $this->_product)) {
         echo "PRODUCT WITHOUT SKU " . var_dump($this->_product);
       } else {
         array_push($this->_batch, $this->_product);
