@@ -57,8 +57,8 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
     $filename = $this->_get_temp_file('json');
     $file = null;
     try {
-      // Right now auth is not strictly necessary, but it will be in the future.
-      $ch = curl_init($url . '?auth_token=' + $this->_api_key);
+      // TODO Right now auth is not strictly necessary, but it will be in the future.
+      $ch = curl_init($url); // . '?auth_token=' + $this->_api_key);
       $file = fopen($filename, "w");
       curl_setopt($ch, CURLOPT_FILE, $file);
       curl_setopt($ch, CURLOPT_HEADER, 0);

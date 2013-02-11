@@ -101,7 +101,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         $this->setStatus(self::STATUS_LOADING);
         $this->save();
         $salsify = Mage::helper('salsify_connect');
-        $salsify->load_data($file);
+        $salsify->load_data($filename);
 
         echo '<br/>Done!</br>';
         $this->setStatus(self::STATUS_DONE);
