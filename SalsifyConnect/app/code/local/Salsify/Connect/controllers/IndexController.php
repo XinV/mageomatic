@@ -32,9 +32,13 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     $url = "http://localhost:5000/";
     $key = "yNoKZx9UabqqQ1m2c6K2";
+
+    echo '<br/>creating downloader...';
     $downloader = Mage::helper('salsify_connect/downloader');
     $downloader->set_api_token($key);
     $downloader->set_base_url($url);
+
+    echo '<br/>creating export...';
     $export = $downloader->create_export();
     echo var_dump($export);
 
