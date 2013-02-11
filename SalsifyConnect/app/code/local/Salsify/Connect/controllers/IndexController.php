@@ -43,47 +43,22 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     $params = $this->getRequest()->getParams();
     $config_id = $params['config'];
-    $config = Mage::getModel('salsify_connect/configuration');
-    $config->load((int)$config_id);
-    if (!$config->getId()) {
-      throw new Exception("Cannot do an export without specifying a configuration");
-    }
-    echo var_dump((int)($config->getId()));
-    echo '<br/><br/>';
-
     $model = Mage::getModel('salsify_connect/importrun');
-    $model->setStartTime(date('Y-m-d h:m:s', time()));
-    $model->setConfigurationId($config->getId());
-    $model->set_status_preparing();
-
-    // $export = $downloader->create_export();
-    // $model->setToken($export->id);
-    $model->setToken(1); // FIXME
-
+    $model->setConfigurationId($config_id);
     $model->save();
-    echo var_dump($model);
-    echo '<br/><br/>';
+    $model->start_import();
 
-    echo '<br/>saved model: ' . $model->getId();
-
-    echo '<br/>created. go to salsify/index/chexport to check the status';
+    echo '<br/>created. go to salsify/index/chexport/id/'.($model->getId()).' to check the status';
   }
 
   public function chexportAction() {
-    echo '<br/>checking export status...';
-
-    $url = "http://localhost:5000/";
-    $key = "yNoKZx9UabqqQ1m2c6K2";
-    $downloader = Mage::helper('salsify_connect/downloader');
-    $downloader->set_api_token($key);
-    $downloader->set_base_url($url);
-
-    echo '<br/>first export:';
-    $export = $downloader->get_export(1);
-    echo var_dump($export);
-    echo '<br/>second export:';
-    $export = $downloader->get_export(2);
-    echo var_dump($export);
+    $params = $this->getRequest()->getParams();
+    $import_id = $params['id'];
+    $import = Mage::getModel('salsify_connect/importrun');
+    $import->load((int)$import_id);
+    if (!$import->getId()) {
+      throw new Exception("Must specify a valid import ID.");
+    }
   }
 
 }

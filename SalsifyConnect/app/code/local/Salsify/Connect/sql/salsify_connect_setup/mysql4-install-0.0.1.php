@@ -29,7 +29,8 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'identity' => true,
     ), 'Salsify Connect Import ID')
   ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-    'nullable' => false,
+    'nullable' => true,
+    'default'  => NULL,
     ), 'Salsify Connect Import Token (provided by Salsify Server)')
   ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     'unsigned' => false,
