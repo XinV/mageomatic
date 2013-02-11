@@ -26,15 +26,13 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
       throw new Exception("Base URL and API token must be set to create a new export.");
     }
     $url = $this->get_create_export_url();
-
-    $respose = http_request(HTTP_METH_POST, $url);
-    echo '<br/>';
-    echo var_dump($response);
-    // FIXME make an HTTP request here
+    $req = new HttpRequest($url, HTTP_METH_POST);
+    $mes = $req->send();
+    return json_decode($mes->getBody());
   }
 
   private function get_create_export_url() {
-    return $this->_base_url . '/api/exports?format=json&api_key=' . $this->_api_token;
+    return $this->_base_url . '/api/exports?format=json&auth_token=' . $this->_api_token;
   }
 
   /**
