@@ -17,16 +17,12 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   }
 
   public function start_import() {
-    echo '1<br/>';
     $this->setStatus(self::STATUS_PREPARING);
     $this->setStartTime(date('Y-m-d h:m:s', time()));
     $this->save();
-    echo '2<br/>';
     
     try {
-      echo '3<br/>';
       $downloader = $this->_get_downloader();
-      echo '4<br/>';
       $export = $downloader->create_export();
     } catch (Exception $e) {
       $this->setStatus(self::STATUS_ERROR);
@@ -51,8 +47,11 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
   private function _get_downloader() {
     if (!$this->_downloader) {
+      echo  '1';
       $config = $this->_get_config();
+      echo  '2';
       $this->_downloader = Mage::helper('salsify_connect/downloader');
+      echo  '3';
       $this->_downloader.set_base_url($config->getUrl());
       $this->_downloader.set_api_key($config->getApiKey());
     }
