@@ -80,7 +80,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function end_object() {
     if ($this->_in_nested > 0) {
       $this->_in_nested--;
-    } else {
+    } elseif ($this->_product) {
       array_push($this->_batch, $this->_product);
       $this->_product = null;
       if (count($this->_batch) > self::BATCH_SIZE) {
