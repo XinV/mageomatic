@@ -10,19 +10,21 @@
 class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
 
   private $_base_url;
-  private $_api_token;
+  private $_api_key;
 
   public function set_base_url($baseurl) {
     $this->_base_url = $baseurl;
   }
 
-  public function set_api_key($apitoken) {
-    $this->_api_token = $apitoken;
+  public function set_api_key($apikey) {
+    $this->_api_key = $apikey;
   }
 
+  // TODO make this configurable with "compressed" vs. not once we figure out
+  //      how to deal with GZipped stuff in PHP.
   public function create_export() {
-    if (!$this->_base_url || !$this->_api_token) {
-      throw new Exception("Base URL and API token must be set to create a new export.");
+    if (!$this->_base_url || !$this->_api_key) {
+      throw new Exception("Base URL and API key must be set to create a new export.");
     }
     $url = $this->_get_create_export_url();
     $req = new HttpRequest($url, HTTP_METH_POST);
@@ -31,12 +33,12 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   }
 
   private function _get_create_export_url() {
-    return $this->_base_url . '/api/exports?format=json&auth_token=' . $this->_api_token;
+    return $this->_base_url . '/api/exports?format=json&auth_token=' . $this->_api_key;
   }
 
   public function get_export($id) {
-    if (!$this->_base_url || !$this->_api_token) {
-      throw new Exception("Base URL and API token must be set to create a new export.");
+    if (!$this->_base_url || !$this->_api_key) {
+      throw new Exception("Base URL and API key must be set to create a new export.");
     }
     $url = $this->_get_export_url($id);
     $req = new HttpRequest($url, HTTP_METH_GET);
@@ -45,20 +47,30 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   }
 
   private function _get_export_url($id) {
-    return $this->_base_url . '/api/exports/'.$id.'?format=json&auth_token=' . $this->_api_token;
+    return $this->_base_url . '/api/exports/'.$id.'?format=json&auth_token=' . $this->_api_key;
   }
 
   /**
    * Returns the path to the locally downloaded file.
    */
-  public function download() {
-    $file = $this->_get_temp_file('json');
-
-    // FIXME need to download from salsify :)
-    // For now, we're mimicking the upload...
-    copy($this->_get_temp_directory() . DS . 'products.json', $file);
-
-    return $file;
+  public function download($url) {
+    $filename = $this->_get_temp_file('json');
+    $file = null;
+    try {
+      // Right now auth is not strictly necessary, but it will be in the future.
+      $ch = curl_init($url . '?auth_token=' + $this->_api_key);
+      $file = fopen($filename, "w");
+      curl_setopt($ch, CURLOPT_FILE, $file);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
+      curl_exec($ch);
+      curl_close($ch);
+      fclose($file);
+    } catch (Exception $e) {
+      if ($file) { fclose($file); }
+      unlink($filenmae);
+      throw $e;
+    }
+    return $filename;
   }
 
   /**

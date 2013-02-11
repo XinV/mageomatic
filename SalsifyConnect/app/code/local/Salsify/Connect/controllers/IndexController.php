@@ -60,7 +60,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     if (!$import->getId()) {
       throw new Exception("Must specify a valid import ID.");
     }
-    echo "Status: " . $import->get_status_string();
+    echo "Status: " . $import->update_status_if_ready();
   }
 
 }
