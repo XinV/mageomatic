@@ -43,21 +43,16 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     $params = $this->getRequest()->getParams();
     $config_id = $params['config'];
-    if (!$config_id) {
-      throw new Exception("Must specify ID for config.");
-    }
-
-    echo '<br/>creating export...';
     $config = Mage::getModel('salsify_connect/configuration');
-    $config->load(1);
+    $config->load((int)$config_id);
     if (!$config->getId()) {
       throw new Exception("Cannot do an export without specifying a configuration");
     }
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->set_start_time();
-    $model->setConfigurationId((int)$config->getId());
     $model->set_status_preparing();
+    $model->setConfigurationId((int)$config->getId());
     // $export = $downloader->create_export();
     // $model->setToken($export->id);
     $model->setToken(1); // FIXME
