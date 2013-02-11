@@ -18,7 +18,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $salsify = Mage::helper('salsify_connect');
 
     echo '<br/>Loading file...';
-    $salsify->load_data(BP.DS.'var'.DS.'salsify'.DS.'simple.json');
+    $salsify->load_data(BP.DS.'var'.DS.'salsify'.DS.'export.json');
 
     echo '<br/>Data loaded!';
   }
