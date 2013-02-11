@@ -48,6 +48,8 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     if (!$config->getId()) {
       throw new Exception("Cannot do an export without specifying a configuration");
     }
+    echo var_dump((int)$config->getId());
+    echo '<br/><br/>';
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->set_start_time();
