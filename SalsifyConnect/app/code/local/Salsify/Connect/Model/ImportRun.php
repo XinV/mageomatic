@@ -73,6 +73,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     try {
       $downloader = $this->_get_downloader();
       $export = $downloader->get_export($this->getToken());
+      echo var_dump($export);
 
       if ($status === self::STATUS_PREPARING) {
         // we were waiting for a public URL
