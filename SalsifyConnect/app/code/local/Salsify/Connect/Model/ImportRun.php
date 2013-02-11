@@ -112,7 +112,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       if ($filename && file_exists($filename)) {
         unlink($filename);
       }
-      $this->_set_error();
+      $this->_set_error($e);
     }
   }
 
