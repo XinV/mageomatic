@@ -53,7 +53,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     }
     echo '</dl>';
 
-    echo ImportRun::STATUS_PROCESSING;
+    echo \SalsifyConnect\ImportRun::STATUS_PROCESSING;
 
     echo '<br/>creating export...';
     $config = Mage::getModel('salsify_connect/configuration');
