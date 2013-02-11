@@ -36,7 +36,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   //   'nullable' => false,
   //   'primary'  => false,
   //   'identity' => false,
-    ), 'Salsify Connect Import Run Status')
+  // ), 'Salsify Connect Import Run Status')
   // ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
   //   'nullable' => false,
   //   ), 'Salsify Connect Import Run Start Time')
