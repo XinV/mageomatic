@@ -46,12 +46,23 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $downloader->set_api_token($key);
     $downloader->set_base_url($url);
 
+    echo '<dl>';            
+    foreach($this->getRequest()->getParams() as $key=>$value) {
+        echo '<dt><strong>Param: </strong>'.$key.'</dt>';
+        echo '<dt><strong>Value: </strong>'.$value.'</dt>';
+    }
+    echo '</dl>';
+
     echo '<br/>creating export...';
+    $config = Mage::getModel('salsify_connect/configuration');
+    $config->load(1);
+
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setStartTime(new DateTime('now'));
-    $export = $downloader->create_export();
-    $model->setToken($export->id);
-    $model->save();
+    $model->setConfiguration($config);
+    // $export = $downloader->create_export();
+    // $model->setToken($export->id);
+    // $model->save();
 
     echo '<br/>saved model: '. $model->getId();
 
