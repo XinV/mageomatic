@@ -49,14 +49,14 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'primary'  => false,
     'identity' => false,
     ), 'Config Used for this Import Run')
-  // ->addForeignKey(
-  //         $installer->getFkName('salsify_connect/import_run', 'configuration_id',
-  //                               'salsify_connect/configuration', 'id'),
-  //         'configuration_id',
-  //         $installer->getTable('salsify_connect/configuration'),
-  //         'id',
-  //         Varien_Db_Ddl_Table::ACTION_NO_ACTION,
-  //         Varien_Db_Ddl_Table::ACTION_NO_ACTION)
+  ->addForeignKey(
+          $installer->getFkName('salsify_connect/import_run', 'configuration_id',
+                                'salsify_connect/configuration', 'id'),
+          'configuration_id',
+          $installer->getTable('salsify_connect/configuration'),
+          'id',
+          Varien_Db_Ddl_Table::ACTION_NO_ACTION,
+          Varien_Db_Ddl_Table::ACTION_NO_ACTION)
   ->setComment('Salsify_Connect salsify_connect/import_run entity table');
 $installer->getConnection()->createTable($table);
 
