@@ -60,7 +60,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setStartTime(date('Y-m-d H:i:s', time()));
     // $model->setConfiguration($config);
-    $model->setConfigurationId($config->getId());
+    $model->setConfigurationId((int)$config->getId());
     $model->setStatus($model->STATUS_PROCESSING);
     echo var_dump($model);
     // $export = $downloader->create_export();
