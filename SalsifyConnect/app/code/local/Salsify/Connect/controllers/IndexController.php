@@ -52,7 +52,11 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $downloader->set_api_token($key);
     $downloader->set_base_url($url);
 
+    echo '<br/>first export:';
     $export = $downloader->get_export(1);
+    echo var_dump($export);
+    echo '<br/>second export:';
+    $export = $downloader->get_export(2);
     echo var_dump($export);
   }
 
