@@ -101,13 +101,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Key will always be a string
   public function key($key) {
-    if ($this->_in_nested == 2) {
-      echo "KEY: " . $key;
-      echo '<br/<br/>';
-    }
+    // FIXME Horrible.
     if (!$this->_in_products && $this->_in_nested == 2 && $key === 'products') {
-      echo "HERE!!!<br/>";
       $this->_in_products = true;
+    }
+
+    if ($this->_in_products) {
+      echo "key: " . $key . " :nesting: " . $key . "<br/>";
     }
 
     if ($this->_in_nested == self::PRODUCT_NESTING_LEVEL) {
