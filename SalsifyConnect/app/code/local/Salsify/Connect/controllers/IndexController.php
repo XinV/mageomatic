@@ -44,10 +44,15 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>creating export...';
     $model = Mage::getModel('salsify_connect/importrun');
     try {
+      echo '<br/>1';
       $model->setStartTime(new DateTime('now'));
+      echo '<br/>2';
       $export = $downloader->create_export();
+      echo '<br/>3';
       $model->setToken($export['id']);
+      echo '<br/>4';
       $model->save();
+      echo '<br/>5';
     } catch (Exception $e) {
       var_dump($e);
     }
