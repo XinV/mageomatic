@@ -44,7 +44,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function start_object() {
     $this->_in_nested++;
 
-    if ($this->_in_products && this->_in_nested === self::PRODUCT_NESTING_LEVEL) {
+    if ($this->_in_products && $this->_in_nested === self::PRODUCT_NESTING_LEVEL) {
       $this->_product = array();
 
       // Add fields required by Magento.
