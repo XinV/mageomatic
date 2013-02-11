@@ -53,8 +53,6 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setConfigurationId('1');
-    $model->save();
-    
     $model->set_start_time();
     $model->set_status_preparing();
     // $export = $downloader->create_export();
@@ -64,7 +62,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/><br/>';
     $model->save();
 
-    // echo '<br/>saved model: ' . $model->getId();
+    echo '<br/>saved model: ' . $model->getId();
 
     echo '<br/>created. go to salsify/index/chexport to check the status';
   }
