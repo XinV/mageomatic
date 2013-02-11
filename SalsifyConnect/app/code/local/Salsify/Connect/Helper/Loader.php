@@ -76,17 +76,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function end_object() {
-    $this->_in_nested--;
+    if ($this->_product && $this->_in_nested === self::PRODUCT_NESTING_LEVEL) {
 
-    if (!$this->_product) { return; }
-
-    if ($this->_in_nested == self::PRODUCT_NESTING_LEVEL) {
       array_push($this->_batch, $this->_product);
       $this->_product = null;
       if (count($this->_batch) > self::BATCH_SIZE) {
         $this->_flush_batch();
       }
     }
+
+    $this->_in_nested--;
   }
 
   public function start_array() {
@@ -114,8 +113,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // Note that value may be a string, integer, boolean, array, etc.
   public function value($value) {
     if (!$this->_product) { return; }
-
-    echo "HERE";
 
     if ($this->_in_nested === self::PRODUCT_NESTING_LEVEL && $this->_key) {
       $code = $this->_attribute_code($this->_key);
