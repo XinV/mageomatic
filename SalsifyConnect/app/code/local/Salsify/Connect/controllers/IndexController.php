@@ -29,14 +29,19 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
   public function configAction() {
     echo '<br/>creating export configuration.';
+
+    $config = Mage::getModel('salsify_connect/configuration');
+    $config->setApiKey("yNoKZx9UabqqQ1m2c6K2");
+    $config->url("http://localhost:5000/");
+    $config->save();
+
+    echo '<br/>configuration created: ' . $config->getId();
   }
 
   public function exportAction() {
     echo '<br/>creating new export from Salsify...';
 
     // FIXME should get this from a configuration
-    $url = "http://localhost:5000/";
-    $key = "yNoKZx9UabqqQ1m2c6K2";
     $downloader = Mage::helper('salsify_connect/downloader');
     $downloader->set_api_token($key);
     $downloader->set_base_url($url);
