@@ -32,7 +32,10 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'nullable' => false,
     ), 'Salsify Connect Import Token (provided by Salsify Server)')
   ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => false,
     'nullable' => false,
+    'primary'  => false,
+    'identity' => false,
     ), 'Salsify Connect Import Run Status')
   // ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
   //   'nullable' => false,
