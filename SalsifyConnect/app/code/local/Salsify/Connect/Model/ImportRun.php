@@ -35,7 +35,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   private function _get_config() {
     if (!$this->_config) {
       $this->_config = Mage::getModel('salsify_connect/configuration')
-                           ->load($this->getConfigurationId())
+                           ->load($this->getConfigurationId());
       if (!$this->_config->getId()) {
         throw new Exception("Must first specify a valid import configuration.");
       }
