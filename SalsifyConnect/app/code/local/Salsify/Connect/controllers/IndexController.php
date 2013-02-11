@@ -42,25 +42,17 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>creating new export from Salsify...';
 
     $params = $this->getRequest()->getParams();
-    echo var_dump($params);
-
-    // FIXME should get this from a configuration
-    // $downloader = Mage::helper('salsify_connect/downloader');
-    // $downloader->set_api_token($key);
-    // $downloader->set_base_url($url);
-
-    echo '<dl>';            
-    foreach($this->getRequest()->getParams() as $key=>$value) {
-        echo '<dt><strong>Param: </strong>'.$key.'</dt>';
-        echo '<dt><strong>Value: </strong>'.$value.'</dt>';
+    $config_id = $params['config'];
+    if (!$config_id) {
+      throw new Exception("Must specify ID for config.");
     }
-    echo '</dl>';
 
     echo '<br/>creating export...';
     $config = Mage::getModel('salsify_connect/configuration');
     $config->load(1);
-    echo var_dump($config);
-    echo '<br/><br/>';
+    if (!$config->getId()) {
+      throw new Exception("Cannot do an export without specifying a configuration");
+    }
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->set_start_time();
