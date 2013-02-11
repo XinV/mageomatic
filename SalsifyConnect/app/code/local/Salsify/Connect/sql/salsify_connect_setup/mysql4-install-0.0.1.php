@@ -46,12 +46,13 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('configuration_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     'unsigned' => true,
     'nullable' => false,
+    'default'   => 0,
     ), 'Salsify Connect Import ID')
   ->addForeignKey(
-          $installer->getFkName('salsify_connect_import_run', 'configuration_id',
-                                'salsify_connect_configuration', 'id'),
+          $installer->getFkName('salsify_connect/import_run', 'configuration_id',
+                                'salsify_connect/configuration', 'id'),
           'configuration_id',
-          $installer->getTable('salsify_connect_configuration'),
+          $installer->getTable('salsify_connect/configuration'),
           'id',
           Varien_Db_Ddl_Table::ACTION_NO_ACTION,
           Varien_Db_Ddl_Table::ACTION_NO_ACTION)
