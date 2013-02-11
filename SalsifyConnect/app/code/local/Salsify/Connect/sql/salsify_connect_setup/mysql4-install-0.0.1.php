@@ -48,10 +48,10 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'nullable' => false,
     ), 'Salsify Connect Import ID')
   ->addForeignKey(
-          $installer->getFkName('salsify_connect/import_run', 'configuration_id',
-                                'salsify_connect/configuration', 'id'),
+          $installer->getFkName('salsify_connect_import_run', 'configuration_id',
+                                'salsify_connect_configuration', 'id'),
           'configuration_id',
-          $installer->getTable('salsify_connect/configuration'),
+          $installer->getTable('salsify_connect_configuration'),
           'id',
           Varien_Db_Ddl_Table::ACTION_NO_ACTION,
           Varien_Db_Ddl_Table::ACTION_NO_ACTION)
