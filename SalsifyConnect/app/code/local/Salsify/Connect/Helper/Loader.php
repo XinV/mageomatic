@@ -78,9 +78,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function end_object() {
+    if (!$this->_product) { return; }
+
     if ($this->_in_nested > 0) {
       $this->_in_nested--;
-    } elseif ($this->_product) {
+    } else {
       array_push($this->_batch, $this->_product);
       $this->_product = null;
       if (count($this->_batch) > self::BATCH_SIZE) {
@@ -90,6 +92,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function start_array() {
+    if (!$this->_product) { return; }
+    
     if ($this->_product) {
       // FIXME not yet implemented: multi-assigned values, etc.
       $this->_in_nested++;
@@ -99,6 +103,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function end_array() {
+    if (!$this->_product) { return; }
+
     if ($this->_in_nested > 0) {
       $this->_in_nested--;
     } else {
@@ -110,8 +116,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function key($key) {
     if (!$this->_in_products && $key === 'products') {
       $this->_in_products = true;
-      $this->_in_nested = -1;
     }
+
+    if (!$this->_product) { return; }
 
     if ($this->_in_nested == 0) {
       $this->_key = $key;
@@ -120,6 +127,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Note that value may be a string, integer, boolean, array, etc.
   public function value($value) {
+    if (!$this->_product) { return; }
+
     if ($this->_in_nested == 0 && $this->_key) {
       $code = $this->_attribute_code($this->_key);
       $this->_product[$code] = $value;
