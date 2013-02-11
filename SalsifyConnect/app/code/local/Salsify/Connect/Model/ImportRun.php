@@ -73,11 +73,10 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     try {
       $downloader = $this->_get_downloader();
       $export = $downloader->get_export($this->getToken());
-      echo var_dump($export);
 
       if ($status === self::STATUS_PREPARING) {
         // we were waiting for a public URL
-        if ($export->processing === "true") { return false; }
+        if ($export->processing) { return false; }
         $url = $export->url;
         if (!$url) {
           $this->_set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
