@@ -31,11 +31,11 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'Salsify Connect Import Token (provided by Salsify Server)')
-  ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'unsigned' => false,
-    'nullable' => false,
-    'primary'  => false,
-    'identity' => false,
+  // ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+  //   'unsigned' => false,
+  //   'nullable' => false,
+  //   'primary'  => false,
+  //   'identity' => false,
     ), 'Salsify Connect Import Run Status')
   // ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
   //   'nullable' => false,
