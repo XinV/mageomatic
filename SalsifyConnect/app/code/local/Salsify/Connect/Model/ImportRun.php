@@ -105,6 +105,8 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         echo '<br/>Done!</br>';
         $this->setStatus(self::STATUS_DONE);
         $this->save();
+      } else {
+        echo "blah " . $status;
       }
 
     } catch (Exception $e) {
