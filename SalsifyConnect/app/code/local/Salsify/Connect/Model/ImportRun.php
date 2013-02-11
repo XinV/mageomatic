@@ -17,19 +17,25 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   }
 
   public function start_import() {
+    echo '1<br/>';
     $this->setStatus(self::STATUS_PREPARING);
     $this->setStartTime(date('Y-m-d h:m:s', time()));
     $this->save();
+    echo '2<br/>';
     
     try {
+      echo '3<br/>';
       $downloader = $this->_get_downloader();
       $export = $downloader->create_export();
-      $this->setToken($export->id);
+      echo '4<br/>';
     } catch (Exception $e) {
       $this->setStatus(self::STATUS_ERROR);
       $this->save();
       throw $e;
     }
+    $this->setToken($export->id);
+    $this->setStatus(self::STATUS_PREPARING);
+    $this->save();
   }
 
   private function _get_config() {

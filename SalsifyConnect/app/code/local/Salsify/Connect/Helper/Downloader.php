@@ -20,7 +20,6 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
     $this->_api_token = $apitoken;
   }
 
-
   public function create_export() {
     if (!$this->_base_url || !$this->_api_token) {
       throw new Exception("Base URL and API token must be set to create a new export.");
