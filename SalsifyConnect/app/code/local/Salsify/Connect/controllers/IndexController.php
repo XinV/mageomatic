@@ -2,19 +2,29 @@
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
 
   public function indexAction() {
-    $this->loadLayout();
-    $this->renderLayout();
+    // FIXME remember to remove the connection_configuration.phtml and local.xml
+    // when moving to the admin interface.
+    // $this->loadLayout();
+    // $this->renderLayout();
+
+    echo 'usage:';
+    echo '&nbsp;nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.';
+    echo '&nbsp;nbsp;salsify/index/config - creates a config for export usage.';
+    echo '&nbsp;nbsp;salsify/index/export/config/1 - kicks off an export using config ID 1.';
+    echo '&nbsp;nbsp;salsify/index/chexport/id/1 - checks the status of export with ID 1 and advances it if ready.';
   }
 
-  public function testAction() {
+  public function testloadAction() {
     $downloader = Mage::helper('salsify_connect/downloader');
     $file = $downloader->download();
     echo '<br/>Temp file for uploading: ' . $file;
 
     echo '<br/>Getting helper...';
     $salsify = Mage::helper('salsify_connect');
+
     echo '<br/>Loading file...';
     $salsify->load_data($file);
+
     echo '<br/>Data loaded!';
   }
 
