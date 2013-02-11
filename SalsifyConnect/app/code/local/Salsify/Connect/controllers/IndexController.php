@@ -32,12 +32,8 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     $url = "http://localhost:5000/";
     $key = "yNoKZx9UabqqQ1m2c6K2";
-
-    echo '<br/>creating downloader...';
     $downloader = Mage::helper('salsify_connect/downloader');
-    echo '<br/> setting api_token...';
     $downloader->set_api_token($key);
-    echo '<br/> setting base_url...';
     $downloader->set_base_url($url);
 
     echo '<br/>creating export...';
@@ -48,13 +44,16 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   }
 
   public function chexportAction() {
-    echo '<br/>checking export status.';
-    echo '<br/>making the request...';
-    $response = http_request(HTTP_METH_GET, 'www.google.com');
-    echo '<br/>done';
-    echo '<br/>';
-    echo var_dump($response);
-    echo '<br/>trying a different way.';
+    echo '<br/>checking export status...';
+
+    $url = "http://localhost:5000/";
+    $key = "yNoKZx9UabqqQ1m2c6K2";
+    $downloader = Mage::helper('salsify_connect/downloader');
+    $downloader->set_api_token($key);
+    $downloader->set_base_url($url);
+
+    $export = $downloader->get_export(1);
+    echo var_dump($export);
   }
 
 }
