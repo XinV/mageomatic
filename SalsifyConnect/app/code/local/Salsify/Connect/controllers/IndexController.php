@@ -48,7 +48,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
       $model->setStartTime(new DateTime('now'));
       echo '<br/>2';
       $export = $downloader->create_export();
-      var_dump($export);
+      var_dump($export['id']);
       echo '<br/>3';
       $model->setToken($export['id']);
       echo '<br/>4';
