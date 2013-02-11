@@ -78,7 +78,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         // we were waiting for a public URL signally that Salsify has prepared
         // all the data.
 
-        if ($export->processing) { echo "THERE"; return false; }
+        if ($export->processing) { return false; }
         $url = $export->url;
         if (!$url) {
           $this->_set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
@@ -106,6 +106,8 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         echo '<br/>Done!</br>';
         $this->setStatus(self::STATUS_DONE);
         $this->save();
+
+        return true;
       }
 
     } catch (Exception $e) {

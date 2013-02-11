@@ -37,7 +37,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function end_document() {
-    echo var_dump($this->_batch);
     $this->_flush_batch();
   }
 
