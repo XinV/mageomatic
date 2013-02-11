@@ -43,7 +43,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   // ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
   //   'nullable' => true,
   //   ), 'Salsify Connect Import Run End Time')
-  ->addColumn('config', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+  ->addColumn('foo', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     // 'unsigned' => true,
     // 'nullable' => false,
     // 'primary'  => false,
