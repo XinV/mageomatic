@@ -20,12 +20,19 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //       right now.
   private $_in_nested;
 
+  // FIXME right now this is nested since we're not doing anything until we're
+  //       dealing with products.
+  private $_in_products;
+
   private $_attributes;
 
   public function start_document() {
     $this->_attributes = array();
     $this->_batch = array();
+
+    // -1 to skip the highest level of nesting...
     $this->_in_nested = 0;
+    $this->_in_products = false;
   }
 
   public function end_document() {
@@ -33,6 +40,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function start_object() {
+    if (!$this->_in_products) {
+      return;
+    }
+
     if ($this->_product) {
       $this->_in_nested++;
     } else {
@@ -70,12 +81,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if ($this->_in_nested > 0) {
       $this->_in_nested--;
     } else {
-      if (!array_key_exists('sku', $this->_product)) {
-        echo "PRODUCT WITHOUT SKU " . var_dump($this->_product);
-      } else {
-        array_push($this->_batch, $this->_product);
-      }
-
+      array_push($this->_batch, $this->_product);
       $this->_product = null;
       if (count($this->_batch) > self::BATCH_SIZE) {
         $this->_flush_batch();
@@ -102,6 +108,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Key will always be a string
   public function key($key) {
+    if (!$this->_in_products && $key === 'products') {
+      $this->_in_products = true;
+      $this->_in_nested = -1;
+    }
+
     if ($this->_in_nested == 0) {
       $this->_key = $key;
     }
