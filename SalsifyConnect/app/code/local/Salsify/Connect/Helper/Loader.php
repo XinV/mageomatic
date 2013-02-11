@@ -72,6 +72,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     } else {
       array_push($this->_batch, $this->_product);
       $this->_product = null;
+      if (count($this->_batch) > self::BATCH_SIZE) {
+        $this->_flush_batch();
+      }
     }
   }
 
