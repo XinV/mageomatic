@@ -42,9 +42,9 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>creating new export from Salsify...';
 
     // FIXME should get this from a configuration
-    $downloader = Mage::helper('salsify_connect/downloader');
-    $downloader->set_api_token($key);
-    $downloader->set_base_url($url);
+    // $downloader = Mage::helper('salsify_connect/downloader');
+    // $downloader->set_api_token($key);
+    // $downloader->set_base_url($url);
 
     echo '<dl>';            
     foreach($this->getRequest()->getParams() as $key=>$value) {
