@@ -32,9 +32,6 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   }
 
   public function exportAction() {
-    // FIXME I should be creating a new model here
-    $model = Mage::getModel('salsify_connect/importrun');
-
     echo '<br/>creating new export from Salsify...';
 
     // FIXME should get this from a configuration
@@ -45,10 +42,15 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $downloader->set_base_url($url);
 
     echo '<br/>creating export...';
-    $model->setStartTime(new DateTime('now'));
-    $export = $downloader->create_export();
-    $model->setToken($export['id']);
-    $model->save();
+    $model = Mage::getModel('salsify_connect/importrun');
+    try {
+      $model->setStartTime(new DateTime('now'));
+      $export = $downloader->create_export();
+      $model->setToken($export['id']);
+      $model->save();
+    } catch (Exception $e) {
+      var_dump($e);
+    }
 
     echo '<br/>saved model: '. $model->getId();
 
