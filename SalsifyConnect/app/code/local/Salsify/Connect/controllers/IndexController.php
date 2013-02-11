@@ -18,15 +18,6 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>Data loaded!';
   }
 
-  public function createAction() {
-    echo '<br/>getting loader';
-    $loader = Mage::helper('salsify_connect/loader');
-    echo '<br/>creating attribute';
-    $attribute = $loader->_create_attribute_if_needed("Rob Attribute of Awesomeness", 'text');
-    echo '<br/>';
-    echo var_dump($attribute);
-  }
-
   public function configAction() {
     echo '<br/>creating export configuration.';
 
@@ -59,6 +50,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     if (!$import->getId()) {
       throw new Exception("Must specify a valid import ID.");
     }
+    echo "Status: " . $import->get_status_string();
   }
 
 }

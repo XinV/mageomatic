@@ -13,7 +13,31 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   private $_downloader;
 
   protected function _construct() {
+    if (!$this->getStatus()) {
+      $this->setStatus(self::STATUS_NOT_STARTED);
+    }
     $this->_init('salsify_connect/importrun');
+  }
+
+  public function get_status_string() {
+    switch ($this->getStatus()) {
+      case self::STATUS_ERROR:
+        return "Error: Failed";
+      case self::STATUS_NOT_STARTED:
+        return "Export not started";
+      case self::STATUS_PREPARING:
+        return "Salsify is preparing the export.";
+      case self::STATUS_UPLOADING:
+        return "Salsify is uploading the export.";
+      case self::STATUS_DOWNLOADING:
+        return "Magento is downloading the export.";
+      case self::STATUS_LOADING:
+        return "Magento is loading the exported data.";
+      case self::STATUS_DONE:
+        return "Salsify export has been successfully loaded into Magento.";
+      default:
+        throw new Exception("INTERNAL ERROR: unknown status: " . $this->getStatus());
+    }
   }
 
   public function start_import() {
@@ -47,15 +71,10 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
   private function _get_downloader() {
     if (!$this->_downloader) {
-      echo  '1';
       $config = $this->_get_config();
-      echo  '2';
       $this->_downloader = Mage::helper('salsify_connect/downloader');
-      echo  '3';
       $this->_downloader->set_base_url($config->getUrl());
-      echo  '4';
       $this->_downloader->set_api_key($config->getApiKey());
-      echo  '5';
     }
     return $this->_downloader;
   }

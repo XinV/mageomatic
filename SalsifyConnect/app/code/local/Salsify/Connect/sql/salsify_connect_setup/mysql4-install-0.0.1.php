@@ -1,4 +1,8 @@
 <?php
+
+// NOTE: to UNDO this:
+// DELETE from core_resource where code = 'salsify_connect_setup'; drop table salsify_connect_import_run; drop table salsify_connect_configuration;
+
 $installer = $this;
 $installer->startSetup();
 
