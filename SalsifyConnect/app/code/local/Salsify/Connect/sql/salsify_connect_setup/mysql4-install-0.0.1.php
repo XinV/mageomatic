@@ -48,7 +48,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     // 'nullable' => false,
     // 'primary'  => false,
     // 'identity' => false,
-    ), 'Salsify Connect Configuration Used for this Import Run')
+    ), 'Config Used for this Import Run')
   // Magento seems to have a bug here with insert statement generation.
   // ->addForeignKey(
   //         $installer->getFkName('salsify_connect/import_run', 'configuration_id',
