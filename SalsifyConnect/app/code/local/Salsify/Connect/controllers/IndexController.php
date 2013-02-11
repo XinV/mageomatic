@@ -32,7 +32,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     $config = Mage::getModel('salsify_connect/configuration');
     $config->setApiKey("yNoKZx9UabqqQ1m2c6K2");
-    $config->url("http://localhost:5000/");
+    $config->setUrl("http://localhost:5000/");
     $config->save();
 
     echo '<br/>configuration created: ' . $config->getId();
