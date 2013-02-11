@@ -35,7 +35,6 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
 
     echo '<br/>creating downloader...';
     $downloader = Mage::helper('salsify_connect/downloader');
-    echo var_dump($downloader);
     echo '<br/> setting api_token...';
     $downloader->set_api_token($key);
     echo '<br/> setting base_url...';

@@ -17,7 +17,7 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   }
 
   public function set_api_token($apitoken) {
-    $this->$_api_token = $apitoken;
+    $this->_api_token = $apitoken;
   }
 
 
