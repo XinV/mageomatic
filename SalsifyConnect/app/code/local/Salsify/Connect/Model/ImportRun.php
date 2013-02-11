@@ -13,7 +13,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
   public function set_start_time() {
     $now = Mage::getModel('core/date')->date('Y-m-d h:i:s');
-    $model->setStartTime($model->formatDate($now));
+    $model->setStartTime($now);
   }
 
   public function set_status_preparing() {
