@@ -60,7 +60,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
   // Return whether the status was advanced.
   public function update_status_if_ready() {
-    $status = $this->getStatus();
+    $status = (int)$this->getStatus();
     if ($status === self::STATUS_NOT_STARTED ||
         $status === self::STATUS_DOWNLOADING || // TODO remove when async
         $status === self::STATUS_LOADING || // TODO remove when async
