@@ -66,7 +66,6 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         $status === self::STATUS_LOADING || // TODO remove when async
         $status === self::STATUS_ERROR ||
         $status === self::STATUS_DONE) {
-      echo "1";
       return false;
     }
 
@@ -76,8 +75,9 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       $export = $downloader->get_export($this->getToken());
 
       if ($status === self::STATUS_PREPARING) {
-        // we were waiting for a public URL
-        echo "HERE";
+        // we were waiting for a public URL signally that Salsify has prepared
+        // all the data.
+
         if ($export->processing) { echo "THERE"; return false; }
         $url = $export->url;
         if (!$url) {
@@ -95,7 +95,8 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         $filename = $downloader->download($url);
 
         // FIXME this is ghetto and should be removed
-        echo '<br/>Download successful. Loading data...<br/>';
+        echo '<br/>Download successful. Downloaded to: ' . $filename;
+        echo '<br/>Loading data...<br/>';
 
         $this->setStatus(self::STATUS_LOADING);
         $this->save();
@@ -105,8 +106,6 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
         echo '<br/>Done!</br>';
         $this->setStatus(self::STATUS_DONE);
         $this->save();
-      } else {
-        echo "blah " . $status;
       }
 
     } catch (Exception $e) {
