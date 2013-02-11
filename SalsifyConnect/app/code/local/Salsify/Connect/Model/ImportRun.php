@@ -52,9 +52,9 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       echo  '2';
       $this->_downloader = Mage::helper('salsify_connect/downloader');
       echo  '3';
-      $this->_downloader.set_base_url($config->getUrl());
+      $this->_downloader->set_base_url($config->getUrl());
       echo  '4';
-      $this->_downloader.set_api_key($config->getApiKey());
+      $this->_downloader->set_api_key($config->getApiKey());
       echo  '5';
     }
     return $this->_downloader;
