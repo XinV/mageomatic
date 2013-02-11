@@ -42,13 +42,10 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   public function chexportAction() {
     echo '<br/>checking export status.';
     echo '<br/>making the request...';
-    echo '<br/>HTTP_METH_GET: '.HTTP_METH_GET;
-    try {
-      http_request(HTTP_METH_GET, 'www.google.com');
-    } catch (Exception $e) {
-      echo '<br/>ERROR: '.$e->getMessage();
-    }
+    $response = http_request(HTTP_METH_GET, 'www.google.com');
     echo '<br/>done';
+    echo '<br/>';
+    echo var_dump($response);
   }
 
 }
