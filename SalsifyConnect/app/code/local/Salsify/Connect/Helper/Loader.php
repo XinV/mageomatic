@@ -19,6 +19,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // FIXME this variable is only necessary since we are only loading in props
   //       right now.
   private $_in_nested;
+  const PRODUCT_NESTING_LEVEL = 4;
 
   // FIXME right now this is nested since we're not doing anything until we're
   //       dealing with products.
@@ -41,13 +42,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function start_object() {
-    if (!$this->_in_products) {
-      return;
-    }
+    $this->_in_nested++;
 
-    if ($this->_product) {
-      $this->_in_nested++;
-    } else {
+    if ($this->_product && $this->_in_nested != self::PRODUCT_NESTING_LEVEL) {
       $this->_product = array();
 
       // Add fields required by Magento.
@@ -79,11 +76,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function end_object() {
+    $this->_in_nested--;
+
     if (!$this->_product) { return; }
 
-    if ($this->_in_nested > 0) {
-      $this->_in_nested--;
-    } else {
+    if ($this->_in_nested == self::PRODUCT_NESTING_LEVEL) {
       array_push($this->_batch, $this->_product);
       $this->_product = null;
       if (count($this->_batch) > self::BATCH_SIZE) {
@@ -93,35 +90,22 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   public function start_array() {
-    if (!$this->_product) { return; }
-
-    if ($this->_product) {
-      // FIXME not yet implemented: multi-assigned values, etc.
-      $this->_in_nested++;
-    } else {
-      // start of product list
-    }
+    $this->_in_nested++;
+    // FIXME not yet implemented: multi-assigned values, etc.
   }
 
   public function end_array() {
-    if (!$this->_product) { return; }
-
-    if ($this->_in_nested > 0) {
-      $this->_in_nested--;
-    } else {
-      // end of document
-    }
+    $this->_in_nested--;
+    // FIXME also not implemented
   }
 
   // Key will always be a string
   public function key($key) {
-    if (!$this->_in_products && $key === 'products') {
+    if (!$this->_in_products && $this->_in_nested == 2 && $key === 'products') {
       $this->_in_products = true;
     }
 
-    if (!$this->_product) { return; }
-
-    if ($this->_in_nested == 0) {
+    if ($this->_in_nested == self::PRODUCT_NESTING_LEVEL) {
       $this->_key = $key;
     }
   }
@@ -130,7 +114,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   public function value($value) {
     if (!$this->_product) { return; }
 
-    if ($this->_in_nested == 0 && $this->_key) {
+    if ($this->_in_nested == self::PRODUCT_NESTING_LEVEL && $this->_key) {
       $code = $this->_attribute_code($this->_key);
       $this->_product[$code] = $value;
 
