@@ -45,7 +45,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_in_nested++;
 
     if ($this->_in_products && $this->_in_nested === self::PRODUCT_NESTING_LEVEL) {
-      echo "HERE";
       $this->_product = array();
 
       // Add fields required by Magento.
@@ -115,6 +114,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // Note that value may be a string, integer, boolean, array, etc.
   public function value($value) {
     if (!$this->_product) { return; }
+
+    echo "HERE";
 
     if ($this->_in_nested === self::PRODUCT_NESTING_LEVEL && $this->_key) {
       $code = $this->_attribute_code($this->_key);
