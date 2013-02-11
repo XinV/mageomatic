@@ -48,15 +48,15 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'nullable' => false,
     'default'   => 0,
     ), 'Salsify Connect Import ID')
-  // Magento seems to have a bug here with import statements.
-  ->addForeignKey(
-          $installer->getFkName('salsify_connect/import_run', 'configuration_id',
-                                'salsify_connect/configuration', 'id'),
-          'configuration_id',
-          $installer->getTable('salsify_connect/configuration'),
-          'id',
-          Varien_Db_Ddl_Table::ACTION_NO_ACTION,
-          Varien_Db_Ddl_Table::ACTION_NO_ACTION)
+  // Magento seems to have a bug here with insert statement generation.
+  // ->addForeignKey(
+  //         $installer->getFkName('salsify_connect/import_run', 'configuration_id',
+  //                               'salsify_connect/configuration', 'id'),
+  //         'configuration_id',
+  //         $installer->getTable('salsify_connect/configuration'),
+  //         'id',
+  //         Varien_Db_Ddl_Table::ACTION_NO_ACTION,
+  //         Varien_Db_Ddl_Table::ACTION_NO_ACTION)
   ->setComment('Salsify_Connect salsify_connect/import_run entity table');
 $installer->getConnection()->createTable($table);
 
