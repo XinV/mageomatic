@@ -27,9 +27,17 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo var_dump($attribute);
   }
 
+  public function configAction() {
+    echo '<br/>creating export configuration.':
+  }
+
   public function exportAction() {
+    // FIXME I should be creating a new model here
+    $model = Mage::getModel('salsify_connect/importrun');
+
     echo '<br/>creating new export from Salsify...';
 
+    // FIXME should get this from a configuration
     $url = "http://localhost:5000/";
     $key = "yNoKZx9UabqqQ1m2c6K2";
     $downloader = Mage::helper('salsify_connect/downloader');
@@ -37,8 +45,12 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $downloader->set_base_url($url);
 
     echo '<br/>creating export...';
+    $model->setStartTime(new DateTime('now'));
     $export = $downloader->create_export();
-    echo var_dump($export);
+    $model->setToken($export['id']);
+    $model->save();
+
+    echo '<br/>saved model: '. $model->getId();
 
     echo '<br/>created. go to salsify/index/chexport to check the status';
   }
