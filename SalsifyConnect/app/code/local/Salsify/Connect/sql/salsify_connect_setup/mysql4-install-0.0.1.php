@@ -43,10 +43,9 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   // ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
   //   'nullable' => true,
   //   ), 'Salsify Connect Import Run End Time')
-  ->addColumn('configuration', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'unsigned' => true,
+  ->addColumn('foo', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
-    ), 'ID of Salsify Connect Configuration')
+    ), 'Salsify Connect Import Token (provided by Salsify Server)')
   // Magento seems to have a bug here with insert statement generation.
   // ->addForeignKey(
   //         $installer->getFkName('salsify_connect/import_run', 'configuration',
