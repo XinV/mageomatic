@@ -44,10 +44,10 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   //   'nullable' => true,
   //   ), 'Salsify Connect Import Run End Time')
   ->addColumn('configuration_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    // 'unsigned' => true,
-    // 'nullable' => false,
-    // 'primary'  => false,
-    // 'identity' => false,
+    'unsigned' => true,
+    'nullable' => false,
+    'primary'  => false,
+    'identity' => false,
     ), 'Config Used for this Import Run')
   // ->addForeignKey(
   //         $installer->getFkName('salsify_connect/import_run', 'configuration_id',
