@@ -1,6 +1,6 @@
 <?php
 class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
-  
+
   const STATUS_PREPARING   = 1;
   const STATUS_UPLOADING   = 2;
   const STATUS_DOWNLOADING = 3;
@@ -8,7 +8,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   const STATUS_DONE        = 5;
 
   protected function _construct() {
-    $this->_init('salsify_connect/import_run');
+    $this->_init('salsify_connect/importrun');
   }
 
   public function set_status_preparing() {
