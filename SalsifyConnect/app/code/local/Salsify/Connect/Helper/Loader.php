@@ -106,11 +106,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $this->_in_products = true;
     }
 
-    if ($this->_in_products) {
-      echo "key: " . $key . " :nesting: " . $this->_in_nested . "<br/>";
-    }
-
     if ($this->_in_nested == self::PRODUCT_NESTING_LEVEL) {
+      echo "HERE";
       $this->_key = $key;
     }
   }
