@@ -84,7 +84,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     }
   }
 
-  public funciton set_download_started() {
+  public function set_download_started() {
     $this->setStatus(self::STATUS_DOWNLOADING);
     $this->save();
   }
