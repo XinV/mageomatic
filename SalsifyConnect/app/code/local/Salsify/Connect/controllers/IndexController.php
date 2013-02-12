@@ -42,7 +42,7 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
       throw new Exception("Must specify configuration ID to use for import.");
     }
     $config_id = $params['config'];
-    
+
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setConfigurationId($config_id);
     $model->save();
@@ -67,6 +67,11 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     } else {
       echo '<br/>Download is ready. Starting download asynchronously. Check(port) back for updates!<br/>';
     }
+  }
+
+  public function workerAction() {
+    $worker = new DJWorker($options);
+    $worker->start();
   }
 
 }
