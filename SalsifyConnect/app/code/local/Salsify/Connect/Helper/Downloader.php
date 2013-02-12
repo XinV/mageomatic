@@ -50,27 +50,13 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
     return $this->_base_url . '/api/exports/'.$id.'?format=json&auth_token=' . $this->_api_key;
   }
 
-  /**
-   * Returns the path to the locally downloaded file.
-   */
-  public function download($url) {
-    $filename = $this->_get_temp_file('json');
-    $file = null;
-    try {
-      // TODO Right now auth is not strictly necessary, but it will be in the future.
-      $ch = curl_init($url); // . '?auth_token=' + $this->_api_key);
-      $file = fopen($filename, "w");
-      curl_setopt($ch, CURLOPT_FILE, $file);
-      curl_setopt($ch, CURLOPT_HEADER, 0);
-      curl_exec($ch);
-      curl_close($ch);
-      fclose($file);
-    } catch (Exception $e) {
-      if ($file) { fclose($file); }
-      unlink($filenmae);
-      throw $e;
-    }
-    return $filename;
+  public function async_download($import_job_id, $url) {
+    $job = Mage::getModel('salsify_connect/download_job');
+    $job->setName('Download for Import Job ' . $import_job_id)
+        ->setImportJobId($import_job_id)
+        ->setUrl($url)
+        ->setFilename($)
+        ->enqueue($this->_get_temp_file('json'));
   }
 
   /**

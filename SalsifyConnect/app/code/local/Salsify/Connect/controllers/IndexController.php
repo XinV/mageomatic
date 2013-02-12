@@ -57,9 +57,11 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     }
     echo "Current status: " . $import->get_status_string();
     echo "<br/><br/>Attempting next stage...";
-    $advanced = $import->update_status_if_ready();
+    $advanced = $import->start_download_if_ready();
     if (!$advanced) {
       echo '<br/>Not yet ready to advance.';
+    } else {
+      echo '<br/>Download is ready. Starting download asynchronously. Check(port) back for updates!<br/>';
     }
   }
 

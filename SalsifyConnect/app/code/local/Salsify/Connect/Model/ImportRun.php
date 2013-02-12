@@ -4,20 +4,22 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   private $_config;
   private $_downloader;
 
-  const STATUS_ERROR       = -1;
-  const STATUS_NOT_STARTED = 0;
-  const STATUS_PREPARING   = 1;
-  const STATUS_DOWNLOADING = 2;
-  const STATUS_LOADING     = 3;
-  const STATUS_DONE        = 4;
+  const STATUS_ERROR             = -1;
+  const STATUS_NOT_STARTED       = 0;
+  const STATUS_SALSIFY_PREPARING = 1;
+  const STATUS_DOWNLOADING       = 2;
+  const STATUS_LOADING           = 3;
+  const STATUS_DONE              = 4;
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
         return "Error: Failed";
       case self::STATUS_NOT_STARTED:
         return "Export not started";
-      case self::STATUS_PREPARING:
+      case self::STATUS_SALSIFY_PREPARING:
         return "Salsify is preparing the export.";
+      case self::STATUS_DOWNLOAD_JOB_IN_QUEUE:
+        return "Download job is in the queue waiting to start.";
       case self::STATUS_DOWNLOADING:
         return "Magento is downloading the export.";
       case self::STATUS_LOADING:
@@ -29,7 +31,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     }
   }
 
-  private function _set_error($e) {
+  public function set_error($e) {
     $this->setStatus(self::STATUS_ERROR);
     $this->save();
     throw $e;
@@ -43,79 +45,64 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   }
 
   public function start_import() {
-    $this->setStatus(self::STATUS_PREPARING);
+    $this->setStatus(self::STATUS_SALSIFY_PREPARING);
     $this->setStartTime(date('Y-m-d h:m:s', time()));
-    $this->save();
-    
     try {
       $downloader = $this->_get_downloader();
       $export = $downloader->create_export();
     } catch (Exception $e) {
-      $this->_set_error();
+      $this->set_error();
     }
     $this->setToken($export->id);
-    $this->setStatus(self::STATUS_PREPARING);
     $this->save();
   }
 
-  // Return whether the status was advanced.
-  public function update_status_if_ready() {
+  // Return whether the status was advanced to downloading state.
+  public function start_download_if_ready() {
     $status = (int)$this->getStatus();
-    if ($status === self::STATUS_NOT_STARTED ||
-        $status === self::STATUS_DOWNLOADING || // TODO remove when async
-        $status === self::STATUS_LOADING || // TODO remove when async
-        $status === self::STATUS_ERROR ||
-        $status === self::STATUS_DONE) {
-      return false;
-    }
 
-    $filename = null;
-    try {
+    if ($status === self::STATUS_SALSIFY_PREPARING) {
+      // we were waiting for a public URL signally that Salsify has prepared the
+      // download.
+
       $downloader = $this->_get_downloader();
       $export = $downloader->get_export($this->getToken());
 
-      if ($status === self::STATUS_PREPARING) {
-        // we were waiting for a public URL signally that Salsify has prepared
-        // all the data.
-
-        if ($export->processing) { return false; }
-        $url = $export->url;
-        if (!$url) {
-          $this->_set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
-        }
-
-        // we have the URL, time to start downloading
-        // TODO can we do this asynchronously?
-
-        // FIXME this is ghetto and should be removed
-        echo '<br/>Download is ready. Downloading...<br/>';
-
-        $this->setStatus(self::STATUS_DOWNLOADING);
-        $this->save();
-        $filename = $downloader->download($url);
-
-        // FIXME this is ghetto and should be removed
-        echo '<br/>Download successful. Downloaded to: ' . $filename;
-        echo '<br/>Loading data...<br/>';
-
-        $this->setStatus(self::STATUS_LOADING);
-        $this->save();
-        $salsify = Mage::helper('salsify_connect');
-        $salsify->load_data($filename);
-
-        echo '<br/>Done!</br>';
-        $this->setStatus(self::STATUS_DONE);
-        $this->save();
-
-        return true;
+      if ($export->processing) { return false; }
+      $url = $export->url;
+      if (!$url) {
+        $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
       }
 
-    } catch (Exception $e) {
-      if ($filename && file_exists($filename)) {
-        unlink($filename);
-      }
-      $this->_set_error($e);
+      $this->setStatus(self::STATUS_DOWNLOAD_JOB_IN_QUEUE);
+      $this->save();
+      $downloader->async_download($this->getId(), $url);
+
+      return true;
+    } else {
+      return false;
     }
+  }
+
+  public funciton set_download_started() {
+    $this->setStatus(self::STATUS_DOWNLOADING);
+    $this->save();
+  }
+
+  public function set_download_complete($filename) {
+    if ($this->getStatus() !== self::STATUS_DOWNLOADING) {
+      throw new Exception("Cannot set_download_complete unless you are downloading.");
+    }
+
+    $this->setStatus(self::STATUS_LOADING);
+    $this->save();
+    $salsify = Mage::helper('salsify_connect');
+
+    // FIXME load data asynchronously
+    $salsify->load_data($filename);
+
+    $this->setStatus(self::STATUS_DONE);
+    $this->save();
   }
 
   private function _get_config() {
