@@ -8,10 +8,10 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     // $this->renderLayout();
 
     echo 'usage:';
-    echo '<br/>&nbsp;nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.';
-    echo '<br/>&nbsp;nbsp;salsify/index/config - creates a config for export usage.';
-    echo '<br/>&nbsp;nbsp;salsify/index/export/config/1 - kicks off an export using config ID 1.';
-    echo '<br/>&nbsp;nbsp;salsify/index/chexport/id/1 - checks the status of export with ID 1 and advances it if ready.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/config - creates a config for export usage.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/export/config/1 - kicks off an export using config ID 1.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/chexport/id/1 - checks the status of export with ID 1 and advances it if ready.';
   }
 
   public function testloadAction() {
