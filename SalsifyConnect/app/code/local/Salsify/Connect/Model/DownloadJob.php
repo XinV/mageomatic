@@ -3,6 +3,13 @@
 class Salsify_Connect_Model_DownloadJob extends Jowens_JobQueue_Model_Job_Abstract {
 
   public function perform() {
+    Mage::log(
+      "DownloadJob#perform: " . $this->getName(),
+      null, 
+      'salsify.log',
+      true
+    );
+
     $url = $this->getUrl();
     $filename = $this->getFilename();
     $import_run_id = $this->getImportRunId();
