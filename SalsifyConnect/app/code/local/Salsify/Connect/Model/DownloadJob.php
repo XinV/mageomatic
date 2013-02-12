@@ -1,6 +1,6 @@
 <?php
 
-class Salsify_Connect_Model_Download_Job extends Jowens_JobQueue_Model_Job_Abstract {
+class Salsify_Connect_Model_DownloadJob extends Jowens_JobQueue_Model_Job_Abstract {
 
   public function perform() {
     $url = $this->getUrl();
