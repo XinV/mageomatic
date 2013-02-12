@@ -55,8 +55,8 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
     $job->setName('Download for Import Job ' . $import_job_id)
         ->setImportJobId($import_job_id)
         ->setUrl($url)
-        ->setFilename($)
-        ->enqueue($this->_get_temp_file('json'));
+        ->setFilename($this->_get_temp_file('json'))
+        ->enqueue();
   }
 
   /**
