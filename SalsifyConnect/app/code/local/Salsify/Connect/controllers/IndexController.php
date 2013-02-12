@@ -38,7 +38,11 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>creating new export from Salsify...';
 
     $params = $this->getRequest()->getParams();
+    if (!array_key_exists('config', $params)) {
+      throw new Exception("Must specify configuration ID to use for import.");
+    }
     $config_id = $params['config'];
+    
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setConfigurationId($config_id);
     $model->save();
