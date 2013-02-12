@@ -51,8 +51,6 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   }
 
   public function async_download($import_job_id, $url) {
-    echo "here";
-
     $job = Mage::getModel('salsify_connect/download_job');
     $job->setName('Download for Import Job ' . $import_job_id)
         ->setImportJobId($import_job_id)

@@ -65,18 +65,22 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       // we were waiting for a public URL signally that Salsify has prepared the
       // download.
 
+echo '1';
       $downloader = $this->_get_downloader();
       $export = $downloader->get_export($this->getToken());
-
+echo '2';
       if ($export->processing) { return false; }
       $url = $export->url;
       if (!$url) {
         $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
       }
-
+echo '3';
       $this->setStatus(self::STATUS_DOWNLOAD_JOB_IN_QUEUE);
+echo '4';
       $this->save();
+echo '5';
       $downloader->async_download($this->getId(), $url);
+echo '6';
 
       return true;
     } else {
