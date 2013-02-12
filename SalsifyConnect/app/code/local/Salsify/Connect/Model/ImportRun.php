@@ -4,12 +4,13 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   private $_config;
   private $_downloader;
 
-  const STATUS_ERROR             = -1;
-  const STATUS_NOT_STARTED       = 0;
-  const STATUS_SALSIFY_PREPARING = 1;
-  const STATUS_DOWNLOADING       = 2;
-  const STATUS_LOADING           = 3;
-  const STATUS_DONE              = 4;
+  const STATUS_ERROR                 = -1;
+  const STATUS_NOT_STARTED           = 0;
+  const STATUS_SALSIFY_PREPARING     = 1;
+  const STATUS_DOWNLOAD_JOB_IN_QUEUE = 2;
+  const STATUS_DOWNLOADING           = 3;
+  const STATUS_LOADING               = 4;
+  const STATUS_DONE                  = 5;
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
@@ -65,22 +66,16 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       // we were waiting for a public URL signally that Salsify has prepared the
       // download.
 
-echo '1';
       $downloader = $this->_get_downloader();
       $export = $downloader->get_export($this->getToken());
-echo '2';
       if ($export->processing) { return false; }
       $url = $export->url;
       if (!$url) {
         $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
       }
-echo '3';
       $this->setStatus(self::STATUS_DOWNLOAD_JOB_IN_QUEUE);
-echo '4';
       $this->save();
-echo '5';
       $downloader->async_download($this->getId(), $url);
-echo '6';
 
       return true;
     } else {
