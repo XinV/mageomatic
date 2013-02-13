@@ -1,6 +1,6 @@
 <?php
 
-set_include_path(get_include_path().PS.BP.DS.'DJJob');
+set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
 Model/Worker.php:require_once('DJJob.php');
 
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
