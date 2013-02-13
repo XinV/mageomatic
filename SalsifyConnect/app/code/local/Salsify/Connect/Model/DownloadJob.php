@@ -14,6 +14,13 @@ class Salsify_Connect_Model_DownloadJob extends Jowens_JobQueue_Model_Job_Abstra
     $filename = $this->getFilename();
     $import_run_id = $this->getImportRunId();
 
+    Mage::log(
+      "DownloadJob#perform: (url, filename, import_run_id) = (".$url.",".$filename.",".$import_run_id.")",
+      null, 
+      'salsify.log',
+      true
+    );
+
     if (!($url && $filename && $import_run_id)) {
       throw new Exception("Must set url, filename, and import run id for download job.");
     }
