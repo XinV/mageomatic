@@ -28,11 +28,21 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   }
 
   public function configAction() {
-    echo '<br/>creating export configuration.';
+    $params = $this->getRequest()->getParams();
+
+    if (!array_key_exists('api_key', $params)) {
+      throw new Exception("Must specify api_key to use for import.");
+    }
+    $api_key = $params['api_key'];
+
+    if (!array_key_exists('salsify_url', $params)) {
+      throw new Exception("Must specify salsify_url to use for import.");
+    }
+    $url = urldecode($params['salsify_url']);
 
     $config = Mage::getModel('salsify_connect/configuration');
-    $config->setApiKey("yNoKZx9UabqqQ1m2c6K2");
-    $config->setUrl("http://localhost:5000/");
+    $config->setApiKey($api_key);
+    $config->setUrl($url);
     $config->save();
 
     echo '<br/>configuration created: ' . $config->getId();
@@ -85,11 +95,6 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   private function sneaky_worker_thread_start() {
     echo '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
     echo '<script language="javascript">$.get("/salsify/index/worker");</script>';
-
-    // echo '<br/>Visit <a target="_blank" href="/salsify/index/worker">here</a> to create a worker.';
-    // echo '<br/>Note that you can close that new window after a second or so without waiting for it to return.';
-    // TODO the crontab approach was not working. There needs to be antoher way
-    // to create a worker.
   }
 
   public function workerAction() {
