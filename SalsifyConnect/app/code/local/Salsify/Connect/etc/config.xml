@@ -56,16 +56,10 @@
       </catalog_product_save_after>
     </events>
 
-    <blocks>
-      <adminhtml>
-        <rewrite>
-        </rewrite>
-      </adminhtml>
-    </blocks>
-
   </global>
 
 
+  <!-- TODO remove once admin panel is in place -->
   <frontend>
     <routers>
       <salsify_connect>
@@ -77,5 +71,18 @@
       </salsify_connect>
     </routers>
   </frontend>
+
+
+  <admin>
+    <routers>
+      <salsify_connect>
+        <use>admin</use>
+        <args>
+          <module>Salsify_Connect</module>
+          <frontName>sadmin</frontName>
+        </args>
+      </salsify_connect>
+    </routers>
+  </admin>
 
 </config>
