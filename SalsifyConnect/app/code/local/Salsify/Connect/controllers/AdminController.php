@@ -1,6 +1,6 @@
 <?php
 
-class Salsify_Connect_AdminController extends Mage_Core_Controller_Front_Action {
+class Salsify_Connect_AdminController extends Mage_Adminhtml_Controller_Action {
   public function indexAction() {
     $this->loadLayout();
  
