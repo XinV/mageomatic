@@ -6,16 +6,11 @@ require_once('DJJob.php');
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
 
   public function indexAction() {
-    // FIXME remember to remove the connection_configuration.phtml and local.xml
-    // when moving to the admin interface.
-    // $this->loadLayout();
-    // $this->renderLayout();
-
     echo 'usage:';
     echo '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.';
-    echo '<br/>&nbsp;&nbsp;salsify/index/config - creates a config for export usage.';
-    echo '<br/>&nbsp;&nbsp;salsify/index/export/config/1 - kicks off an export using config ID 1.';
-    echo '<br/>&nbsp;&nbsp;salsify/index/chexport/id/1 - checks the status of export with ID 1 and advances it if ready.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/config?api_key=YOURKEY&salsify_url=YOURURL - creates a config for export usage.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/export?config=ID - kicks off an export using config ID 1.';
+    echo '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
   }
 
   public function testloadAction() {
@@ -63,6 +58,9 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $model->start_import();
 
     echo '<br/>created. go to salsify/index/chexport/id/'.($model->getId()).' to check the status';
+
+    // TODO use jquery to automatically check for updates so that the user
+    //      doesn't have to refresh the screen.
   }
 
   public function chexportAction() {
