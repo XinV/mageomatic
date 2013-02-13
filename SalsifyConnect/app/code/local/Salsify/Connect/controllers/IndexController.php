@@ -1,4 +1,8 @@
 <?php
+
+set_include_path(get_include_path().PS.BP.DS.'DJJob');
+Model/Worker.php:require_once('DJJob.php');
+
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
 
   public function indexAction() {
