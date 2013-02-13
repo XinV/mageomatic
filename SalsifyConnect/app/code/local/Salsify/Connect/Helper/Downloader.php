@@ -51,14 +51,6 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
   }
 
   public function async_download($import_run_id, $url) {
-    // FIXME
-    Mage::log(
-      "Downloader#async_download: " . $import_run_id,
-      null, 
-      'salsify.log',
-      true
-    );
-
     $job = Mage::getModel('salsify_connect/downloadjob');
     $job->setName('Download for Import Job ' . $import_run_id)
         ->setImportRunId($import_run_id)
