@@ -77,6 +77,10 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   public function workerAction() {
     echo "Queueing up a worker<br/>";
 
+     if(!Mage::getStoreConfig('jobqueue/config/enabled')) {
+        echo "FUCK<br/>";
+      }
+
     $worker = Mage::getModel('jobqueue/worker');
     $worker->executeJobs();
 
