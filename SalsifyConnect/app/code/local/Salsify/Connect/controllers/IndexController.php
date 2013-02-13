@@ -1,7 +1,8 @@
 <?php
 
-set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
-require_once('DJJob.php');
+// FIXME
+// set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
+// require_once('DJJob.php');
 
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
 
@@ -74,8 +75,12 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
   }
 
   public function workerAction() {
-    $worker = new DJWorker($options);
-    $worker->start();
+    $worker = Mage::getModel('jobqueue/worker');
+    $worker->executeJobs();
+
+    // FIXME
+    // $worker = new DJWorker($options);
+    // $worker->start();
   }
 
 }
