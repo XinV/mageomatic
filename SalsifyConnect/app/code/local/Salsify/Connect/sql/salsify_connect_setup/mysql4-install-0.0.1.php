@@ -1,7 +1,7 @@
 <?php
 
 // NOTE: to UNDO this:
-// DELETE from core_resource where code = 'salsify_connect_setup'; drop table salsify_connect_import_run; drop table salsify_connect_configuration;
+// DELETE from core_resource where code = 'salsify_connect_setup'; drop table salsify_connect_import_run; drop table salsify_connect_configuration; drop table jobs;
 
 $installer = $this;
 $installer->startSetup();
@@ -64,5 +64,26 @@ $table = $installer->getConnection()->newTable($installer->getTable(
           Varien_Db_Ddl_Table::ACTION_NO_ACTION)
   ->setComment('Salsify_Connect salsify_connect/import_run entity table');
 $installer->getConnection()->createTable($table);
+
+
+// NOTE: this is taken almost directly from the DJJob/jobs.sql
+// I clearly didn't bother to use the newer syntax as above...and I'm not at
+// all convinced that it's worth it, since Magento seems pretty unhappy using
+// any database other than MySQL right now.
+$installer->run("
+  CREATE TABLE IF NOT EXISTS `jobs` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `handler` TEXT NOT NULL,
+  `queue` VARCHAR(255) NOT NULL DEFAULT 'default',
+  `attempts` INT UNSIGNED NOT NULL DEFAULT 0,
+  `run_at` DATETIME NULL,
+  `locked_at` DATETIME NULL,
+  `locked_by` VARCHAR(255) NULL,
+  `failed_at` DATETIME NULL,
+  `error` TEXT NULL,
+  `created_at` DATETIME NOT NULL
+  ) ENGINE = INNODB;
+");
+
 
 $installer->endSetup();

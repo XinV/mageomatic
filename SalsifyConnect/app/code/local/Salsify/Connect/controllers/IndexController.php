@@ -1,8 +1,7 @@
 <?php
 
-// FIXME
-// set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
-// require_once('DJJob.php');
+set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
+require_once('DJJob.php');
 
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
 
@@ -65,26 +64,39 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
       throw new Exception("Must specify a valid import ID.");
     }
     echo "Current status: " . $import->get_status_string();
-    echo "<br/><br/>Attempting next stage...";
-    $advanced = $import->start_download_if_ready();
-    if (!$advanced) {
-      echo '<br/>Not yet ready to advance.';
-    } else {
-      echo '<br/>Download is ready. Starting download asynchronously. Check(port) back for updates!<br/>';
+
+    if (!$import->is_done()) {
+      echo "<br/><br/>Attempting next stage...";
+      if($import->is_waiting_on_salsify()) {
+        $advanced = $import->start_download_if_ready();
+        if (!$advanced) {
+          echo '<br/>Still waiting on Salsify.';
+        } else {
+          echo '<br/>Download is ready. Enqueued background job to complete import.';
+          $this->sneaky_worker_thread_start();
+        }
+      } elseif ($import->is_waiting_on_worker()) {
+        echo '<br/>Still waiting on background worker to pick up the job.';
+        $this->sneaky_worker_thread_start();
+      }
     }
   }
 
+  private function sneaky_worker_thread_start() {
+    echo '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+    echo '<script language="javascript">$.get("/salsify/index/worker");</script>';
+
+    // echo '<br/>Visit <a target="_blank" href="/salsify/index/worker">here</a> to create a worker.';
+    // echo '<br/>Note that you can close that new window after a second or so without waiting for it to return.';
+    // TODO the crontab approach was not working. There needs to be antoher way
+    // to create a worker.
+  }
+
   public function workerAction() {
-    echo "Queueing up a worker<br/>";
-
-    $worker = Mage::getModel('jobqueue/worker');
-    $worker->executeJobs();
-
-    echo "<br/>Worker queued up and should be doing its thing.";
-
-    // FIXME
-    // $worker = new DJWorker($options);
-    // $worker->start();
+    // TODO add a one-time token or something like that to enable this to be
+    //      called safely.
+    $job = Mage::getModel('salsify_connect/importjob');
+    $job->start_worker();
   }
 
 }
