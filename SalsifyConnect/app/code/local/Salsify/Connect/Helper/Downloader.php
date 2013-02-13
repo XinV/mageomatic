@@ -50,10 +50,10 @@ class Salsify_Connect_Helper_Downloader extends Mage_Core_Helper_Abstract {
     return $this->_base_url . '/api/exports/'.$id.'?format=json&auth_token=' . $this->_api_key;
   }
 
-  public function async_download($import_job_id, $url) {
+  public function async_download($import_run_id, $url) {
     $job = Mage::getModel('salsify_connect/downloadjob');
-    $job->setName('Download for Import Job ' . $import_job_id)
-        ->setImportJobId($import_job_id)
+    $job->setName('Download for Import Job ' . $import_run_id)
+        ->setImportRunId($import_run_id)
         ->setUrl($url)
         ->setFilename($this->_get_temp_file('json'))
         ->enqueue('default', time());
