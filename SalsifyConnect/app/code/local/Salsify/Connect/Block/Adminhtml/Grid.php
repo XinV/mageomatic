@@ -1,6 +1,6 @@
 <?php
  
-class Salsify_Connect_Block_Adminhtml_Connect_Grid extends Mage_Adminhtml_Block_Widget_Grid {
+class Salsify_Connect_Block_Adminhtml_Salsify_Connect_Grid extends Mage_Adminhtml_Block_Widget_Grid {
   
   public function __construct() {
     parent::__construct();

@@ -1,5 +1,5 @@
 <?php
-class Salsify_Connect_Block_Adminhtml_Connect extends Mage_Adminhtml_Block_Widget_Grid_Container {
+class Salsify_Connect_Block_Adminhtml_Salsify_Connect extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
   public function __construct() {
     $this->_controller = 'adminhtml_salsify_connect';
