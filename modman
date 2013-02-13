@@ -1,4 +1,4 @@
 SalsifyConnect/app/etc/modules/*           app/etc/modules/
 SalsifyConnect/app/code/local/Salsify/*    app/code/local/Salsify/
 SalsifyConnect/lib/*                       lib/
-
+SalsifyConnect/app/design/*                app/design/

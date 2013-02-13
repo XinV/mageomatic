@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <salsify_connect_adminhtml_salsifyconnect_index>
+    <reference name="content">
+      <block type="salsify_connect/adminhtml_salsify_connect" name="salsify_connect" />
+    </reference>
+  </salsify_connect_adminhtml_salsifyconnect_index>
+</layout>
+
