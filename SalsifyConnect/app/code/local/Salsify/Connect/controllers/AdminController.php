@@ -7,6 +7,6 @@ class Salsify_Connect_AdminController extends Mage_Adminhtml_Controller_Action {
     $block = $this->getLayout()->createBlock('core/text', 'green-block')->setText('<h1>Green Acorn Web Design</h1>');
     $this->_addContent($block);
  
-    $this->_setActiveMenu('green_menu')->renderLayout();
+    $this->_setActiveMenu('salslify_connect_menu')->renderLayout();
   }
 }
