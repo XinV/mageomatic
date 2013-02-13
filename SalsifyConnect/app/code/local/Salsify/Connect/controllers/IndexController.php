@@ -80,6 +80,8 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     $worker = Mage::getModel('jobqueue/worker');
     $worker->executeJobs();
 
+    echo "<br/>Worker queued up and should be doing its thing."
+
     // FIXME
     // $worker = new DJWorker($options);
     // $worker->start();
