@@ -86,6 +86,7 @@
     </routers>
   </admin>
 
+  <!-- TODO move to adminhtml.xml (not sure what can be moved) -->
   <adminhtml>
     <menu>
       <salsify_connect module="salsify_connect">
