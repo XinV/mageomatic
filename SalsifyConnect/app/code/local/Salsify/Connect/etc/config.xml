@@ -76,7 +76,7 @@
   <adminhtml>
     <menu>
       <salsify_connect module="salsify_connect">
-        <title>Salsify Connect</title>
+        <title>Salsify Connecta</title>
         <sort_order>69</sort_order>         
         <children>
           <items module="salsify_connect">
@@ -95,7 +95,7 @@
         <admin>
           <children>
             <Salsify_Connect>
-              <title>Salsify Connecta</title>
+              <title>Salsify Connect</title>
               <sort_order>1</sort_order>
             </Salsify_Connect>
           </children>
