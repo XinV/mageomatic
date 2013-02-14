@@ -100,9 +100,15 @@
             <action>salsify/adminhtml_manageimports/index</action>
           </manage_imports>
 
+          <manage_imports module="salsify_connect">
+            <title>Salsify Account Details</title>
+            <sort_order>1</sort_order>
+            <action>salsify/adminhtml_manageimports/configure</action>
+          </manage_imports>
+
           <test module="salsify_connect">
             <title>Test Layout</title>
-            <sort_order>1</sort_order>
+            <sort_order>69</sort_order>
             <action>salsify/adminhtml_manageimports/test</action>
           </test>
 

@@ -6,7 +6,8 @@ require_once('DJJob.php');
 class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_Controller_action {
 
 
-  const INDEX_MENU_ID = 'salsify_connect_menu/manage_imports';
+  const INDEX_MENU_ID  = 'salsify_connect_menu/manage_imports';
+  const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
 
 
   // FIXME factor into a log helper
@@ -59,6 +60,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_end_render();
   }
 
+
   public function indexAction() {
     $this->_start_render(self::INDEX_MENU_ID);
 
@@ -74,6 +76,17 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $this->_end_render();
   }
+
+
+  public function configurationAction() {
+    $this->_start_render(self::CONFIG_MENU_ID);
+
+    // must render this via a block
+    $this->_render_html('<h1>COMING SOON!</h1>');
+
+    $this->_end_render();
+  }
+
 
   // FIXME only used for development purposes. remove once no longer necessary.
   public function testloadAction() {
