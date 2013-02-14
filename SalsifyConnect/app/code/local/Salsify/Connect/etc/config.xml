@@ -96,15 +96,13 @@
           <manage_imports module="salsify_connect">
             <title>Manage Imports</title>
             <sort_order>0</sort_order>
-            <!-- FIXME need to figure out the route here -->
             <action>salsify/adminhtml_manageimports</action>
-            <!-- <action>salsify/index/index</action> -->
           </manage_imports>
         </children>
       </salsify_connect_menu>
     </menu>
 
-    <!--
+    <!-- FIXME what does this stuff do?
     <acl>
       <resources>
         <all>
@@ -120,6 +118,8 @@
         </admin>
       </resources>
     </acl>
+
+    FIXME are layouts really necessary for what we're trying to accomplish?
     <layout>
       <updates>
         <salsify_connect>

@@ -2,8 +2,8 @@
 <layout version="0.0.1">
   <salsify_connect_adminhtml_manageimports_index>
     <reference name="content">
-      <block type="salsify_connect/adminhtml_manageimports" name="manageimports" />
-      <!--
+      <!-- <block type="salsify_connect/adminhtml_manageimports" name="manageimports" /> -->
+      
       We know this works, so we know that this configuration file is being
       loaded correctly.
       <block type="core/text" name="manageimports">
@@ -11,7 +11,7 @@
           <val>TESTING</val>
         </action>
       </block>
-      -->
+      
     </reference>
   </salsify_connect_adminhtml_manageimports_index>
 </layout>
