@@ -1,40 +1,50 @@
 <?php
 
 class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_Controller_action {
- 
-  public function testAction() {
-    Mage::log("index", null, 'salsify.log', true);
 
-    // this MUST come first for this to work
+  private function _start_render($menu_id) {
     $this->loadLayout();
-
-    // make sure to set the active menu
     $this->_setActiveMenu('salsify_connect_menu/test');
 
     // add a left block to the layout
     // FIXME add links to the menu items for easy use on the left
     $this->_addLeft($this->getLayout()
                          ->createBlock('core/text')
-                         ->setText('<h1>Left Block</h1>'));
+                         ->setText('<h1>FUTURE SITE OF SWEET MENU</h1>'));
+  }
 
-    // create a text block with the name of "example-block"
-    // FIXME load the block that we want to load programatically
+  // FIXME is the name necessary?
+  private function _render_html($name, $html) {
     $block = $this->getLayout()
-                  ->createBlock('core/text', 'example-block')
-                  ->setText('<h1>This is a text block</h1>');
+                  ->createBlock('core/text', $name)
+                  ->setText($html);
     $this->_addContent($block);
+  }
 
-    // add any js to the page using something like this:
-    // $jsblock = $this->getLayout()->createBlock('core/text')->setText('<script type="text/        javascript">alert ("foo");</script>');
-    // $this->_addJs($jsblock);
+  private function _render_js($js) {
+    $jsblock = $this->getLayout()
+                    ->createBlock('core/text')
+                    ->setText($js);
+    $this->_addJs($jsblock);
+  }
 
+  private function _end_render() {
     $this->renderLayout();
   }
 
-  public function indexAction() {
-    $this->loadLayout();
-    $this->_setActiveMenu('salsify_connect_menu/manage_imports');
+ 
+  // FIXME remove when we're going live. this is just for testing.
+  public function testAction() {
+    $this->_start_render('salsify_connect_menu/test');
+    $this->_render_html('example-block', '<h1>This is a text block</h1>');
+    $this->_end_render();
+  }
 
+  public function indexAction() {
+    $this->_start_render('salsify_connect_menu/manage_imports');
+
+    // FIXME load the block that we want to load programatically
+    // FIXME remove these and write the data
     $usage = 'usage:'
            . '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.'
            . '<br/>&nbsp;&nbsp;salsify/index/config?api_key=YOURKEY&salsify_url=YOURURL - creates a config for export usage.'
@@ -45,7 +55,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                   ->setText($usage);
     $this->_addContent($block);
 
-    $this->renderLayout();
+    $this->_end_render();
   }
 
   public function testloadAction() {
@@ -126,16 +136,13 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
   private function sneaky_worker_thread_start() {
-    // FIXME not sure if this works  with new factoring
-    // FIXME add a local jquery fallback...
     $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
     $sneaky = '<script type="text/javascript">$.get("/salsify/admin_html/mangeimports/worker");</script>';
+    $this->_render_js($jquery);
+    $this->_render_js($sneaky);
 
-    $jqueryblock = $this->getLayout()->createBlock('core/text')->setText($jquery);
-    $sneakyblock = $this->getLayout()->createBlock('core/text')->setText($sneaky);
-
-    $this->_addJs($jqueryblock);
-    $this->_addJs($sneakyblock);
+    // FIXME not sure if this works  with new factoring
+    // FIXME add a local jquery fallback (mostly for offline testing)
   }
 
   public function workerAction() {
