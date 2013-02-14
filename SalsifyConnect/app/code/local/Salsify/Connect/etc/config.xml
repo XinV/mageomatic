@@ -96,7 +96,7 @@
             <title>Manage Imports</title>
             <sort_order>0</sort_order>
             <!-- <action>salsify_connect/adminhtml_manageimports</action> -->
-            <action>connect/index/index</action>
+            <action>salsify/index/index</action>
           </first_page>
         </children>
       </salsify_connect>
