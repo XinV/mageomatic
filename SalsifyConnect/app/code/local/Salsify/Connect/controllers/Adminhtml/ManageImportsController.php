@@ -35,11 +35,15 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->loadLayout();
     $this->_setActiveMenu('salsify_connect_menu/manage_imports');
 
-    echo 'usage:';
-    echo '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.';
-    echo '<br/>&nbsp;&nbsp;salsify/index/config?api_key=YOURKEY&salsify_url=YOURURL - creates a config for export usage.';
-    echo '<br/>&nbsp;&nbsp;salsify/index/export?config=ID - kicks off an export using config ID 1.';
-    echo '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
+    $usage = 'usage:'
+           . '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.'
+           . '<br/>&nbsp;&nbsp;salsify/index/config?api_key=YOURKEY&salsify_url=YOURURL - creates a config for export usage.'
+           . '<br/>&nbsp;&nbsp;salsify/index/export?config=ID - kicks off an export using config ID 1.'
+           . '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
+    $block = $this->getLayout()
+                  ->createBlock('core/text', 'usage-block')
+                  ->setText($usage);
+    $this->_addContent($block);
 
     $this->renderLayout();
   }
