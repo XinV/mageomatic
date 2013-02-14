@@ -14,9 +14,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
   // FIXME is the name necessary?
-  private function _render_html($name, $html) {
+  private function _render_html($html) {
     $block = $this->getLayout()
-                  ->createBlock('core/text', $name)
+                  ->createBlock('core/text')
                   ->setText($html);
     $this->_addContent($block);
   }
@@ -36,7 +36,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   // FIXME remove when we're going live. this is just for testing.
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
-    $this->_render_html('example-block', '<h1>This is a text block</h1>');
+    $this->_render_html('<h1>This is a header</h1>');
+    $this->_render_html('<div>This is a text block</div>');
     $this->_end_render();
   }
 
