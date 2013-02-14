@@ -19,7 +19,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_log('rendering '.$menu_id);
 
     $this->loadLayout();
-    $this->_setActiveMenu('salsify_connect_menu/test');
+    $this->_setActiveMenu($menu_id);
 
     // add a left block to the layout
     // FIXME add links to the menu items for easy use on the left
