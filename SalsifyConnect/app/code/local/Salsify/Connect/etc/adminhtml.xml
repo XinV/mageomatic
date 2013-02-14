@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+  <menu>
+    <salsify_connect_menu module="salsify_connect">
+      <title>Salsify Connect</title>
+      <sort_order>6969</sort_order>         
+      <children>
+        
+        <manage_imports module="salsify_connect">
+          <title>Manage Imports</title>
+          <sort_order>0</sort_order>
+          <action>salsify/adminhtml_manageimports/index</action>
+        </manage_imports>
+
+        <configuration module="salsify_connect">
+          <title>Salsify Account Details</title>
+          <sort_order>1</sort_order>
+          <action>salsify/adminhtml_manageimports/configuration</action>
+        </configuration>
+
+        <test module="salsify_connect">
+          <title>Test Layout</title>
+          <sort_order>69</sort_order>
+          <action>salsify/adminhtml_manageimports/test</action>
+        </test>
+
+      </children>
+    </salsify_connect_menu>
+  </menu>
+
+</config>
