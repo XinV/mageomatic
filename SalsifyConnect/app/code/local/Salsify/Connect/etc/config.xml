@@ -105,7 +105,7 @@
     <layout>
       <updates>
         <salsify_connect>
-          <file>salsify_connect.xml</file>
+          <file>manageimports.xml</file>
         </salsify_connect>
       </updates>
     </layout>
