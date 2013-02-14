@@ -6,7 +6,7 @@ class Salsify_Connect_Block_Adminhtml_Salsify_Connect_Grid extends Mage_Adminhtm
     Mage::log("grid", null, 'salsify.log', true);
 
     parent::__construct();
-    $this->setId('salsifyconnectGrid');
+    $this->setId('salsify_connectGrid');
     $this->setDefaultSort('id');
     $this->setDefaultDir('DESC');
     $this->setSaveParametersInSession(true);
