@@ -53,14 +53,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
  
   // FIXME remove when we're going live. this is just for testing.
   public function testAction() {
-    $this->_start_render(self::INDEX_MENU_ID);
+    $this->_start_render('salsify_connect_menu/test');
     $this->_render_html('<h1>This is a header</h1>');
     $this->_render_html('<div>This is a text block</div>');
     $this->_end_render();
   }
 
   public function indexAction() {
-    $this->_start_render('salsify_connect_menu/manage_imports');
+    $this->_start_render(self::INDEX_MENU_ID);
 
     // FIXME load the block that we want to load programatically
     //       try to load the Salsify_Connect_Block_Adminhtml_ManageImports
