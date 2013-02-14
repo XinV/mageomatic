@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<layout version="0.1.0">
+<layout version="0.0.1">
   <salsify_connect_adminhtml_manageimports_index>
     <reference name="content">
       <block type="salsify_connect/adminhtml_manageimports" name="manageimports" />
