@@ -9,7 +9,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->loadLayout();
 
     // make sure to set the active menu
-    $this->_setActiveMenu('tutorial_menu/first_page');
+    $this->_setActiveMenu('salsify_connect_menu/manage_imports');
 
     // add a left block to the layout
     $this->_addLeft($this->getLayout()
