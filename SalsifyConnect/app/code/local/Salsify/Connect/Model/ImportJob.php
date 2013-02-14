@@ -91,6 +91,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
     $this->log("ImportJob: load successful. Local file: ".$filename);
   }
 
+  // FIXME factor into a log helper
   private function log($msg) {
     Mage::log($msg, null, 'salsify.log', true);
   }

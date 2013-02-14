@@ -1,7 +1,10 @@
 <?php
+// FIXME remove this file completely once we know that the worker execution
+//       kickoff works in the adminhtml version of it.
 
 set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
 require_once('DJJob.php');
+
 
 class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action {
 

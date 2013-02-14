@@ -1,25 +1,42 @@
 <?php
 
+set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
+require_once('DJJob.php');
+
 class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_Controller_action {
 
+
+  const INDEX_MENU_ID = 'salsify_connect_menu/manage_imports';
+
+
+  // FIXME factor into a log helper
+  private function _log($msg) {
+    Mage::log('ManageImports: ' . $msg, null, 'salsify.log', true);
+  }
+
+
   private function _start_render($menu_id) {
+    $this->_log('rendering '.$menu_id);
+
     $this->loadLayout();
     $this->_setActiveMenu('salsify_connect_menu/test');
 
     // add a left block to the layout
     // FIXME add links to the menu items for easy use on the left
+    //       not sure how to create a link in magento to a resource, though...
     $this->_addLeft($this->getLayout()
                          ->createBlock('core/text')
                          ->setText('<h1>FUTURE SITE OF SWEET MENU</h1>'));
   }
 
-  // FIXME is the name necessary?
+
   private function _render_html($html) {
     $block = $this->getLayout()
                   ->createBlock('core/text')
                   ->setText($html);
     $this->_addContent($block);
   }
+
 
   private function _render_js($js) {
     $jsblock = $this->getLayout()
@@ -28,6 +45,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_addJs($jsblock);
   }
 
+
   private function _end_render() {
     $this->renderLayout();
   }
@@ -35,7 +53,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
  
   // FIXME remove when we're going live. this is just for testing.
   public function testAction() {
-    $this->_start_render('salsify_connect_menu/test');
+    $this->_start_render(self::INDEX_MENU_ID);
     $this->_render_html('<h1>This is a header</h1>');
     $this->_render_html('<div>This is a text block</div>');
     $this->_end_render();
@@ -45,20 +63,19 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/manage_imports');
 
     // FIXME load the block that we want to load programatically
-    // FIXME remove these and write the data
+    //       try to load the Salsify_Connect_Block_Adminhtml_ManageImports
+    //       block as it SHOULD be able to do the trick...
     $usage = 'usage:'
            . '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.'
            . '<br/>&nbsp;&nbsp;salsify/index/config?api_key=YOURKEY&salsify_url=YOURURL - creates a config for export usage.'
            . '<br/>&nbsp;&nbsp;salsify/index/export?config=ID - kicks off an export using config ID 1.'
            . '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
-    $block = $this->getLayout()
-                  ->createBlock('core/text', 'usage-block')
-                  ->setText($usage);
-    $this->_addContent($block);
+    $this->_render_html($usage);
 
     $this->_end_render();
   }
 
+  // FIXME only used for development purposes. remove once no longer necessary.
   public function testloadAction() {
     $salsify = Mage::helper('salsify_connect');
 
@@ -68,6 +85,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     echo '<br/>Data loaded!';
   }
 
+  // FIXME make this into a form that the user can use to enter a configuration
   public function configAction() {
     $params = $this->getRequest()->getParams();
 
@@ -109,6 +127,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //      doesn't have to refresh the screen.
   }
 
+  // FIXME make this into some kind of polling/monitoring/restful thing that
+  //       is called by JS from the manage_imports main area
   public function chexportAction() {
     $params = $this->getRequest()->getParams();
     $import_id = $params['id'];
