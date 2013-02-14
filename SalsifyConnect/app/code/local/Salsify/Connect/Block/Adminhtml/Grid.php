@@ -1,12 +1,12 @@
 <?php
  
-class Salsify_Connect_Block_Adminhtml_SalsifyConnect_Grid extends Mage_Adminhtml_Block_Widget_Grid {
+class Salsify_Connect_Block_Adminhtml_ManageImports_Grid extends Mage_Adminhtml_Block_Widget_Grid {
   
   public function __construct() {
     Mage::log("grid", null, 'salsify.log', true);
 
     parent::__construct();
-    $this->setId('salsifyGrid');
+    $this->setId('manageimportsGrid');
     $this->setDefaultSort('id');
     $this->setDefaultDir('DESC');
     $this->setSaveParametersInSession(true);
