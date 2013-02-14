@@ -11,6 +11,12 @@
 
 
   <global>
+    <helpers>
+      <salsify_connect>
+          <class>Salsify_Connect_Helper</class>
+      </salsify_connect>
+    </helpers>
+
     <models>
       <salsify_connect>
         <class>Salsify_Connect_Model</class>
@@ -29,12 +35,6 @@
       </salsify_connect_resource>
     </models>
 
-    <helpers>
-      <salsify_connect>
-          <class>Salsify_Connect_Helper</class>
-      </salsify_connect>
-    </helpers>
-
     <resources>
       <salsify_connect_setup>
         <setup>
@@ -44,6 +44,7 @@
       </salsify_connect_setup>
     </resources>
 
+    <!-- FIXME finish the eventing system -->
     <events>
       <catalog_product_save_after>
         <observers>
@@ -59,7 +60,7 @@
   </global>
 
 
-  <!-- TODO remove once admin panel is in place -->
+  <!-- TODO remove once admin panel is in place
   <frontend>
     <routers>
       <salsify_connect>
@@ -71,22 +72,36 @@
       </salsify_connect>
     </routers>
   </frontend>
+  -->
 
+  <admin>
+    <routers>
+      <salsify_route_unique_id>
+        <use>admin</use>
+        <args>
+          <module>Salsify_Connect</module>
+          <frontName>salsify</frontName>
+        </args>
+      </salsify_route_unique_id>
+    </routers>
+  </admin>
 
   <adminhtml>
     <menu>
       <salsify_connect module="salsify_connect">
         <title>Salsify Connect</title>
-        <sort_order>69</sort_order>         
+        <sort_order>6969</sort_order>         
         <children>
-          <items module="salsify_connect">
+          <first_page module="salsify_connect">
             <title>Manage Imports</title>
             <sort_order>0</sort_order>
             <action>salsify_connect/adminhtml_manageimports</action>
-          </items>
+          </first_page>
         </children>
       </salsify_connect>
     </menu>
+
+    <!--
     <acl>
       <resources>
         <all>
@@ -109,6 +124,7 @@
         </salsify_connect>
       </updates>
     </layout>
+    -->
   </adminhtml> 
 
 </config>
