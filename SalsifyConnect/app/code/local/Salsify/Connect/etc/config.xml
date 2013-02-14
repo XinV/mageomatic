@@ -79,7 +79,7 @@
         <title>Salsify Connect</title>
         <sort_order>69</sort_order>         
         <children>
-          <items module="salsifyconnect">
+          <items module="salsify_connect">
             <title>Manage Imports</title>
             <sort_order>0</sort_order>
             <action>salsify_connect/adminhtml_salsifyconnect</action>
