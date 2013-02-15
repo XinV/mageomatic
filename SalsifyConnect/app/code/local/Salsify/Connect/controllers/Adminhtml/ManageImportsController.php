@@ -82,7 +82,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //       try to load the Salsify_Connect_Block_Adminhtml_ManageImports
     //       block as it SHOULD be able to do the trick...
     $configurl = $this->_get_url('config');
-    $usage = '<h1>Import Process:'
+    $usage = '<h1>Import Process</h1>'
            . '<ul>'
            . '  <li><a href="'.$configurl.'">Create a configuration</a></li>'
            . '</ul>';
@@ -128,6 +128,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   // FIXME make this into a form that the user can use to enter a configuration
   public function configAction() {
+    $this->_start_render('salsify_connect_menu/config');
+
     // $params = $this->getRequest()->getParams();
 
     // if (!array_key_exists('api_key', $params)) {
@@ -148,29 +150,30 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $config->setUrl($url);
     $config->save();
 
-    echo '<br/>configuration created: ' . $config->getId();
+    $id = $config->getId();
+    $import_url = $this->_get_url('import') . '?config=' . $id;
+
+    $this->_render_html('<h1>Configuration created: ' . $id . '</h1>');
+    $this->_render_html('Next: <a href="'.$import_url.'">Kick off import</a>');
+
+    $this->_end_render();
   }
 
   // FIXME remove for dev
   public function importAction() {
-    echo '<br/>creating new import from Salsify...';
-
-    // $params = $this->getRequest()->getParams();
-    // if (!array_key_exists('config', $params)) {
-    //   throw new Exception("Must specify configuration ID to use for import.");
-    // }
-    // $config_id = $params['config'];
-    $config_id = 2;
+    $params = $this->getRequest()->getParams();
+    if (!array_key_exists('config', $params)) {
+      throw new Exception("Must specify configuration ID to use for import.");
+    }
+    $config_id = $params['config'];
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setConfigurationId($config_id);
     $model->save();
     $model->start_import();
 
-    echo '<br/>created. go to salsify/index/chimport/id/'.($model->getId()).' to check the status';
-
-    // TODO use jquery to automatically check for updates so that the user
-    //      doesn't have to refresh the screen.
+    $url = $this->_get_url('chimport') . '?id=' . $model->getId();
+    $this->_redirectUrl($url);
   }
 
   // FIXME make this into some kind of polling/monitoring/restful thing that
@@ -178,9 +181,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function chimportAction() {
     $this->_start_render('salsify_connect_menu/chimport');
 
-    // $params = $this->getRequest()->getParams();
-    // $import_id = $params['id'];
-    $import_id = 2;
+    $params = $this->getRequest()->getParams();
+    $import_id = $params['id'];
 
     $import = Mage::getModel('salsify_connect/importrun');
     $import->load((int)$import_id);
@@ -205,18 +207,20 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       }
     }
 
+    $url = $this->_get_url('chimport') . '?id=' . $import_id;
+    $this->_render_html('<br><a href="'.$url.'">Re-chimport</a>');
+
     $this->_end_render();
   }
 
   private function sneaky_worker_thread_start() {
-    // FIXME this doesn't work due to Magento's OOTB x-site scripting protections.
-    //       need to get the URL from magento instead of hard-coding it here.
+    $worker_url = $this->_get_url('worker');
 
     // TODO add a local jquery fallback (mostly for offline testing)
-    // $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
-    // $sneaky = '<script type="text/javascript">$.get("/salsify/admin_html/mangeimports/worker");</script>';
-    // $this->_render_js($jquery);
-    // $this->_render_js($sneaky);
+    $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+    $sneaky = '<script type="text/javascript">$.get("'.$worker_url.'");</script>';
+    $this->_render_js($jquery);
+    $this->_render_js($sneaky);
   }
 
   public function workerAction() {
