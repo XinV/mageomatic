@@ -138,14 +138,16 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     echo '<br/>configuration created: ' . $config->getId();
   }
 
+  // FIXME remove for dev
   public function exportAction() {
     echo '<br/>creating new export from Salsify...';
 
-    $params = $this->getRequest()->getParams();
-    if (!array_key_exists('config', $params)) {
-      throw new Exception("Must specify configuration ID to use for import.");
-    }
-    $config_id = $params['config'];
+    // $params = $this->getRequest()->getParams();
+    // if (!array_key_exists('config', $params)) {
+    //   throw new Exception("Must specify configuration ID to use for import.");
+    // }
+    // $config_id = $params['config'];
+    $config_id = 1;
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setConfigurationId($config_id);
