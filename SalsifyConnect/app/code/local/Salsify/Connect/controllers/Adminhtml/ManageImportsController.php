@@ -163,8 +163,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   // FIXME make this into some kind of polling/monitoring/restful thing that
   //       is called by JS from the manage_imports main area
   public function chexportAction() {
-    $params = $this->getRequest()->getParams();
-    $import_id = $params['id'];
+    // $params = $this->getRequest()->getParams();
+    // $import_id = $params['id'];
+    $import_id = 1;
+
     $import = Mage::getModel('salsify_connect/importrun');
     $import->load((int)$import_id);
     if (!$import->getId()) {
