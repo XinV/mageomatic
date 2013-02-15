@@ -287,7 +287,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $code = $this->_attribute_code($attribute);
       $dbattribute = $this->_get_attribute_from_code($code);
       if (!$dbattribute) {
-        $dbattribute = $this->_create_attribute($code, $attribute, $text, $product_type);
+        $dbattribute = $this->_create_attribute($code, $attribute, $type, $product_type);
       }
 
       $this->_attributes[$id] = $attribute;
