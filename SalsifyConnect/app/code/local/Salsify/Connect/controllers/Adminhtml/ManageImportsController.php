@@ -104,8 +104,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/testload');
     
     $salsify = Mage::helper('salsify_connect');
-    $file = BP.DS.'var'.DS.'salsify'.DS.'simple.json';
+    $file = BP.DS.'var'.DS.'salsify'.DS.'export.json';
     $salsify->load_data($file);
+
+    $this->_render_html("<h1>Import Succeeded</h1>");
+    $this->_render_html("Imported from: " . $file);
 
     $this->_end_render();
   }
