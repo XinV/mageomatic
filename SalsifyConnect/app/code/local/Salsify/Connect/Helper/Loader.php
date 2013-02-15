@@ -284,6 +284,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // TODO enable product type configuration here when relevant. For now we're
       //      just supporting simple products anyway (not grouped, configurable,
       //      etc.).
+      //      When Salsify has bundles we'll have to deal with this.
       $product_type = 'simple';
 
       // TODO have types other than text
