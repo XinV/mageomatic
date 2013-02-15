@@ -61,7 +61,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     // $this->_end_render();
 
-    $this->_redirectUrl(Mage::getBaseUrl().'/salsify/adminhtml_manageimports/index');
+    $this->_redirectUrl(Mage::getBaseUrl().'salsify/adminhtml_manageimports/index');
   }
 
 
