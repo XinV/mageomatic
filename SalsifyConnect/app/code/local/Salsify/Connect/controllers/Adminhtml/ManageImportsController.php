@@ -171,7 +171,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     // $params = $this->getRequest()->getParams();
     // $import_id = $params['id'];
-    $import_id = 1;
+    $import_id = 2;
 
     $import = Mage::getModel('salsify_connect/importrun');
     $import->load((int)$import_id);
