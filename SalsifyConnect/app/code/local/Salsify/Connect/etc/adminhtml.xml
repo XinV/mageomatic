@@ -34,7 +34,7 @@
 
         <chexport module="salsify_connect">
           <title>Chexport</title>
-          <sort_order>51</sort_order>
+          <sort_order>52</sort_order>
           <action>salsify/adminhtml_manageimports/chexport</action>
         </chexport>
 
