@@ -196,13 +196,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
   private function sneaky_worker_thread_start() {
-    $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
-    $sneaky = '<script type="text/javascript">$.get("/salsify/admin_html/mangeimports/worker");</script>';
-    $this->_render_js($jquery);
-    $this->_render_js($sneaky);
+    // FIXME this doesn't work due to Magento's OOTB x-site scripting protections.
+    //       need to get the URL from magento instead of hard-coding it here.
 
-    // FIXME not sure if this works  with new factoring
-    // FIXME add a local jquery fallback (mostly for offline testing)
+    // TODO add a local jquery fallback (mostly for offline testing)
+    // $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+    // $sneaky = '<script type="text/javascript">$.get("/salsify/admin_html/mangeimports/worker");</script>';
+    // $this->_render_js($jquery);
+    // $this->_render_js($sneaky);
   }
 
   public function workerAction() {
