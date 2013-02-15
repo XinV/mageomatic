@@ -74,8 +74,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
            . '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
     $this->_render_html($usage);
 
-    $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
-    $this->_addContent($importsblock);
+    // $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
+    // $this->_addContent($importsblock);
 
     $this->_end_render();
   }
