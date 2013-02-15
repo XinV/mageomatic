@@ -163,6 +163,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   // FIXME make this into some kind of polling/monitoring/restful thing that
   //       is called by JS from the manage_imports main area
   public function chexportAction() {
+    $this->_start_render('salsify_connect_menu/chexport');
+
     // $params = $this->getRequest()->getParams();
     // $import_id = $params['id'];
     $import_id = 1;
@@ -172,23 +174,25 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     if (!$import->getId()) {
       throw new Exception("Must specify a valid import ID.");
     }
-    echo "Current status: " . $import->get_status_string();
+    $this->_render_html("Current status: " . $import->get_status_string() . '<br/>');
 
     if (!$import->is_done()) {
-      echo "<br/><br/>Attempting next stage...";
+      $this->_render_html("<br/><br/>Attempting next stage...");
       if($import->is_waiting_on_salsify()) {
         $advanced = $import->start_download_if_ready();
         if (!$advanced) {
-          echo '<br/>Still waiting on Salsify.';
+          $this->_render_html('<br/>Still waiting on Salsify.');
         } else {
-          echo '<br/>Download is ready. Enqueued background job to complete import.';
+          $this->_render_html('<br/>Download is ready. Enqueued background job to complete import.');
           $this->sneaky_worker_thread_start();
         }
       } elseif ($import->is_waiting_on_worker()) {
-        echo '<br/>Still waiting on background worker to pick up the job.';
+        $this->_render_html('<br/>Still waiting on background worker to pick up the job.');
         $this->sneaky_worker_thread_start();
       }
     }
+
+    $this->_end_render();
   }
 
   private function sneaky_worker_thread_start() {
