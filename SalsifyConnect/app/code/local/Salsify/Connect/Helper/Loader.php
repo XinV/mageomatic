@@ -199,7 +199,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       if ($this->_in_attributes) {
         $this->_attribute[$key] = $value;
       } elseif ($this->_in_products) {
-        $this->_product[$key] = $value;
+        if (array_key_exists($key, $this->_attributes)) {
+          $code = $this->_attribute_code($this->_attributes[$key]);
+          $this->_product[$code] = $value;
+        } else {
+          $this->_log("ERROR: product has key of undeclared attribute: " . $key);
+        }
       }
       // TODO other types
     } else {
