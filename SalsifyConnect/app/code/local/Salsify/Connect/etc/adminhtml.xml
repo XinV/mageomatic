@@ -19,6 +19,25 @@
           <action>salsify/adminhtml_manageimports/configuration</action>
         </configuration>
 
+        <!-- FIXME remove all these guys -->
+        <config module="salsify_connect">
+          <title>Create Configuration</title>
+          <sort_order>50</sort_order>
+          <action>salsify/adminhtml_manageimports/config</action>
+        </config>
+
+        <export module="salsify_connect">
+          <title>Start Export</title>
+          <sort_order>51</sort_order>
+          <action>salsify/adminhtml_manageimports/export</action>
+        </export>
+
+        <chexport module="salsify_connect">
+          <title>Chexport</title>
+          <sort_order>51</sort_order>
+          <action>salsify/adminhtml_manageimports/chexport</action>
+        </chexport>
+
         <testload module="salsify_connect">
           <title>Test Load</title>
           <sort_order>68</sort_order>
