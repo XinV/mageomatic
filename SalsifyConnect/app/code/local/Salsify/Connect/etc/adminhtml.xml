@@ -19,6 +19,12 @@
           <action>salsify/adminhtml_manageimports/configuration</action>
         </configuration>
 
+        <testload module="salsify_connect">
+          <title>Test Load</title>
+          <sort_order>68</sort_order>
+          <action>salsify/adminhtml_manageimports/testload</action>
+        </testload>
+
         <test module="salsify_connect">
           <title>Test Layout</title>
           <sort_order>69</sort_order>

@@ -101,12 +101,13 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   // FIXME only used for development purposes. remove once no longer necessary.
   public function testloadAction() {
+    $this->_start_render('salsify_connect_menu/testload');
+    
     $salsify = Mage::helper('salsify_connect');
+    $file = BP.DS.'var'.DS.'salsify'.DS.'simple.json';
+    $salsify->load_data($file);
 
-    echo '<br/>Loading file...';
-    $salsify->load_data(BP.DS.'var'.DS.'salsify'.DS.'export.json');
-
-    echo '<br/>Data loaded!';
+    $this->_end_render();
   }
 
   // FIXME make this into a form that the user can use to enter a configuration

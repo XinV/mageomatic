@@ -16,15 +16,6 @@ class Salsify_Connect_IndexController extends Mage_Core_Controller_Front_Action 
     echo '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
   }
 
-  public function testloadAction() {
-    $salsify = Mage::helper('salsify_connect');
-
-    echo '<br/>Loading file...';
-    $salsify->load_data(BP.DS.'var'.DS.'salsify'.DS.'export.json');
-
-    echo '<br/>Data loaded!';
-  }
-
   public function configAction() {
     $params = $this->getRequest()->getParams();
 
