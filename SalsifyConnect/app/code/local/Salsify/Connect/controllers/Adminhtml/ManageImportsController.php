@@ -115,17 +115,20 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   // FIXME make this into a form that the user can use to enter a configuration
   public function configAction() {
-    $params = $this->getRequest()->getParams();
+    // $params = $this->getRequest()->getParams();
 
-    if (!array_key_exists('api_key', $params)) {
-      throw new Exception("Must specify api_key to use for import.");
-    }
-    $api_key = $params['api_key'];
+    // if (!array_key_exists('api_key', $params)) {
+    //   throw new Exception("Must specify api_key to use for import.");
+    // }
+    // $api_key = $params['api_key'];
 
-    if (!array_key_exists('salsify_url', $params)) {
-      throw new Exception("Must specify salsify_url to use for import.");
-    }
-    $url = urldecode($params['salsify_url']);
+    // if (!array_key_exists('salsify_url', $params)) {
+    //   throw new Exception("Must specify salsify_url to use for import.");
+    // }
+    // $url = urldecode($params['salsify_url']);
+
+    $api_key = 'yNoKZx9UabqqQ1m2c6K2';
+    $url = 'http://localhost:5000/';
 
     $config = Mage::getModel('salsify_connect/configuration');
     $config->setApiKey($api_key);
