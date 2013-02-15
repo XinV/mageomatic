@@ -301,7 +301,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $is_name = false;
 
     if (array_key_exists('roles', $attribute)) {
-      $roles = $attributes['roles'];
+      $roles = $attribute['roles'];
       if (array_key_exists('products', $roles)) {
         $product_roles = $roles['products'];
         if (in_array('id', $product_roles)) {
