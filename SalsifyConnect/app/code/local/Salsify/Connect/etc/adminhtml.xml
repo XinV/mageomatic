@@ -26,17 +26,17 @@
           <action>salsify/adminhtml_manageimports/config</action>
         </config>
 
-        <export module="salsify_connect">
+        <import module="salsify_connect">
           <title>Start Export</title>
           <sort_order>51</sort_order>
-          <action>salsify/adminhtml_manageimports/export</action>
-        </export>
+          <action>salsify/adminhtml_manageimports/import</action>
+        </import>
 
-        <chexport module="salsify_connect">
-          <title>Chexport</title>
+        <chimport module="salsify_connect">
+          <title>Chimport</title>
           <sort_order>52</sort_order>
-          <action>salsify/adminhtml_manageimports/chexport</action>
-        </chexport>
+          <action>salsify/adminhtml_manageimports/chimport</action>
+        </chimport>
 
         <worker module="salsify_connect">
           <title>Start Worker</title>

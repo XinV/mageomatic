@@ -6,6 +6,10 @@ require_once('DJJob.php');
 class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_Controller_action {
 
 
+  // All you need to add is the action!
+  const BASE_ADMIN_URL = 'salsify/adminhtml_manageimports/';
+
+
   const INDEX_MENU_ID  = 'salsify_connect_menu/manage_imports';
   const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
 
@@ -13,6 +17,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   // FIXME factor into a log helper
   private function _log($msg) {
     Mage::log('ManageImports: ' . $msg, null, 'salsify.log', true);
+  }
+
+
+  private function _get_url($action) {
+    return Mage::helper("adminhtml")->getUrl(self::BASE_ADMIN_URL . $action);
   }
 
 
@@ -72,11 +81,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // FIXME load the block that we want to load programatically
     //       try to load the Salsify_Connect_Block_Adminhtml_ManageImports
     //       block as it SHOULD be able to do the trick...
-    $usage = 'usage:'
-           . '<br/>&nbsp;&nbsp;salsify/index/testload - loads a pre-saved test file. just for testing import.'
-           . '<br/>&nbsp;&nbsp;salsify/index/config?api_key=YOURKEY&salsify_url=YOURURL - creates a config for export usage.'
-           . '<br/>&nbsp;&nbsp;salsify/index/export?config=ID - kicks off an export using config ID 1.'
-           . '<br/>&nbsp;&nbsp;salsify/index/chexport?id=ID - checks the status of export with ID 1 and advances it if ready.';
+    $configurl = $this->_get_url('config');
+    $usage = '<h1>Import Process:'
+           . '<ul>'
+           . '  <li><a href="'.$configurl.'">Create a configuration</a></li>'
+           . '</ul>';
     $this->_render_html($usage);
 
 
@@ -143,8 +152,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
   // FIXME remove for dev
-  public function exportAction() {
-    echo '<br/>creating new export from Salsify...';
+  public function importAction() {
+    echo '<br/>creating new import from Salsify...';
 
     // $params = $this->getRequest()->getParams();
     // if (!array_key_exists('config', $params)) {
@@ -158,7 +167,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $model->save();
     $model->start_import();
 
-    echo '<br/>created. go to salsify/index/chexport/id/'.($model->getId()).' to check the status';
+    echo '<br/>created. go to salsify/index/chimport/id/'.($model->getId()).' to check the status';
 
     // TODO use jquery to automatically check for updates so that the user
     //      doesn't have to refresh the screen.
@@ -166,8 +175,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   // FIXME make this into some kind of polling/monitoring/restful thing that
   //       is called by JS from the manage_imports main area
-  public function chexportAction() {
-    $this->_start_render('salsify_connect_menu/chexport');
+  public function chimportAction() {
+    $this->_start_render('salsify_connect_menu/chimport');
 
     // $params = $this->getRequest()->getParams();
     // $import_id = $params['id'];
