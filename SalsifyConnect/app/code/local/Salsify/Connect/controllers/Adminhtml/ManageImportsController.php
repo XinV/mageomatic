@@ -151,7 +151,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   throw new Exception("Must specify configuration ID to use for import.");
     // }
     // $config_id = $params['config'];
-    $config_id = 1;
+    $config_id = 2;
 
     $model = Mage::getModel('salsify_connect/importrun');
     $model->setConfigurationId($config_id);
