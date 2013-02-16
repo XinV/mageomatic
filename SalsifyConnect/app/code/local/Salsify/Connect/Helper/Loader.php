@@ -374,7 +374,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'is_unique' => 0,
       'is_required' => 0,
       'is_configurable' => 0,
-      'is_searchable' => 0,
+      'is_searchable' => 1,
       'is_filterable' => 0,
       'is_filterable_in_search' => 0,
       'is_visible_in_advanced_search' => 1,
