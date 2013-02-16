@@ -63,15 +63,16 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
  
   // FIXME remove when we're going live. this is just for testing.
   public function testAction() {
-    // $this->_start_render('salsify_connect_menu/test');
+    $this->_start_render('salsify_connect_menu/test');
 
-    // $this->_render_html('<h1>This is a header</h1>');
-    // $this->_render_html('<div>This is a text block</div>');
+    $loader = Mage::helper('salsify_connect/loader');
+    $attribute = array();
+    $attribute['name'] = "TESTING";
+    $dbattr = $loader->_create_attribute('12345', $attribute, 'text', 'simple');
 
-    // $this->_end_render();
-    $url = Mage::helper("adminhtml")->getUrl('salsify/adminhtml_manageimports/index');
-    $this->_log("REDIRECT: ".$url);
-    $this->_redirectUrl($url);
+    $this->_render_html("created attribute");
+
+    $this->_end_render();
   }
 
 
