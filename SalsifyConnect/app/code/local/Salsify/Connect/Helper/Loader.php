@@ -287,8 +287,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       //      When Salsify has bundles we'll have to deal with this.
       $product_type = 'simple';
 
-      // TODO have types other than text
-      $type = 'text';
+      // TODO have types
+      $type = 'varchar';
 
       $code = $this->_attribute_code($attribute);
       $dbattribute = $this->_get_attribute_from_code($code);
@@ -377,7 +377,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'is_searchable' => 0,
       'is_filterable' => 0,
       'is_filterable_in_search' => 0,
-      'is_visible_in_advanced_search' => 0,
+      'is_visible_in_advanced_search' => 1,
       'is_comparable' => 0,
       'is_used_for_price_rules' => 0,
       'is_wysiwyg_enabled' => 0,
