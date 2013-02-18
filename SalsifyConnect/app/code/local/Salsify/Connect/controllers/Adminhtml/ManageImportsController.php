@@ -69,7 +69,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $attribute = array();
     $attribute['name'] = "TESTING";
     $loader->_create_attribute('salsify_12345', $attribute, 'text', 'simple');
-    $loader->_reindex();
+
+    // fixme make this private
+    // $loader->_reindex();
 
     $this->_render_html("created attribute");
 
