@@ -330,6 +330,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // creating a checksum seemed to be the easiest way to accomplish that,
     // though it has the downside of creating opaque atttribute_ids which do
     // show up in the admin panel...
+    //
+    // Could also have edited this file:
+    //   /app/code/core/Mage/Eav/Model/Entity/Attribute.php
+    //   CONST ATTRIBUTE_CODE_MAX_LENGTH = 60;
     $code = 'salsify_'.md5($attribute['name']);
     $code = substr($code, 0, 30);
     return $code;
@@ -351,6 +355,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
   // as a starting point.
+  // More docs: http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
   public function _create_attribute($code, $attribute, $attribute_type, $product_type) {
     // There are even more options that we're not setting here. For example:
     // http://alanstorm.com/magento_attribute_migration_generator
@@ -395,7 +400,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'is_used_for_price_rules' => 0,
       'is_wysiwyg_enabled' => 0,
       'is_html_allowed_on_front' => 0,
-      'is_visible_on_front' => 0,
+      'is_visible_on_front' => 1,
       // # is_used_for_promo_rules
       'used_in_product_listing' => 0,
       'used_for_sort_by' => 0,
@@ -433,6 +438,28 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $model->addData($_attribute_data);
     $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
     $model->setIsUserDefined(1);
+
+    // Need to add the properties to a specific group of they don't show up in
+    // the admin UI at all. In the future we might want to make this an option
+    // so that we don't pollute the general attribute set. Maybe dumping all
+    // into a Salsify group?
+    $entityTypeID = Mage::getModel('eav/entity')
+                        ->setType('catalog_product')
+                        ->getTypeId();
+    $model->setEntityTypeId($entityTypeID);
+
+    $attributeSetId = Mage::getModel('catalog/product')
+                          ->getResource()
+                          ->getEntityType()
+                          ->getDefaultAttributeSetId();
+    $model->setAttributeSetId($attributeSetId);
+
+    $attributeGroupId = Mage::getModel('catalog/product')
+                            ->getResource()
+                            ->getEntityType()
+                            ->getDefaultAttributeSetId();
+    $model->setAttributeGroupId($attributeGroupId);
+
     try {
       $model->save();
     } catch (Exception $e) {
