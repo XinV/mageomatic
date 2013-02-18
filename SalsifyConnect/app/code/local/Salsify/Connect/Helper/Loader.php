@@ -69,7 +69,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   // Update all indexes in Magento.
-  public function _reindex() {
+  private function _reindex() {
     $processCollection = Mage::getSingleton('index/indexer')
                              ->getProcessesCollection(); 
     
@@ -356,7 +356,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
   // as a starting point.
   // More docs: http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
-  public function _create_attribute($code, $attribute, $attribute_type, $product_type) {
+  private function _create_attribute($code, $attribute, $attribute_type, $product_type) {
     // There are even more options that we're not setting here. For example:
     // http://alanstorm.com/magento_attribute_migration_generator
 
@@ -455,11 +455,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("set: " . $attributeSetId);
     $model->setAttributeSetId($attributeSetId);
 
-    // $attributeGroupId = Mage::getModel('catalog/product')
-    //                         ->getResource()
-    //                         ->getEntityType()
-    //                         ->getDefaultAttributeGroupId();
-    // $attributeGroupId = 4;
+    # wish I knew a better way to do this without having to get the core setup...
     $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
     $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
     $this->_log("group: " . $attributeGroupId);

@@ -56,6 +56,12 @@
           <action>salsify/adminhtml_manageimports/test</action>
         </test>
 
+        <cleaner module="salsify_connect">
+          <title>DELETE SALSIFY DATA</title>
+          <sort_order>100</sort_order>
+          <action>salsify/adminhtml_manageimports/cleaner</action>
+        </cleaner>
+
       </children>
     </salsify_connect_menu>
   </menu>

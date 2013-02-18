@@ -70,9 +70,6 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $attribute['name'] = "TESTING";
     $loader->_create_attribute('salsify_12345', $attribute, 'text', 'simple');
 
-    // fixme make this private
-    // $loader->_reindex();
-
     $this->_render_html("created attribute");
 
     $this->_end_render();
@@ -232,6 +229,18 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //      called safely.
     $job = Mage::getModel('salsify_connect/importjob');
     $job->start_worker();
+  }
+
+  public function cleanerAction() {
+    $this->_start_render('salsify_connect_menu/cleaner');
+
+    $products = Mage::getModel('catalog/product')
+                    ->getCollection()
+                    ->addFieldToFilter('price', array("eq"=>0.0100));
+
+    $this->_render_html("Num salsify products: " . count($products));
+
+    $this->_end_render();
   }
 
 }
