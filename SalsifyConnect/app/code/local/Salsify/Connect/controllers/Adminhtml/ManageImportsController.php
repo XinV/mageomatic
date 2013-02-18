@@ -234,14 +234,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
 
-    $products = Mage::getModel('catalog/product')
-                    ->getCollection()
-                    ->addFieldToFilter('price', array("eq"=>0.0100));
-    $this->_render_html("Num salsify products: " . count($products));
+    $salsify_products = Mage::getModel('catalog/product')
+                            ->getCollection()
+                            ->addFieldToFilter('price', array("eq"=>0.0100));
+    $this->_render_html("Num salsify products: " . count($salsify_products));
 
-    // $products = Mage::getModel('catalog/product')
-    //                 ->getCollection();
-    // $this->_render_html("Num products: " . count($products));
+    $products = Mage::getModel('catalog/product')
+                    ->getCollection();
+    $this->_render_html("Num products: " . count($products));
 
     $this->_end_render();
   }
