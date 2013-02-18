@@ -69,7 +69,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   // Update all indexes in Magento.
-  private function _reindex() {
+  public function _reindex() {
     $processCollection = Mage::getSingleton('index/indexer')
                              ->getProcessesCollection(); 
     
@@ -416,12 +416,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     try {
       $model->save();
     } catch (Exception $e) {
-      Mage::log(
-        'ERROR: could not create attribute <'.$name.'>: '.$e->getMessage(),
-        null, 
-        'salsify.log',
-        true
-      );
+      $this->_log('ERROR: could not create attribute <'.$name.'>: '.$e->getMessage());
     }
 
     // should be in the DB now

@@ -68,7 +68,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $loader = Mage::helper('salsify_connect/loader');
     $attribute = array();
     $attribute['name'] = "TESTING";
-    $dbattr = $loader->_create_attribute('salsify_12345', $attribute, 'varchar', 'simple');
+    $loader->_create_attribute('salsify_12345', $attribute, 'varchar', 'simple');
+    $loader->_reindex();
 
     $this->_render_html("created attribute");
 
