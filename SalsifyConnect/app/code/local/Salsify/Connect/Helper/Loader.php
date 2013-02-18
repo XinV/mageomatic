@@ -459,8 +459,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //                         ->getResource()
     //                         ->getEntityType()
     //                         ->getDefaultAttributeGroupId();
-    // $this->_log("group: " . $attributeGroupId);
-    $model->setAttributeGroupId(4);
+    $attributeGroupId = 4;
+    $this->_log("group: " . $attributeGroupId);
+    $model->setAttributeGroupId($attributeGroupId);
 
     try {
       $model->save();
