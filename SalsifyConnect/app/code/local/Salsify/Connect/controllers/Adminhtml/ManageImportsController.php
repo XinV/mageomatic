@@ -240,7 +240,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("Num salsify products: " . count($products));
 
     $products = Mage::getModel('catalog/product')
-                    ->getCollection()
+                    ->getCollection();
     $this->_render_html("Num products: " . count($products));
 
     $this->_end_render();
