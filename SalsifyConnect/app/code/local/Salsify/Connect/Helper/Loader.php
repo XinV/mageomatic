@@ -452,13 +452,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
                           ->getResource()
                           ->getEntityType()
                           ->getDefaultAttributeSetId();
-    $this->_log("set: " . $attributeSetId);
     $model->setAttributeSetId($attributeSetId);
 
     # wish I knew a better way to do this without having to get the core setup...
     $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
     $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
-    $this->_log("group: " . $attributeGroupId);
     $model->setAttributeGroupId($attributeGroupId);
 
     try {
