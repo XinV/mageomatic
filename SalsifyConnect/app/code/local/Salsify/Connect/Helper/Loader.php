@@ -443,10 +443,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // the admin UI at all. In the future we might want to make this an option
     // so that we don't pollute the general attribute set. Maybe dumping all
     // into a Salsify group?
-    $entityTypeID = Mage::getModel('eav/entity')
+    $entityTypeId = Mage::getModel('eav/entity')
                         ->setType('catalog_product')
                         ->getTypeId();
-    $model->setEntityTypeId($entityTypeID);
+    $model->setEntityTypeId($entityTypeId);
 
     $attributeSetId = Mage::getModel('catalog/product')
                           ->getResource()
@@ -459,7 +459,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //                         ->getResource()
     //                         ->getEntityType()
     //                         ->getDefaultAttributeGroupId();
-    $attributeGroupId = 4;
+    // $attributeGroupId = 4;
+    $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+    $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
     $this->_log("group: " . $attributeGroupId);
     $model->setAttributeGroupId($attributeGroupId);
 
