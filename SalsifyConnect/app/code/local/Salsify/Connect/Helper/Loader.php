@@ -389,6 +389,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'frontend_input' => $attribute_type, //'boolean','text', etc.
       'frontend_label' => $name,
 
+      // without this it will not show up in the UI
+      'group' => 'General',
+
       // TODO apply_to multiple types by default? right now Salsify itself only
       //      really supports the simple type.
       'apply_to' => array($product_type), //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
