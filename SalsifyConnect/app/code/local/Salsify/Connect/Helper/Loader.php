@@ -271,10 +271,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   private function _flush_batch() {
-    Mage::getSingleton('fastsimpleimport/import')
-        ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
-        ->processProductImport($this->_batch);
-    $this->_batch = array();
+    try {
+      Mage::getSingleton('fastsimpleimport/import')
+          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+          ->processProductImport($this->_batch);
+      $this->_batch = array();
+    } catch (Exception $e) {
+      $this->_log('ERROR could not flush batch: '.$e->getMessage());
+    }
   }
 
 
