@@ -234,14 +234,19 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
 
+    $this->_render_html("Salsify Cleaner");
+
     $salsify_products = Mage::getModel('catalog/product')
                             ->getCollection()
                             ->addFieldToFilter('price', array("eq"=>0.0100));
-    $this->_render_html("Num salsify products: " . count($salsify_products));
+    $this->_render_html("Total Salsify products deleted: " . count($salsify_products) . '<br/>');
+    foreach($salsify_products as $product) { $product->delete(); }
 
-    $products = Mage::getModel('catalog/product')
-                    ->getCollection();
-    $this->_render_html("Num products: " . count($products));
+    $salsify_attributes = Mage::getModel('eav/attribute')
+                              ->getCollection()
+                              ->addFieldToFilter('attribute_code', array('like'=>'salsify_%'));
+    $this->_render_html("Total Salsify attributes deleted: " . count($salsify_attributes) . '<br/>');
+    foreach($salsify_attributes as $attribute) { $attribute->delete(); }
 
     $this->_end_render();
   }

@@ -436,13 +436,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
     $model->addData($_attribute_data);
-    $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
     $model->setIsUserDefined(1);
 
     // Need to add the properties to a specific group of they don't show up in
     // the admin UI at all. In the future we might want to make this an option
     // so that we don't pollute the general attribute set. Maybe dumping all
     // into a Salsify group?
+
+    // originally:
+    // $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
     $entityTypeId = Mage::getModel('eav/entity')
                         ->setType('catalog_product')
                         ->getTypeId();
