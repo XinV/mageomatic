@@ -288,7 +288,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $product_type = 'simple';
 
       // TODO have types
-      $type = 'varchar';
+      $type = 'text';
 
       $code = $this->_attribute_code($attribute);
       $dbattribute = $this->_get_attribute_from_code($code);
@@ -357,7 +357,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     $name = $attribute['name'];
 
-    // TODO are there other options we should be setting?
+    // I *think* this is everything we COULD be setting, with some properties
+    // commented out. I got values from eav_attribute and catalog_eav_attribute
+
     // TODO should we be flexible on global vs. store? what elements here should
     //      be configurable during an import?
 
@@ -370,9 +372,20 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'default_value_yesno' => 0,
       'default_value_date' => '',
       'default_value_textarea' => '',
+      // # default_value - set below
+
+      // These are available but shouldn't be set here.
+      // # attribute_model
+      // # backend_model
+      // # backend_type - set below
+      // # backend_table
+      // # source_model
+
+      'is_user_defined' => 0,
       'is_global' => 1,
       'is_unique' => 0,
       'is_required' => 0,
+      // # is_visible
       'is_configurable' => 0,
       'is_searchable' => 0,
       'is_filterable' => 0,
@@ -383,11 +396,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'is_wysiwyg_enabled' => 0,
       'is_html_allowed_on_front' => 0,
       'is_visible_on_front' => 0,
+      // # is_used_for_promo_rules
       'used_in_product_listing' => 0,
       'used_for_sort_by' => 0,
       'type' => $attribute_type,
+      // # position
+
+      // # frontend_model
+      // # frontend_class
+      // TODO the frontend_input can't be varchar, so there is a mismatch here...
       'frontend_input' => $attribute_type, //'boolean','text', etc.
       'frontend_label' => $name,
+      // # frontend_input_renderer
 
       // without this it will not show up in the UI
       'group' => 'General',
