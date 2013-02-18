@@ -457,7 +457,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $attributeGroupId = Mage::getModel('catalog/product')
                             ->getResource()
                             ->getEntityType()
-                            ->getDefaultAttributeSetId();
+                            ->getDefaultAttributeGroupId();
     $model->setAttributeGroupId($attributeGroupId);
 
     try {
