@@ -288,7 +288,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $product_type = 'simple';
 
       // TODO have types
-      $type = 'text';
+      $type = 'varchar';
 
       $code = $this->_attribute_code($attribute);
       $dbattribute = $this->_get_attribute_from_code($code);
