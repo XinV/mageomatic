@@ -242,7 +242,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("Total Salsify products deleted: " . count($salsify_products) . '<br/>');
     foreach($salsify_products as $product) { $product->delete(); }
 
-    $salsify_attributes = Mage::getModel('eav/attribute')
+    $salsify_attributes = Mage::getModel('catalog/resource_eav_attribute')
                               ->getCollection()
                               ->addFieldToFilter('attribute_code', array('like'=>'salsify_%'));
     $this->_render_html("Total Salsify attributes deleted: " . count($salsify_attributes) . '<br/>');
