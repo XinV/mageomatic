@@ -405,7 +405,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if ($attribute['id'] === self::SALSIFY_PRODUCT_ID) {
       return self::SALSIFY_PRODUCT_ID;
     } elseif ($attribute['id'] === self::SALSIFY_CATEGORY_ID) {
-      return self::SALSIFY_PRODUCT_ID;
+      return self::SALSIFY_CATEGORY_ID;
     }
 
     // code can only be 30 characters at most and cannot contain spaces
