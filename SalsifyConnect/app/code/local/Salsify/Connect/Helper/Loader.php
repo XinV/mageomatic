@@ -332,11 +332,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // FIXME make this private
   public function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
-
-    if ($id === self::SALSIFY_ID) {
-      return $this->_salsify_id_attribute;
-    }
-
     if (!array_key_exists($id, $this->_attributes)) {
       // TODO enable product type configuration here when relevant. For now we're
       //      just supporting simple products anyway (not grouped, configurable,
@@ -382,6 +377,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       return 'name';
     }
     // TODO get other OOTB type attributes via mapping from Salsify.
+
+    if ($attribute['id'] === self::SALSIFY_ID) {
+      return self::SALSIFY_ID;
+    }
 
     // code can only be 30 characters at most and cannot contain spaces
     // creating a checksum seemed to be the easiest way to accomplish that,
