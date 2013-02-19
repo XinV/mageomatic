@@ -109,29 +109,42 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
     // }
 
+    $this->_create_category();
+    $this->_log("Done creating category");
+
+    $this->_end_render();
+  }
+
+
+  private function _create_category() {
     $category = new Mage_Catalog_Model_Category();
-    // TODO we're currently ignoring this
+    $ids = $category->_db->fetchCol("SELECT DISTINCT entity_id FROM catalog_category_entity_varchar WHERE value LIKE 'Joel%'");
+    $this->_log("IDS: ". var_export($ids, true));
+    
+    // TODO we're currently ignoring this. I *think* this sets the default store.
     // $category->setStoreId(0);
     $category->setName('Joel Momma');
     $category->setUrlKey('joel-momma');
     $category->setIsActive('1');
     $category->setIncludeInMenu('1');
     $category->setDescription('Created during Salsify import.');
-    // TODO not sure what this is
-    // $category->setDisplayMode('PRODUCTS');
+    // TODO what are the other options?
+    $category->setDisplayMode('PRODUCTS_AND_PAGE');
     $category->setIsAnchor('0');
     $category->setLevel('1');
     $category->setParentId('1');
+
     $parentCategory = Mage::getModel('catalog/category')->load('1');
     $category->setPath($parentCategory->getPath()); 
+    // TODO attribute_set_id is not being set for the new categories. Copy from
+    //      the parent? Not sure what the advantage is yet from a navigation
+    //      perspective.
+    
     try {
       $category->save();
-      $this->_render_html("Done: " . var_export($category, true));
     } catch (Exception $e) {
-      $this->_render_html("EXCEPTION: " . $e->getMessage());
+      $this->_log("ERROR creating category: " . $e->getMessage());
     }
-
-    $this->_end_render();
   }
 
 
