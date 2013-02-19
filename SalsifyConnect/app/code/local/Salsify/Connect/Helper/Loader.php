@@ -279,7 +279,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       //     ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
       //     ->processProductImport($this->_batch);
 
-      $entity_type = Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode();
+      // $entity_type = Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode();
+      //  FIXME not DRY (see _create_attribute below)
+      $entity_type_id = $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
+
       $api = Mage::getModel('api_import/import_api');
       $api->importEntities($this->_batch, $entity_type);
 
