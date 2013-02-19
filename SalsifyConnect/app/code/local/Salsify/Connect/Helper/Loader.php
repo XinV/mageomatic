@@ -277,6 +277,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   private function _flush_batch() {
+    $this->_log("Flushing product batch.");
     $this->_log("BATCH SIZE: " . count($this->_batch));
     $this->_log("BATCH ITEM: " . var_export($this->_batch[0], true));
 
