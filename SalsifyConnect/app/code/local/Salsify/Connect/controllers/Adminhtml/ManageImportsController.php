@@ -109,9 +109,24 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
     // }
 
-    $categories = Mage::getModel('catalog/category')->getCollection();
-    foreach($categories as $category) {
-      $this->_render_html(var_export($category, true) . '<br/>');
+    $category = new Mage_Catalog_Model_Category();
+    // $category->setStoreId(0);
+    $category->setName('Joel Momma');
+    $category->setUrlKey('joel-momma');
+    $category->setIsActive('1');
+    $category->setIncludeInMenu('1');
+    // $category->setDescription('Joel Momma');
+    // $category->setDisplayMode('PRODUCTS');
+    $category->setIsAnchor('0');
+    $category->setLevel('0');
+    // $category->setParentId('1');
+
+    // $parentCategory = Mage::getModel('catalog/category')->load('1');
+    // $category->setPath($parentCategory->getPath()); 
+    try {
+      $category->save();
+    } catch (Exception $e) {
+      $this->_render_html("EXCEPTION: " . $e->getMessage());
     }
 
     $this->_end_render();
