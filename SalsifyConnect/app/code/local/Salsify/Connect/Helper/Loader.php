@@ -286,7 +286,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
                             ->getTypeId();
 
       $api = Mage::getModel('api_import/import_api');
-      $api->importEntities($this->_batch, $entity_type);
+      $api->importEntities($this->_batch, $entity_type_id);
 
       $this->_batch = array();
     } catch (Exception $e) {
