@@ -74,38 +74,44 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // $attribute = $loader->_get_attribute_from_code('color');
     // $this->_render_html("attribute: " . var_export($attribute, true));
 
-    $data = array();
-    $data[] = array(
-      '_root' => 'TESTING',
-      '_category' => 'Test2',
-      'name' => 'Test2',
-      // 'description' => 'Test2',
-      'is_active' => 'yes',
-      'include_in_menu' => 'yes',
-      // 'meta_description' => 'Meta Test'
-      'available_sort_by' => 'Price',
-      'default_sort_by' => 'Price',
-      'position' => '1',
-    );
-    $data[] = array(
-      '_root' => 'TESTING',
-      '_category' => 'Test2/Test3',
-      'name' => 'TestTest',
-      // 'description' => 'Test3',
-      'is_active' => 'yes',
-      'include_in_menu' => 'yes',
-      // 'meta_description' => 'Meta Test'
-      'available_sort_by' => 'Price',
-      'default_sort_by' => 'Price',
-      'position' => '1',
-    );
+    // $data = array();
+    // $data[] = array(
+    //   '_root' => 'TESTING',
+    //   '_category' => 'Test2',
+    //   'name' => 'Test2',
+    //   // 'description' => 'Test2',
+    //   'is_active' => 'yes',
+    //   'include_in_menu' => 'yes',
+    //   // 'meta_description' => 'Meta Test'
+    //   'available_sort_by' => 'Price',
+    //   'default_sort_by' => 'Price',
+    //   'position' => '1', // note: integer value of this doesn't work
+    // );
+    // $data[] = array(
+    //   '_root' => 'TESTING',
+    //   '_category' => 'Test2/Test3',
+    //   'name' => 'TestTest',
+    //   // 'description' => 'Test3',
+    //   'is_active' => 'yes',
+    //   'include_in_menu' => 'yes',
+    //   // 'meta_description' => 'Meta Test'
+    //   'available_sort_by' => 'Price',
+    //   'default_sort_by' => 'Price',
+    //   'position' => '1',
+    // );
 
-    $import = Mage::getModel('fastsimpleimport/import');
-    try {
-      $import->processCategoryImport($data);
-    } catch (Exception $e) {
-      $this->_render_html("EXCEPTION: " . $e->getMessage());
-      $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
+    // $import = Mage::getModel('fastsimpleimport/import');
+    // try {
+    //   $import->processCategoryImport($data);
+    //   $this->_render_html("Created new categories. You should reindex.");
+    // } catch (Exception $e) {
+    //   $this->_render_html("EXCEPTION: " . $e->getMessage());
+    //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
+    // }
+
+    $categories = Mage::getModel('catalog/category')->getCollection();
+    foreach($categories as $category) {
+      $this->_render_html(var_export($category, true));
     }
 
     $this->_end_render();
