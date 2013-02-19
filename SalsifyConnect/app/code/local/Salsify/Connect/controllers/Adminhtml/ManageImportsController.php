@@ -79,22 +79,22 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       '_root' => 'TESTING',
       '_category' => 'Test2',
       'name' => 'Test2',
-      'description' => 'Test2',
+      // 'description' => 'Test2',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
       // 'meta_description' => 'Meta Test'
-      // 'available_sort_by' => 'position',
+      'available_sort_by' => 'position',
       // 'default_sort_by' => 'position',
     );
     $data[] = array(
       '_root' => 'TESTING',
       '_category' => 'Test2/Test3',
       'name' => 'TestTest',
-      'description' => 'Test3',
+      // 'description' => 'Test3',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
       // 'meta_description' => 'Meta Test'
-      // 'available_sort_by' => 'position',
+      'available_sort_by' => 'position',
       // 'default_sort_by' => 'position',
     );
 
