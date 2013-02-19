@@ -83,8 +83,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
       // 'meta_description' => 'Meta Test'
-      'available_sort_by' => 'position',
-      'default_sort_by' => 'position',
+      'available_sort_by' => 'Price',
+      'default_sort_by' => 'Price',
     );
     $data[] = array(
       '_root' => 'TESTING',
@@ -94,8 +94,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
       // 'meta_description' => 'Meta Test'
-      'available_sort_by' => 'position',
-      'default_sort_by' => 'position',
+      'available_sort_by' => 'Price',
+      'default_sort_by' => 'Price',
     );
 
     $import = Mage::getModel('fastsimpleimport/import');
