@@ -117,11 +117,12 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
 
   private function _create_category() {
-    $category = new Mage_Catalog_Model_Category();
-    $collection = $category->getCollection();
-    // $ids = $category->_db->fetchCol("SELECT DISTINCT entity_id FROM catalog_category_entity_varchar WHERE value LIKE 'Joel%'");
-    // $this->_log("IDS: ". var_export($ids, true));
+    $category = Mage::getModel('catalog/category')->loadByAttribute('url_key', 'your_url_key');
+    $category = $category->loadByAttribute('name','Joel');
+    $this->_log("category: " . var_export($category, true));
+    return true;
     
+    $category = new Mage_Catalog_Model_Category();
     // TODO we're currently ignoring this. I *think* this sets the default store.
     // $category->setStoreId(0);
     $category->setName('Joel Momma');
