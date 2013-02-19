@@ -6,7 +6,6 @@ require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
  */
 class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
 
-
   // TODO factor into a log helper
   private function _log($msg) {
     Mage::log('Loader: ' . $msg, null, 'salsify.log', true);
@@ -17,14 +16,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // TODO need to special case ids coming from salsify to make sure they don't
   //      accidentally intersect with this, though that seems like a low-probability
   //      event.
-  const SALSIFY_PRODUCT_ID = 'salsify_product_id';
-  const SALSIFY_PRODUCT_ID_NAME = 'Salsify Product ID';
   const SALSIFY_CATEGORY_ID = 'salsify_category_id';
   const SALSIFY_CATEGORY_ID_NAME = 'Salsify Category ID';
+  const SALSIFY_PRODUCT_ID = 'salsify_product_id';
+  const SALSIFY_PRODUCT_ID_NAME = 'Salsify Product ID';
 
   // For types of attributes
-  const PRODUCT  = 1;
-  const CATEGORY = 2;
+  const CATEGORY = 1;
+  const PRODUCT  = 2;
 
   // Current keys and values that we're building up. We have to do it this way
   // vs. just having a current object stack because php deals with arrays as
@@ -35,18 +34,24 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   const ARRAY_TYPE  = 0;
   const OBJECT_TYPE = 1;
 
+  // cached attributes
+  private $_attributes;
+
+  // current attribute
+  private $_attribute;
+
+  // category hierarchy
+  private $_categories;
+
+  // current category that we're building up
+  private $_category;
+
   // Current product batch that has been read in.
   const BATCH_SIZE = 1000;
   private $_batch;
 
   // Current product.
   private $_product;
-  
-  // cached attributes
-  private $_attributes;
-
-  // current attribute
-  private $_attribute;
 
   // keep track of nesting level during parsing
   private $_nesting_level;
@@ -55,6 +60,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // keeps track of current state
   private $_in_attributes;
+  private $_in_attribute_values;
   private $_in_products;
 
 
@@ -68,11 +74,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_attributes = array();
     $this->_attribute = null;
 
+    $this->_categories = array();
+    $this->_category = null;
+
     $this->_batch = array();
     $this->_product = null;
 
     $this->_nesting_level = 0;
     $this->_in_attributes = false;
+    $this->_in_attribute_values = false;
     $this->_in_products = false;
 
     $this->_create_salsify_id_attributes_if_needed();
@@ -108,6 +118,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if ($this->_nesting_level === self::ITEM_NESTING_LEVEL) {
       if ($this->_in_attributes) {
         $this->_start_attribute();
+      } elseif ($this->_in_attribute_values) {
+        $this->_start_category();
       } elseif ($this->_in_products) {
         $this->_start_product();
       }
@@ -119,17 +131,23 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   public function end_object() {
     if ($this->_nesting_level === self::ITEM_NESTING_LEVEL) {
-      if ($this->_attribute) {
+      if ($this->_in_attributes) {
         $this->_end_attribute();
-      } elseif ($this->_product) {
+      } elseif ($this->_in_attribute_values) {
+        $this->_end_category();
+      } elseif ($this->_in_products) {
         $this->_end_product();
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
       $this->_end_nested_thing();
     } elseif ($this->_nesting_level === self::HEADER_NESTING_LEVEL) {
+        if ($this->_in_attribute_values) {
+          $this->_create_categories_if_required();
+        }
+
         $this->_in_attributes = false;
+        $this->_in_attribute_values = false;
         $this->_in_products = false;
-        // TODO other modes
     }
 
     $this->_nesting_level--;
@@ -138,12 +156,33 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _start_attribute() {
     $this->_attribute = array();
+    if ($this->_in_attributes) {
+      // TODO is this always true?
+      $this->_attribute['type'] = self::PRODUCT;
+    } elseif ($this->_in_attribute_values) {
+      $this->_attribute['type'] = self::CATEGORY;
+    } else {
+      $this->_log("ERROR: _start_attribute when not in attributes or attribute values");
+    }
+  }
+
+  private function _end_attribute() {
+    // FIXME Salsify ID is not being set on these
+    // FIXME need to distinguish a root category vs. other attriubtes that need
+    //       to be created.
+
+    $this->_create_attribute_if_needed($this->_attribute);
+    $this->_attribute = null;
   }
 
 
-  private function _end_attribute() {
-    $this->_create_attribute_if_needed($this->_attribute);
-    $this->_attribute = null;
+  private function _start_category() {
+    $this->_category = array();
+  }
+
+  private function _end_category() {
+    $this->_categories[$this->_category['id']] = $this->_category;
+    $this->_category = null;
   }
 
 
@@ -153,6 +192,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // Add fields required by Magento.
     // FIXME query the system to get the full list of required attributes.
     //       otherwise the bulk import fails silently...
+    // FIXME move this cleaning stuff to the END and combine with other cleaning
+    //       (noteably the 256 character limit currently in value())
 
     // TODO Salsify only supports simple products right now
     $this->_product['_type'] = 'simple';
@@ -181,7 +222,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _end_product() {
     // TODO figure out the best solution to get multi-valued properties into
-    //      Magento.
+    //      Magento. This *might* just work, but we'd have to be careful to remove
+    //      commas from incoming data.
     $clean_product = array();
     foreach($this->_product as $key => $val) {
       if (is_array($val)) {
@@ -190,6 +232,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $clean_product[$key] = $val;
       }
     }
+
+    // FIXME the Salsify ID is not being set on this here
 
     array_push($this->_batch, $clean_product);
     $this->_product = null;
@@ -234,6 +278,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // at the root of an object
       if ($this->_in_attributes) {
         $this->_attribute[$key] = $value;
+      } elseif ($this->_in_attribute_values) {
+        $this->_log("ERROR: in a nested object in attribute_values, but shouldn't be: " . var_export($this->_category, true));
+        $this->_log("ERROR: nested thing for above: " . var_export($value,true));
       } elseif ($this->_in_products) {
         if (array_key_exists($key, $this->_attributes)) {
           $code = $this->_attribute_code($this->_attributes[$key]);
@@ -242,7 +289,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           $this->_log("ERROR: product has key of undeclared attribute: " . $key);
         }
       }
-      // TODO other types
     } else {
       // within a nested object of some kind
       $parent_value = array_pop($this->_value_stack);
@@ -267,11 +313,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       if ($key === 'attributes') {
         $this->_log("Starting to parse attributes.");
         $this->_in_attributes = true;
+      } elseif ($key === 'attribute_values') {
+        $this->_log("Starting to parse categories (attribute_values).");
+        $this->_in_attribute_values = true;
       } elseif ($key === 'products') {
         $this->_log("Starting to parse products.");
         $this->_in_products = true;
       }
-      // TODO other modes
     }
   }
 
@@ -283,6 +331,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
       if ($this->_in_attributes) {
         $this->_attribute[$key] = $value;
+      } elseif ($this->_in_attribute_values) {
+        $this->_category[$key] = $value;
       } elseif ($this->_in_products) {
         if (!array_key_exists($key, $this->_attributes)) {
           $this->_log('ERROR: skipping unrecognized property id on product: ' . $key);
@@ -339,6 +389,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO pass in is_unique into the creation to make sure that it is, in fact,
     //      unique
     // TODO figure out how to prevent the value from being editable
+    //      possibly: http://stackoverflow.com/questions/6384120/magento-read-only-and-hidden-product-attributes
 
     $attribute = array();
     $attribute['id'] = self::SALSIFY_PRODUCT_ID;
@@ -363,7 +414,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       //      When Salsify has bundles we'll have to deal with this.
       $product_type = 'simple';
 
-      // TODO have types
+      // At the moment we only get text properties from Salsify. In fact, since
+      // we don't enforce datatypes in Salsify a single attribute could, in
+      // theory, have a numeric value and a text value, so for now we have to
+      // pick 'text' here to be safe.
       $type = 'text';
 
       $code = $this->_attribute_code($attribute);
@@ -590,5 +644,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     # wish I knew a better way to do this without having to get the core setup...
     $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
     return $setup->getDefaultAttributeGroupId($entity_type_id, $attribute_set_id);
+  }
+
+
+  private function _create_categories_if_required() {
+    $this->_log("finished reading categories.");
+    $this->_log(var_export($this->_categories, true));
+
+    // FIXME for reference:
+    // {"id":"1049","attribute_id":"ICEcat Product Category","name":"Fineliners","parent_id":"453"}
+    // $id        = $this->_category['id'];
+    // $parent_id = $this->_category['parent_id'];
+    $this->_categories = null;
   }
 }
