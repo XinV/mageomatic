@@ -65,6 +65,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   public function end_document() {
+    $this->_log("Finished document. Flushing final product data and reindexing.");
+
     $this->_flush_batch();
     $this->_reindex();
   }
