@@ -85,6 +85,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       // 'meta_description' => 'Meta Test'
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
+      'position' => '1',
     );
     $data[] = array(
       '_root' => 'TESTING',
@@ -96,6 +97,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       // 'meta_description' => 'Meta Test'
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
+      'position' => '1',
     );
 
     $import = Mage::getModel('fastsimpleimport/import');
