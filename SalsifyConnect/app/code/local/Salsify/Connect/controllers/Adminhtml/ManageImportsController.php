@@ -118,7 +118,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/testload');
     
     $salsify = Mage::helper('salsify_connect');
-    $file = BP.DS.'var'.DS.'salsify'.DS.'simple2.json';
+    $file = BP.DS.'var'.DS.'salsify'.DS.'export.json';
     $salsify->load_data($file);
 
     $this->_render_html("<h1>Import Succeeded</h1>");
@@ -244,8 +244,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     // TODO this doesn't work.
     // In mysql:
+    // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
-    // FIXME ALSO IN MYSQL NEED TO DELETE FROM eav_entity_attribute
     //
     // $salsify_attributes = Mage::getModel('catalog/resource_eav_attribute')
     //                           ->getCollection()
