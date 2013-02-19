@@ -47,7 +47,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   public function start_document() {
     $this->_log("Starting document load.");
-    
+
     $this->_key_stack = array();
     $this->_value_stack = array();
     $this->_type_stack = array();
@@ -233,8 +233,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     if ($this->_nesting_level === self::HEADER_NESTING_LEVEL) {
       if ($key === 'attributes') {
+        $this->_log("Starting to parse attributes.");
         $this->_in_attributes = true;
       } elseif ($key === 'products') {
+        $this->_log("Starting to parse products.");
         $this->_in_products = true;
       }
       // TODO other modes
