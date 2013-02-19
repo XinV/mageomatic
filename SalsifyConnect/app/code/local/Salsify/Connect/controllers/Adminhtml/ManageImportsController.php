@@ -118,7 +118,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   private function _create_category() {
     $category = Mage::getModel('catalog/category')
-                    ->loadByAttribute('name','Joel');
+                    ->loadByAttribute('name','Joel Momma');
     $this->_log("category: " . var_export($category, true));
     return true;
     
