@@ -349,7 +349,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $attribute = array();
     $attribute['id'] = self::SALSIFY_CATEGORY_ID;
     $attribute['name'] = self::SALSIFY_CATEGORY_ID_NAME;
-    $attribute['type'] = self::PRODUCT;
+    $attribute['type'] = self::CATEGORY;
     $this->_create_attribute_if_needed($attribute);
   }
 
@@ -524,8 +524,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $entity_type_id     = $this->_get_entity_type_id($attribute);
     $attribute_set_id   = $this->_get_attribute_set_id($attribute);
     $attribute_group_id = $this->_get_attribute_group_id($entity_type_id, $attribute_set_id);
-
-    $this->_log("entity crap: " . $entity_type_id . ',' . $attribute_set_id . ',' . $attribute_group_id);;
 
     $model->setEntityTypeId($entity_type_id);
     $model->setAttributeSetId($attribute_set_id);
