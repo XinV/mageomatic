@@ -297,7 +297,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("Flushing product batch of size: ".count($this->_batch));
 
     try {
-      // TODO decide which of these APIs to use
+      // TODO decide which of these APIs to use. Right now I prefer the
+      //      FastSimpleImport. It has a slightly nicer API, different modes,
+      //      and gives much better error reporting. For example, when import
+      //      was failing due to 256-character properties, FastSimple gave me
+      //      error messages, but ApiImport did not.
 
       Mage::getSingleton('fastsimpleimport/import')
           ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)

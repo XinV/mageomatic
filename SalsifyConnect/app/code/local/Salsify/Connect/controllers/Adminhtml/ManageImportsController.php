@@ -71,9 +71,39 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // $attribute['name'] = "TESTING";
     // $loader->_create_attribute('salsify_12345', $attribute, 'text', 'simple');
 
-    $attribute = $loader->_get_attribute_from_code('color');
+    // $attribute = $loader->_get_attribute_from_code('color');
+    // $this->_render_html("attribute: " . var_export($attribute, true));
 
-    $this->_render_html("attribute: " . var_export($attribute, true));
+    $data = array();
+    $data[] = array(
+      '_root' => 'TESTING CATEGORY',
+      '_category' => 'Test2',
+      'name' => 'Test2',
+      'description' => 'Test2',
+      'is_active' => 'yes',
+      'include_in_menu' => 'yes',
+      'meta_description' => 'Meta Test',
+      'available_sort_by' => 'position',
+      'default_sort_by' => 'position',
+    );
+    $data[] = array(
+      '_root' => 'TESTING CATEGORY',
+      '_category' => 'Test2/Test3',
+      'name' => 'TestTest',
+      'description' => 'Test3',
+      'is_active' => 'yes',
+      'include_in_menu' => 'yes',
+      'meta_description' => 'Meta Test',
+      'available_sort_by' => 'position',
+      'default_sort_by' => 'position',
+    );
+
+    $import = Mage::getModel('fastsimpleimport/import');
+    try {
+      $import->processCategoryImport($data);
+    } catch (Exception $e) {
+      $this->_render_html("ERROR: " . $import->getErrorMessages());
+    }
 
     $this->_end_render();
   }
