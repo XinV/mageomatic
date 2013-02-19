@@ -277,7 +277,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           ->processProductImport($this->_batch);
       $this->_batch = array();
     } catch (Exception $e) {
-      $this->_log('ERROR could not flush batch: '.$e->getMessage());
+      $this->_log('ERROR could not flush batch: ' . $e->getMessage());
+      $this->_log('Backtrace:' . $e->getTraceAsString());
     }
   }
 
