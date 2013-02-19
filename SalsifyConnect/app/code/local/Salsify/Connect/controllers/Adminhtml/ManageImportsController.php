@@ -66,11 +66,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/test');
 
     $loader = Mage::helper('salsify_connect/loader');
-    $attribute = array();
-    $attribute['name'] = "TESTING";
-    $loader->_create_attribute('salsify_12345', $attribute, 'text', 'simple');
 
-    $this->_render_html("created attribute");
+    // $attribute = array();
+    // $attribute['name'] = "TESTING";
+    // $loader->_create_attribute('salsify_12345', $attribute, 'text', 'simple');
+
+    $attribute = $loader->_get_attribute_from_code('color');
+
+    $this->_render_html("attribute: " . var_export($attribute, true));
 
     $this->_end_render();
   }

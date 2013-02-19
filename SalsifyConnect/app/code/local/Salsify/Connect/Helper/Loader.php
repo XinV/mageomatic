@@ -74,6 +74,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Update all indexes in Magento.
   private function _reindex() {
+    $this->_log("Rebuilding all indexes.");
+
     $processCollection = Mage::getSingleton('index/indexer')
                              ->getProcessesCollection(); 
     
@@ -375,7 +377,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
-  private function _get_attribute_from_code($code) {
+  public function _get_attribute_from_code($code) {
     $attributeId = Mage::getResourceModel('eav/entity_attribute')
                        ->getIdByCode('catalog_product', $code);
     if (!$attributeId) {
