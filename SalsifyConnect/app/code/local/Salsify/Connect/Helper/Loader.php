@@ -18,9 +18,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //      accidentally intersect with this, though that seems like a low-probability
   //      event.
   const SALSIFY_PRODUCT_ID = 'salsify_product_id';
-  const SALSIFY_PRODUCT_ID_NAME = 'Salsify ID';
+  const SALSIFY_PRODUCT_ID_NAME = 'Salsify Product ID';
   const SALSIFY_CATEGORY_ID = 'salsify_category_id';
-  const SALSIFY_CATEGORY_ID_NAME = 'Salsify ID';
+  const SALSIFY_CATEGORY_ID_NAME = 'Salsify Category ID';
 
   // For types of attributes
   const PRODUCT  = 1;
@@ -524,6 +524,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $entity_type_id     = $this->_get_entity_type_id($attribute);
     $attribute_set_id   = $this->_get_attribute_set_id($attribute);
     $attribute_group_id = $this->_get_attribute_group_id($entity_type_id, $attribute_set_id);
+
+    $this->_log("SHIT: ".$entity_type_id.','.$attribute_set_id.','.$attribute_group_id);
 
     $model->setEntityTypeId($entity_type_id);
     $model->setAttributeSetId($attribute_set_id);
