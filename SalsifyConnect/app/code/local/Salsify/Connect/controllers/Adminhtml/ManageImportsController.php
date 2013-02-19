@@ -154,6 +154,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     } catch (Exception $e) {
       $this->_log("ERROR creating category: " . $e->getMessage());
     }
+
+    $this->_log("Category entity type: " . $category->getEntityTypeId());
   }
 
 
