@@ -145,16 +145,17 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $this->_log("SETTING MY CUSTOM PROPERTY VALUE");
     $category->setSalsifyCategoryId('BITCHES');
+    $this->_log("SET");
 
     // Even though this is a 'root' category, it's parent is still the global
     // Magento root category, which never shows up in display anywhere.
     $parent_category = Mage::getModel('catalog/category')->load('1');
     $category->setPath($parent_category->getPath()); 
 
-    $attribute_set_id = $parent_category->getResource()
-                                        ->getEntityType()
-                                        ->getDefaultAttributeSetId();
-    $model->setAttributeSetId($attribute_set_id);
+    // $attribute_set_id = $parent_category->getResource()
+    //                                     ->getEntityType()
+    //                                     ->getDefaultAttributeSetId();
+    // $model->setAttributeSetId($attribute_set_id);
 
     // FIXME need this?
     // $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
