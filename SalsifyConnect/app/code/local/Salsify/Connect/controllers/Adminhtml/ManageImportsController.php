@@ -109,6 +109,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
     // }
 
+    $loader->start_document();
+    $loader->_create_attribute_if_needed('salsifyExternalId');
     $this->_create_category();
     $this->_log("Done creating category");
 
@@ -135,6 +137,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $category->setIsAnchor('0');
     $category->setLevel('1');
     $category->setParentId('1');
+
+    $category->setSalsifyExternalId('BITCHES');
 
     $parentCategory = Mage::getModel('catalog/category')->load('1');
     $category->setPath($parentCategory->getPath()); 

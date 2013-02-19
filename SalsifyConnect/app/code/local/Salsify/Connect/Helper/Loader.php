@@ -318,6 +318,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // FIXME make this private
   public function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
@@ -381,7 +382,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
-  public function _get_attribute_from_code($code) {
+  private function _get_attribute_from_code($code) {
     $attributeId = Mage::getResourceModel('eav/entity_attribute')
                        ->getIdByCode('catalog_product', $code);
     if (!$attributeId) {
