@@ -259,7 +259,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         } else {
           $attribute = $this->_attributes[$key];
           $code = $this->_attribute_code($attribute);
-          $this->_product[$code] = $value;
+
+          // FIXME how can we store longer properties?
+          $this->_product[$code] = substr($value, 0, 255);
         }
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
@@ -389,8 +391,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO should we be flexible on global vs. store? what elements here should
     //      be configurable during an import?
 
-    // FIXME update these settings so that they are shown in the product details
-    //       page for demo purposes.
     $_attribute_data = array(
       'attribute_code' => $code,
       'note' => 'Added automatically during Salsify import',
