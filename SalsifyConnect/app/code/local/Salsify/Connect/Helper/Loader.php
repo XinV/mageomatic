@@ -272,7 +272,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _flush_batch() {
     $this->_log("BATCH SIZE: " . count($this->_batch));
-    $this->_log("BATCH ITEM: " . var_dump($this->_batch[0]));
+    $this->_log("BATCH ITEM: " . var_export($this->_batch[0], true));
 
     try {
       Mage::getSingleton('fastsimpleimport/import')
