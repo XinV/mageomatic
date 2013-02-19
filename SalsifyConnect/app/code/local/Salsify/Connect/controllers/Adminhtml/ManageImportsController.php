@@ -109,9 +109,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
     // }
 
-    // hack to make sure that the salsify external id exists
-    $attribute = array();
-    $attribute['id'] = "salsify_id";
+    // called just to make sure that the salsify external id exists
     $loader->start_document();
 
     $this->_create_category();
@@ -132,23 +130,33 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // $category->setStoreId(0);
     $category->setName('Joel Momma');
     $category->setUrlKey('joel-momma');
-    $category->setIsActive('1');
-    $category->setIncludeInMenu('1');
     $category->setDescription('Created during Salsify import.');
+
     // TODO what are the other options?
     $category->setDisplayMode('PRODUCTS_AND_PAGE');
+
+    $category->setIsActive('1');
+    $category->setIncludeInMenu('1');
     $category->setIsAnchor('0');
     $category->setLevel('1');
     $category->setParentId('1');
 
-    $category->setSalsifyId('BITCHES');
+    $category->setSalsifyCategoryId('BITCHES');
 
-    $parentCategory = Mage::getModel('catalog/category')->load('1');
-    $category->setPath($parentCategory->getPath()); 
-    // TODO attribute_set_id is not being set for the new categories. Copy from
-    //      the parent? Not sure what the advantage is yet from a navigation
-    //      perspective.
-    
+    // Even though this is a 'root' category, it's parent is still the global
+    // Magento root category, which never shows up in display anywhere.
+    $parent_category = Mage::getModel('catalog/category')->load('1');
+    $category->setPath($parent_category->getPath()); 
+
+    $attribute_set_id = $parent_category->getResource()
+                                        ->getEntityType()
+                                        ->getDefaultAttributeSetId();
+    $model->setAttributeSetId($attribute_set_id);
+
+    // FIXME need this?
+    // $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
+    // $model->setAttributeGroupId($attributeGroupId);
+
     try {
       $category->save();
     } catch (Exception $e) {

@@ -12,9 +12,19 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     Mage::log('Loader: ' . $msg, null, 'salsify.log', true);
   }
 
-  const SALSIFY_ID = 'salsify_id';
-  const SALSIFY_ID_NAME = 'Salsify ID';
-  private $_salsify_id_attribute;
+  // attribute_codes for attributes that store the Salsify IDs within Magento
+  // for various object types.
+  // TODO need to special case ids coming from salsify to make sure they don't
+  //      accidentally intersect with this, though that seems like a low-probability
+  //      event.
+  const SALSIFY_PRODUCT_ID = 'salsify_product_id';
+  const SALSIFY_PRODUCT_ID_NAME = 'Salsify ID';
+  const SALSIFY_CATEGORY_ID = 'salsify_category_id';
+  const SALSIFY_CATEGORY_ID_NAME = 'Salsify ID';
+
+  // For types of attributes
+  const PRODUCT  = 1;
+  const CATEGORY = 2;
 
   // Current keys and values that we're building up. We have to do it this way
   // vs. just having a current object stack because php deals with arrays as
@@ -65,11 +75,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_in_attributes = false;
     $this->_in_products = false;
 
-    // ensure that the Salsify external ID property exists.
-    $attribute = array();
-    $attribute['id'] = self::SALSIFY_ID;
-    $attribute['name'] = self::SALSIFY_ID_NAME;
-    $this->_salsify_id_attribute = $this->_create_attribute_if_needed($attribute);
+    $this->_create_salsify_id_attributes_if_needed();
 
     // FIXME set the salsify_id for ALL objects coming into the system
   }
@@ -329,8 +335,26 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // FIXME make this private
-  public function _create_attribute_if_needed($attribute) {
+  private function _create_salsify_id_attributes_if_needed() {
+    // TODO pass in is_unique into the creation to make sure that it is, in fact,
+    //      unique
+    // TODO figure out how to prevent the value from being editable
+
+    $attribute = array();
+    $attribute['id'] = self::SALSIFY_PRODUCT_ID;
+    $attribute['name'] = self::SALSIFY_PRODUCT_ID_NAME;
+    $attribute['type'] = self::PRODUCT;
+    $this->_create_attribute_if_needed($attribute);
+
+    $attribute = array();
+    $attribute['id'] = self::SALSIFY_CATEGORY_ID;
+    $attribute['name'] = self::SALSIFY_CATEGORY_ID_NAME;
+    $attribute['type'] = self::PRODUCT;
+    $this->_create_attribute_if_needed($attribute);
+  }
+
+
+  private function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
       // TODO enable product type configuration here when relevant. For now we're
@@ -378,8 +402,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     // TODO get other OOTB type attributes via mapping from Salsify.
 
-    if ($attribute['id'] === self::SALSIFY_ID) {
-      return self::SALSIFY_ID;
+    if ($attribute['id'] === self::SALSIFY_PRODUCT_ID) {
+      return self::SALSIFY_PRODUCT_ID;
+    } elseif ($attribute['id'] === self::SALSIFY_CATEGORY_ID) {
+      return self::SALSIFY_PRODUCT_ID;
     }
 
     // code can only be 30 characters at most and cannot contain spaces
@@ -424,7 +450,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO should we be flexible on global vs. store? what elements here should
     //      be configurable during an import?
 
-    $_attribute_data = array(
+    $attribute_data = array(
       'attribute_code' => $code,
       'note' => 'Added automatically during Salsify import',
       'default_value_text' => '',
@@ -440,7 +466,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // # backend_table
       // # source_model
 
-      'is_user_defined' => 0,
+      'is_user_defined' => 1,
       'is_global' => 1,
       'is_unique' => 0,
       'is_required' => 0,
@@ -481,39 +507,26 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if (is_null($model->getIsUserDefined()) || $model->getIsUserDefined() != 0) {
       // required to let Magento know how to store the values for this attribute
       // in their EAV setup.
-      $_attribute_data['backend_type'] = $model->getBackendTypeByInput($_attribute_data['frontend_input']);
+      $attribute_data['backend_type'] = $model->getBackendTypeByInput($attribute_data['frontend_input']);
     }
 
-    $defaultValueField = $model->getDefaultValueByInput($_attribute_data['frontend_input']);
-    if ($defaultValueField) {
-      $_attribute_data['default_value'] = $_attribute_data[$defaultValueField];
+    $default_value_field = $model->getDefaultValueByInput($attribute_data['frontend_input']);
+    if ($default_value_field) {
+      $attribute_data['default_value'] = $attribute_data[$default_value_field];
     }
 
-    $model->addData($_attribute_data);
-    $model->setIsUserDefined(1);
+    $model->addData($attribute_data);
 
     // Need to add the properties to a specific group of they don't show up in
     // the admin UI at all. In the future we might want to make this an option
     // so that we don't pollute the general attribute set. Maybe dumping all
     // into a Salsify group?
-
-    // originally:
-    // $model->setEntityTypeId(Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId());
-    $entityTypeId = Mage::getModel('eav/entity')
-                        ->setType('catalog_product')
-                        ->getTypeId();
-    $model->setEntityTypeId($entityTypeId);
-
-    $attributeSetId = Mage::getModel('catalog/product')
-                          ->getResource()
-                          ->getEntityType()
-                          ->getDefaultAttributeSetId();
-    $model->setAttributeSetId($attributeSetId);
-
-    # wish I knew a better way to do this without having to get the core setup...
-    $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
-    $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
-    $model->setAttributeGroupId($attributeGroupId);
+    $entity_type_id     = $this->_get_entity_type_id($attribute);
+    $attribute_set_id   = $this->_get_attribute_set_id($attribute);
+    $attribute_group_id = $this->_get_attribute_group_id($entity_type_id, $attribute_set_id);
+    $model->setEntityTypeId($entity_type_id);
+    $model->setAttributeSetId($attribute_set_id);
+    $model->setAttributeGroupId($attribute_group_id);
 
     try {
       $model->save();
@@ -523,5 +536,56 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     // should be in the DB now
     return $this->_get_attribute_from_code($code);
+  }
+
+
+  private function _get_attribute_type($attribute) {
+    if (array_key_exists('type', $attribute)) {
+      return $attribute['type'];
+    } else {
+      return self::PRODUCT;
+    }
+  }
+
+
+  private function _get_entity_type_id($attribute) {
+    $type = $this->_get_attribute_type($attribute);
+    $model = Mage::getModel('eav/entity');
+
+    if ($type === self::PRODUCT) {
+      $model->setType('catalog_product');
+    } elseif ($type === self::CATEGORY) {
+      $model->setType('catalog_category');
+    } else {
+      $this->_log("ERROR: unrecognized type id in attribute: " . var_export($attribute, true));
+      return null;
+    }
+
+    return $model->getTypeId();
+  }
+
+
+  private function _get_attribute_set_id($attribute) {
+    $type = $this->_get_attribute_type($attribute);
+
+    if ($type === self::PRODUCT) {
+      $model = Mage::getModel('catalog/product');
+    } elseif ($type === self::CATEGORY) {
+      $model = Mage::getModel('catalog/category');
+    } else {
+      $this->_log("ERROR: unrecognized type id in attribute: " . var_export($attribute, true));
+      return null;
+    }
+
+    return $model->getResource()
+                 ->getEntityType()
+                 ->getDefaultAttributeSetId();
+  }
+
+
+  private function _get_attribute_group_id($entity_type_id, $attribute_set_id) {
+    # wish I knew a better way to do this without having to get the core setup...
+    $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+    return $setup->getDefaultAttributeGroupId($entity_type_id, $attribute_set_id);
   }
 }
