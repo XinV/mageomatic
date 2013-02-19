@@ -110,19 +110,20 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // }
 
     $category = new Mage_Catalog_Model_Category();
+    // TODO we're currently ignoring this
     // $category->setStoreId(0);
     $category->setName('Joel Momma');
     $category->setUrlKey('joel-momma');
     $category->setIsActive('1');
     $category->setIncludeInMenu('1');
-    // $category->setDescription('Joel Momma');
+    $category->setDescription('Created during Salsify import.');
+    // TODO not sure what this is
     // $category->setDisplayMode('PRODUCTS');
     $category->setIsAnchor('0');
-    $category->setLevel('0');
-    // $category->setParentId('1');
-
-    // $parentCategory = Mage::getModel('catalog/category')->load('1');
-    // $category->setPath($parentCategory->getPath()); 
+    $category->setLevel('1');
+    $category->setParentId('1');
+    $parentCategory = Mage::getModel('catalog/category')->load('1');
+    $category->setPath($parentCategory->getPath()); 
     try {
       $category->save();
       $this->_render_html("Done: " . var_export($category, true));
