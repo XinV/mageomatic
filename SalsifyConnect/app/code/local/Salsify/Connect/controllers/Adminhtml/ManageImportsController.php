@@ -242,7 +242,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("Total Salsify products deleted: " . count($salsify_products) . '<br/>');
     foreach($salsify_products as $product) { $product->delete(); }
 
-    // TODO this doesn't work.
+    // TODO delete all the properties programtically.
     // In mysql:
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
@@ -252,6 +252,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //                           ->addFieldToFilter('attribute_code', array('like'=>'salsify_%'));
     // $this->_render_html("Total Salsify attributes deleted: " . count($salsify_attributes) . '<br/>');
     // foreach($salsify_attributes as $attribute) { $attribute->delete(); }
+
+    // TODO clear out the jobs table as well.
 
     $this->_end_render();
   }

@@ -297,12 +297,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     try {
       // TODO decide which of these APIs to use
 
-      // Mage::getSingleton('fastsimpleimport/import')
-      //     ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
-      //     ->processProductImport($this->_batch);
+      Mage::getSingleton('fastsimpleimport/import')
+          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+          ->processProductImport($this->_batch);
 
-      $api = Mage::getModel('api_import/import_api');
-      $api->importEntities($this->_batch);
+      // $api = Mage::getModel('api_import/import_api');
+      // $api->importEntities($this->_batch);
 
       $this->_batch = array();
     } catch (Exception $e) {
