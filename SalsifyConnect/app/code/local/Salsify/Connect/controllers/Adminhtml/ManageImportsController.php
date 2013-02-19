@@ -109,8 +109,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
     // }
 
+    $attribute = array();
+    $attribute['name'] = "salsify_external_id";
     $loader->start_document();
-    $loader->_create_attribute_if_needed('salsifyExternalId');
+    $loader->_create_attribute_if_needed($attribute);
+    
     $this->_create_category();
     $this->_log("Done creating category");
 
