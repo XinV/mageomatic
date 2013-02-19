@@ -46,6 +46,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   public function start_document() {
+    $this->_log("Starting document load.");
+    
     $this->_key_stack = array();
     $this->_value_stack = array();
     $this->_type_stack = array();
