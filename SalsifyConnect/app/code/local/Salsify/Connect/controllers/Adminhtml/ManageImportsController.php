@@ -109,11 +109,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
     // }
 
+    // hack to make sure that the salsify external id exists
     $attribute = array();
-    $attribute['id'] = "salsify_external_id";
-    $attribute['name'] = "ID in Salsify";
+    $attribute['id'] = "salsify_id";
     $loader->start_document();
-    $loader->_create_attribute_if_needed($attribute);
 
     $this->_create_category();
     $this->_log("Done creating category");
@@ -142,7 +141,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $category->setLevel('1');
     $category->setParentId('1');
 
-    $category->setSalsifyExternalId('BITCHES');
+    $category->setSalsifyId('BITCHES');
 
     $parentCategory = Mage::getModel('catalog/category')->load('1');
     $category->setPath($parentCategory->getPath()); 
