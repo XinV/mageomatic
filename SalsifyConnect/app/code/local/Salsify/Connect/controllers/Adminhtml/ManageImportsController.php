@@ -121,7 +121,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   private function _create_category() {
     $this->_log("creating category");
-    
+
     // $category = Mage::getModel('catalog/category')
     //                 ->loadByAttribute('name','Joel Momma');
     // $this->_log("category: " . var_export($category, true));
@@ -143,6 +143,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $category->setLevel('1');
     $category->setParentId('1');
 
+    $this->_log("SETTING MY CUSTOM PROPERTY VALUE");
     $category->setSalsifyCategoryId('BITCHES');
 
     // Even though this is a 'root' category, it's parent is still the global
