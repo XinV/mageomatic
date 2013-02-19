@@ -125,6 +125,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // $category->setPath($parentCategory->getPath()); 
     try {
       $category->save();
+      $this->_render_html("Done: " . var_export($category, true));
     } catch (Exception $e) {
       $this->_render_html("EXCEPTION: " . $e->getMessage());
     }
