@@ -119,10 +119,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
 
   private function _create_category() {
-    $category = Mage::getModel('catalog/category')
-                    ->loadByAttribute('name','Joel Momma');
-    $this->_log("category: " . var_export($category, true));
-    return true;
+    // $category = Mage::getModel('catalog/category')
+    //                 ->loadByAttribute('name','Joel Momma');
+    // $this->_log("category: " . var_export($category, true));
+    // return true;
     
     $category = new Mage_Catalog_Model_Category();
     // TODO we're currently ignoring this. I *think* this sets the default store.
