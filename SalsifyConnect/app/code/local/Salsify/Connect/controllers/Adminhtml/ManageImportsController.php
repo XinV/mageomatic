@@ -111,7 +111,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $categories = Mage::getModel('catalog/category')->getCollection();
     foreach($categories as $category) {
-      $this->_render_html(var_export($category->getName(), true) . '<br/>');
+      $this->_render_html(var_export($category, true) . '<br/>');
     }
 
     $this->_end_render();
