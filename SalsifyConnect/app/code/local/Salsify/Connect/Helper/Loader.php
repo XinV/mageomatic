@@ -12,6 +12,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     Mage::log('Loader: ' . $msg, null, 'salsify.log', true);
   }
 
+  const SALSIFY_ID = 'salsify_id';
+  const SALSIFY_ID_NAME = 'Salsify ID';
+  private $_salsify_id_attribute;
 
   // Current keys and values that we're building up. We have to do it this way
   // vs. just having a current object stack because php deals with arrays as
@@ -61,6 +64,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_nesting_level = 0;
     $this->_in_attributes = false;
     $this->_in_products = false;
+
+    // ensure that the Salsify external ID property exists.
+    $attribute = array();
+    $attribute['id'] = self::SALSIFY_ID;
+    $attribute['name'] = self::SALSIFY_ID_NAME;
+    $this->_salsify_id_attribute = $this->_create_attribute_if_needed($attribute);
+
+    // FIXME set the salsify_id for ALL objects coming into the system
   }
 
 
@@ -321,6 +332,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // FIXME make this private
   public function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
+
+    if ($id === self::SALSIFY_ID) {
+      return $this->_salsify_id_attribute;
+    }
+
     if (!array_key_exists($id, $this->_attributes)) {
       // TODO enable product type configuration here when relevant. For now we're
       //      just supporting simple products anyway (not grouped, configurable,
