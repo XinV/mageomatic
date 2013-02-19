@@ -279,7 +279,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       //     ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
       //     ->processProductImport($this->_batch);
 
-      $entity_type = Mage_ImportExport_Model_Import_Entity_Product::getEntityTypeCode();
+      $entity_type = Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode();
       $api = Mage::getModel('api_import/import_api');
       $api->importEntities($this->_batch, $entity_type);
 
