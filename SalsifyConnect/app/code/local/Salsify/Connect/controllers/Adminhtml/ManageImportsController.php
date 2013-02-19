@@ -141,7 +141,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $category->setLevel('1');
     $category->setParentId('1');
 
-    $category->setSalsifyId('BITCHES');
+    $category['salsify_id'] = 'BITCHES';
 
     $parentCategory = Mage::getModel('catalog/category')->load('1');
     $category->setPath($parentCategory->getPath()); 
