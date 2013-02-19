@@ -128,6 +128,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_product = array();
 
     // Add fields required by Magento.
+    // FIXME query the system to get the full list of required attributes.
+    //       otherwise the bulk import fails silently...
 
     // TODO Salsify only supports simple products right now
     $this->_product['_type'] = 'simple';
