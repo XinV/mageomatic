@@ -161,7 +161,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _end_product() {
-    array_push($this->_batch, $this->_product);
+    // TODO figure out the best solution to get multi-valued properties into
+    //      Magento.
+    $clean_product = array();
+    foreach($this->_product as $key => $val) {
+      if (is_array($val)) {
+        $clean_product[$key] = implode(', ', $val);
+      } else {
+        $clean_product[$key] = $val;
+      }
+    }
+
+    array_push($this->_batch, $clean_product);
     $this->_product = null;
 
     if (count($this->_batch) > self::BATCH_SIZE) {
@@ -268,7 +279,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // unbelievable how PHP doesn't have array_peek...
       $parent = array_pop($this->_value_stack);
       $type = array_pop($this->_type_stack);
-      array_push($this->_type_stack, $type);
       if ($type === self::ARRAY_TYPE) {
         array_push($parent, $value);
       } elseif ($type === self::OBJECT_TYPE) {
@@ -276,6 +286,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $parent[$key] = $value;
       }
       array_push($this->_value_stack, $parent);
+      array_push($this->_type_stack, $type);
     }
   }
 
@@ -285,7 +296,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     try {
       // TODO decide which of these APIs to use
-      
+
       // Mage::getSingleton('fastsimpleimport/import')
       //     ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
       //     ->processProductImport($this->_batch);
