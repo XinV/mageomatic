@@ -76,7 +76,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $data = array();
     $data[] = array(
-      '_root' => 'TESTING CATEGORY',
+      '_root' => 'Default Category',
       '_category' => 'Test2',
       'name' => 'Test2',
       'description' => 'Test2',
@@ -87,7 +87,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'default_sort_by' => 'position',
     );
     $data[] = array(
-      '_root' => 'TESTING CATEGORY',
+      '_root' => 'Default Category',
       '_category' => 'Test2/Test3',
       'name' => 'TestTest',
       'description' => 'Test3',
