@@ -744,7 +744,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
     }
 
-    unset($this->_categories);
     $this->_log("done loading categories into database.");
   }
 
