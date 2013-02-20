@@ -46,6 +46,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // current category that we're building up
   private $_category;
 
+  // this is created while processing the categories and keeps track of all the
+  // category IDs so that when we process products we know whether a particular
+  // value is a category ID or simple an attribute value.
+  private $_category_ids;
+
   // Current product batch that has been read in.
   const BATCH_SIZE = 1000;
   private $_batch;
@@ -432,6 +437,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  private function _delete_attribute_from_salsify_id($attribute_id) {
+    $attribute = array();
+    $attribute['id'] = $attribute_id;
+    $code = $this->_attribute_code($attribute);
+    $dbattribute = $this->_get_attribute_from_code($code);
+    if ($dbattribute) {
+      $dbattribute->delete();
+    }
+  }
+
+
   private function _attribute_code($attribute) {
     $is_id = false;
     $is_name = false;
@@ -456,9 +472,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     // TODO get other OOTB type attributes via mapping from Salsify.
 
-    if ($attribute['id'] === self::SALSIFY_PRODUCT_ID) {
+    $id = $attribute['id'];
+
+    if ($id === self::SALSIFY_PRODUCT_ID) {
       return self::SALSIFY_PRODUCT_ID;
-    } elseif ($attribute['id'] === self::SALSIFY_CATEGORY_ID) {
+    } elseif ($id === self::SALSIFY_CATEGORY_ID) {
       return self::SALSIFY_CATEGORY_ID;
     }
 
@@ -470,7 +488,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // Could also have edited this file:
     //   /app/code/core/Mage/Eav/Model/Entity/Attribute.php
     //   CONST ATTRIBUTE_CODE_MAX_LENGTH = 60;
-    $code = 'salsify_'.md5($attribute['name']);
+    $code = 'salsify_'.md5($id);
     $code = substr($code, 0, 30);
     return $code;
   }
@@ -659,15 +677,43 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // This just makes sure that every single category has its children filled out.
+  // Divides all the category values by attribute_id. Makes sure each category
+  // value has __loaded set to false (keeps track of whether or not it's been
+  // loaded into the DB). Makes sure all child values for each category value
+  // are set.
   private function _prepare_category_hierarchy() {
-    $new_categories = array();
+    $this->_category_ids = array();
+
+    $prepped_categories = array();
     foreach ($this->_categories as $id => $category) {
+      if (!array_key_exists('attribute_id', $category)) {
+        $this->_log("ERROR: no attribute_id specified for category: " . var_export($category, true));
+        continue;
+      }
+      $attribute_id = $category['attribute_id'];
+
+      if (!in_array($attribute_id, $this->_category_ids)) {
+        $this->_category_ids[] = $attribute_id;
+
+        // First time seeing this. If it exists, let's make sure to delete the
+        // actual attribute from the system. The reason we do this here is so
+        // that we don't have to keep all of the attributes in memory as we go
+        // through the prior attributes section. So we just assume that they're
+        // all valid and then delete here.
+        $this->_delete_attribute_from_salsify_id($attribute_id);
+      }
+
+      if (array_key_exists($attribute_id, $prepped_categories)) {
+        $categories = $prepped_categories[$attribute_id];
+      } else {
+        $categories = array();
+      }
+
       if (array_key_exists('parent_id', $category)) {
         $parent_id = $category['parent_id'];
 
-        if (array_key_exists($parent_id, $new_categories)) {
-          $parent = $new_categories[$parent_id];
+        if (array_key_exists($parent_id, $categories)) {
+          $parent = $categories[$parent_id];
         } else {
           $parent = array();
         }
@@ -677,19 +723,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         }
 
         $parent['__children'][] = $id;
-        $new_categories['parent_id'] = $parent;
-      } else {
-        $this->_log("ROOT: " . var_export($category, true));
+        $categories['parent_id'] = $parent;
       }
 
-      if (array_key_exists($id, $new_categories)) {
+      if (array_key_exists($id, $categories)) {
         // make sure to copy children over that have been seen
-        $category['__children'] = $new_categories[$id]['__children'];
+        $category['__children'] = $categories[$id]['__children'];
       }
 
       $category['__loaded'] = false;
-      $new_categories[$id] = $category;
+      $categories[$id] = $category;
+      $prepped_categories[$attribute_id] = $categories;
     }
-    $this->_categories = $new_categories;
+    $this->_categories = $prepped_categories;
   }
 }
