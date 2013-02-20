@@ -141,7 +141,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                         ->loadByAttribute('salsify_category_id', 'BITCHES');
       $this->_log("Value: " . var_export($dbcategory, true));
       $this->_log("Trying to get level");
-      $level = $dbcategory->getLevel();
+      $level = $dbcategory->getLevel() + 1;
       $this->_log("Level: " . $level);
     } catch (Exception $e) {
       $this->_log("Error fetching nonexistant thing: " . $e->getMessage());
