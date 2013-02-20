@@ -723,13 +723,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("finished reading categories.");
 
     $this->_prepare_category_hierarchy();
-    foreach ($this->_categories as $category) {
-      if (!array_key_exists('id', $category)) {
-        // FIXME remove
-        $this->_log("NO ID???? " . var_export($category, true));
+    // after preparing the categories, the categories are grouped by the
+    // attribute that they're associated with.
+    // TODO should be we be creating new roots per attribute? Right now the data
+    //      we're getting takes care of rooting itself, so that feels like it
+    //      would create an additional, unnatural attribute type.
+    foreach ($this->_categories as $attribute_id => $categories) {
+      foreach ($categories as $category) {
+        $id = $category['id'];
+        $this->_create_category_and_ancestors($attribute_id, $category);
       }
-      $id = $category['id'];
-      $this->_create_category_and_ancestors($category);
     }
 
     unset($this->_categories);
@@ -768,34 +771,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $categories = array();
       }
 
-      if (array_key_exists('parent_id', $category)) {
-        $parent_id = $category['parent_id'];
-
-        if (array_key_exists($parent_id, $categories)) {
-          $parent = $categories[$parent_id];
-        } else {
-          $parent = array();
-        }
-
-        if (!array_key_exists('__children', $parent)) {
-          $parent['__children'] = array();
-        }
-
-        $parent['__children'][] = $id;
-        $categories['parent_id'] = $parent;
-      }
-
-      if (array_key_exists($id, $categories)) {
-        // make sure to copy children over that have been seen
-        $category['__children'] = $categories[$id]['__children'];
-      }
-
       // can't used _set_load_status here since we're about to overwrite the 
       // global _categories variable.
       $category['__load_status'] = self::LOAD_NOT_ATTEMPTED;
       $categories[$id] = $category;
       $prepped_categories[$attribute_id] = $categories;
     }
+
     $this->_categories = $prepped_categories;
   }
 
@@ -810,8 +792,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // ensures that a category and all of it's ancestors are in the DB. this will
   // start from the root and work its way up. returns true if successful.
-  private function _create_category_and_ancestors($category) {
-    $load_status = $this->_get_load_status($category);
+  private function _create_category_and_ancestors($attribute_id, $category) {
+    $load_status = $this->_get_load_status($attribute_id, $category);
     if ($load_status === self::LOAD_SUCCEEDED) {
       return true;
     } elseif ($load_status === self::LOAD_FAILED) {
@@ -821,7 +803,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // check if the category already exists in the DB
     $dbcategory = $this->_get_category($category);
     if ($dbcategory) {
-      $this->_set_load_status(self::LOAD_SUCCEEDED);
+      $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
       return true;
     }
 
@@ -830,14 +812,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $parent_id = $category['parent_id'];
       if (!array_key_exists($parent_id)) {
         $this->_log("ERROR: parent ID mentioned for category was not included in import file: " . var_export($category, true));
-        $this->_set_load_status($category, self::LOAD_FAILED);
+        $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
         return false;
       }
       $parent_category = $this->_categories[$parent_id];
       $parent_loaded = $this->_create_category_and_ancestors($parent_category);
       if (!$parent_loaded) {
         $this->_log("ERROR: could not load ancestry for category: " . var_export($category, true));
-        $this->_set_load_status($category, self::LOAD_FAILED);
+        $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
         return false;
       }
     }
@@ -845,21 +827,21 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // finally, create the category
     $dbcategory = $this->_create_category($category);
     if ($dbcategory) {
-      $this->_set_load_status($category, self::LOAD_SUCCEEDED);
+      $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
       return true;
     } else {
-      $this->_set_load_status($category, self::LOAD_FAILED);
+      $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
       return false;
     }
   }
 
 
-  private function _get_load_status($category) {
-    return $this->_categories[$category['id']]['__load_status'];
+  private function _get_load_status($attribute_id, $category) {
+    return $this->_categories[$attribute_id][$category['id']]['__load_status'];
   }
 
-  private function _set_load_status($category, $load_status) {
-    $this->_categories[$category['id']]['__load_status'] = $load_status;
+  private function _set_load_status($attribute_id, $category, $load_status) {
+    $this->_categories[$attribute_id][$category['id']]['__load_status'] = $load_status;
   }
 
 
