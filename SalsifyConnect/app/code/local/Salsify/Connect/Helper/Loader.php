@@ -866,6 +866,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _get_path($category) {
+    $attribute_id = $category['attribute_id'];
     return $this->_categories[$attribute_id][$category['id']]['__path'];
   }
 
