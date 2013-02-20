@@ -440,6 +440,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _delete_attribute_from_salsify_id($attribute_id) {
     $attribute = array();
     $attribute['id'] = $attribute_id;
+    
+    $attribute['type'] = self::CATEGORY;
+    $this->_delete_attribute($attribute);
+
+    $attribute['type'] = self::PRODUCT;
+    $this->_delete_attribute($attribute);
+  }
+
+
+  private function _delete_attribute($attribute) {
     $dbattribute = $this->_get_attribute($attribute);
     if ($dbattribute) {
       $dbattribute->delete();
