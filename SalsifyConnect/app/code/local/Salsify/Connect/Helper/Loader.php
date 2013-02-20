@@ -816,7 +816,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         return false;
       }
       $parent_category = $this->_categories[$attribute_id][$parent_id];
-      $parent_loaded = $this->_create_category_and_ancestors($parent_category);
+      $parent_loaded = $this->_create_category_and_ancestors($attribute_id, $parent_category);
       if (!$parent_loaded) {
         $this->_log("ERROR: could not load ancestry for category: " . var_export($category, true));
         $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
