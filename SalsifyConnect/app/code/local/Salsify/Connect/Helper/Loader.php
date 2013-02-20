@@ -720,15 +720,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // This goes through all the categories that were seen in the import and makes
   // sure that they and their ancestors are all loaded into Magento.
   private function _create_categories_if_needed() {
-    $this->_log("finished reading categories.");
+    $this->_log("finished reading categories. now loading into database");
 
     $this->_prepare_category_hierarchy();
+
+    $this->_log("FIXME prepped");
     // after preparing the categories, the categories are grouped by the
     // attribute that they're associated with.
     // TODO should be we be creating new roots per attribute? Right now the data
     //      we're getting takes care of rooting itself, so that feels like it
     //      would create an additional, unnatural attribute type.
     foreach ($this->_categories as $attribute_id => $categories) {
+      $this->_log("FIXME iterating over " . $attribute_id);
       foreach ($categories as $category) {
         $id = $category['id'];
         $this->_create_category_and_ancestors($attribute_id, $category);
@@ -736,6 +739,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
     unset($this->_categories);
+
+    $this->_log("done loading categories into database.");
   }
 
 
