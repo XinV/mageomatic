@@ -647,12 +647,49 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _create_categories_if_required() {
     $this->_log("finished reading categories.");
+
+    $this->_prepare_category_hierarchy();
+    // FIXME HERE
+
     $this->_log(var_export($this->_categories, true));
 
     // FIXME for reference:
     // {"id":"1049","attribute_id":"ICEcat Product Category","name":"Fineliners","parent_id":"453"}
-    // $id        = $this->_category['id'];
-    // $parent_id = $this->_category['parent_id'];
     $this->_categories = null;
+  }
+
+
+  // This just makes sure that every single category has its children filled out.
+  private function _prepare_category_hierarchy() {
+    $new_categories = array();
+    foreach ($this->_categories as $id => $category) {
+      if (array_key_exists('parent_id', $category)) {
+        $parent_id = $category['parent_id'];
+
+        if (array_key_exists($parent_id, $new_categories)) {
+          $parent = $new_categories[$parent_id];
+        } else {
+          $parent = array();
+        }
+
+        if (!array_key_exists('__children', $parent)) {
+          $parent['__children'] = array();
+        }
+
+        $parent['__children'][] = $id;
+        $new_categories['parent_id'] = $parent;
+      } else {
+        $this->_log("ROOT: " . var_export($category, true));
+      }
+
+      if (array_key_exists($id, $new_categories)) {
+        // make sure to copy children over that have been seen
+        $category['__children'] = $new_categories[$id]['__children'];
+      }
+
+      $category['__loaded'] = false;
+      $new_categories[$id] = $category;
+    }
+    $this->_categories = $new_categories;
   }
 }
