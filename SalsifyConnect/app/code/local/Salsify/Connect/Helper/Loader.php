@@ -796,21 +796,20 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // ensures that a category and all of it's ancestors are in the DB. this will
   // start from the root and work its way up. returns true if successful.
   private function _create_category_and_ancestors($attribute_id, $category) {
-$this->_log("1");
     $load_status = $this->_get_load_status($attribute_id, $category);
     if ($load_status === self::LOAD_SUCCEEDED) {
       return true;
     } elseif ($load_status === self::LOAD_FAILED) {
       return false;
     }
-$this->_log("2");
+
     // check if the category already exists in the DB
     $dbcategory = $this->_get_category($category);
     if ($dbcategory) {
       $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
       return true;
     }
-$this->_log("3");
+
     // first must create ancestry
     if (array_key_exists('parent_id', $category)) {
       $parent_id = $category['parent_id'];
@@ -827,7 +826,7 @@ $this->_log("3");
         return false;
       }
     }
-$this->_log("4");
+
     // finally, create the category
     $dbcategory = $this->_create_category($category);
     if ($dbcategory) {
@@ -854,7 +853,7 @@ $this->_log("4");
   // TODO can't update existing categories (i.e. re-parent)
   private function _create_category($category) {
     $dbcategory = new Mage_Catalog_Model_Category();
-
+$this->_log("1");
     // TODO we're currently ignoring this. I *think* doing so sets the default
     //      store. Either way at some point we need to support multiple stores.
     // $category->setStoreId(0);
@@ -867,29 +866,29 @@ $this->_log("4");
     }
     $dbcategory->setSalsifyCategoryId($id);
     $dbcategory->setDescription('Created during Salsify import.');
-
+$this->_log("2");
     // TODO what are the other options? is this a reasonable default that I
     //      should be picking?
     $dbcategory->setDisplayMode('PRODUCTS_AND_PAGE');
-
+$this->_log("3");
     $dbcategory->setIsActive('1');
     $dbcategory->setIncludeInMenu('1');
-
+$this->_log("4");
     // TODO what is this?
     $dbcategory->setIsAnchor('0');
-
+$this->_log("5");
     if (array_key_exists('parent_id', $category)) {
-      $parent_category = $this->_get_category($category['parent_id']);
+      $parent_dbcategory = $this->_get_category($category['parent_id']);
     } else {
       // even though this is a 'root' category, it's parent is still the global
       // Magento root category (id 1), which never shows up in display anywhere.
-      $parent_category = Mage::getModel('catalog/category')->load('1');
+      $parent_dbcategory = Mage::getModel('catalog/category')->load('1');
     }
-    $dbcategory->setParentId($parent_category->getId());
-    $dbcategory->setLevel($parent_category->getLevel() + 1);
+    $dbcategory->setParentId($parent_dbcategory->getId());
+    $dbcategory->setLevel($parent_dbcategory->getLevel() + 1);
     $dbcategory->setUrlKey($this->_get_url_key($category));
-    $dbcategory->setPath($parent_category->getPath());
-
+    $dbcategory->setPath($parent_dbcategory->getPath());
+$this->_log("6");
     // FIXME this seemed to fuck things up
     // $attribute_set_id = $parent_category->getResource()
     //                                     ->getEntityType()
@@ -907,6 +906,7 @@ $this->_log("4");
       $this->_log("ERROR creating category (will not try entire tree): " . $e->getMessage());
       return null;
     }
+$this->_log("7");
   }
 
   // creates a URL-friendly key for this category. it will replace whitespace
