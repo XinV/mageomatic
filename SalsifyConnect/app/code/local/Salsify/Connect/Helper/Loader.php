@@ -581,12 +581,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // # is_used_for_promo_rules
       'used_in_product_listing' => 0,
       'used_for_sort_by' => 0,
+      // # position?
+
+      // FIXME Is this wrong? Magento seems to be using varchar and not text
+      //       for the attributes here...
       'type' => $attribute_type,
-      // # position
 
       // # frontend_model
       // # frontend_class
-      // TODO the frontend_input can't be varchar, so there is a mismatch here...
+      // FIXME even if the type is varchar here frontend type should be text
       'frontend_input' => $attribute_type, //'boolean','text', etc.
       'frontend_label' => $name,
       // # frontend_input_renderer
@@ -604,6 +607,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if (is_null($model->getIsUserDefined()) || $model->getIsUserDefined() != 0) {
       // required to let Magento know how to store the values for this attribute
       // in their EAV setup.
+
+      // FIXME this is possibly overriding the attribute type set above, and
+      //       thereby causing the 256 character limitation problem.
       $attribute_data['backend_type'] = $model->getBackendTypeByInput($attribute_data['frontend_input']);
     }
 
@@ -766,9 +772,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // returns the database model category for the given category if it exists.
   private function _get_category($category) {
-    // FIXME not sure if this works
     return Mage::getModel('catalog/category')
-               ->loadByAttribute('salsifyCategoryId', $category['id']);
+               ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
   }
 
 
