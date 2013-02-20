@@ -496,13 +496,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
   private function _get_attribute_from_code($code) {
-    $attributeId = Mage::getResourceModel('eav/entity_attribute')
-                       ->getIdByCode('catalog_product', $code);
-    if (!$attributeId) {
+    $attribute_id = Mage::getResourceModel('eav/entity_attribute')
+                        ->getIdByCode('catalog_product', $code);
+    if (!$attribute_id) {
       return null;
     }
     $attribute = Mage::getModel('catalog/resource_eav_attribute')
-                     ->load($attributeId);
+                     ->load($attribute_id);
     return $attribute;
   }
 
