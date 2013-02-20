@@ -137,10 +137,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function _get_real_category() {
     $this->_log("Attempting to get a category that does not exist...");
     try {
-      $dbcategory = Mage::getModel('catalog/category')
-                        ->loadByAttribute('salsify_category_id', 'BITCHES');
-      $this->_log("Value: " . var_export($dbcategory, true));
-      $this->_log("Trying to get level");
+      // $dbcategory = Mage::getModel('catalog/category')
+      //                   ->loadByAttribute('salsify_category_id', 'BITCHES');
+      $dbcategory = $parent_category = Mage::getModel('catalog/category')->load('1');
+      // $this->_log("Value: " . var_export($dbcategory, true));
       $level = $dbcategory->getLevel() + 1;
       $this->_log("Level: " . $level);
     } catch (Exception $e) {

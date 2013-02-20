@@ -808,14 +808,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     if (array_key_exists('parent_id', $category)) {
       $parent_category = $this->_get_category($category['parent_id']);
+      $category->setLevel($parent_category->getLevel() + 1);
     } else {
       // even though this is a 'root' category, it's parent is still the global
       // Magento root category (id 1), which never shows up in display anywhere.
       $parent_category = Mage::getModel('catalog/category')->load('1');
+      $category->setLevel(1);
     }
     $category->setParentId($parent_category->getId());
-    $parent_level = $parent_category->getLevel();
-    $category->setLevel($parent_level + 1);
     $category->setPath($parent_category->getPath());
 
     // FIXME this seemed to fuck things up
