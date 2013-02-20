@@ -503,6 +503,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
     $model = Mage::getResourceModel('eav/entity_attribute');
+    $code  = $this->_attribute_code($attribute);
 
     if ($type === self::CATEGORY) {
       $attribute_id = $model->getIdByCode('catalog_category', $code);
