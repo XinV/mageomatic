@@ -265,13 +265,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // FIXME figure out the best solution to get multi-valued properties into
     //       Magento. This *might* just work, but we'd have to be careful to remove
     //       commas from incoming data.
-    // FIXME deal with teh 256 character limit
     $clean_product = array();
     foreach($product as $key => $val) {
       if (is_array($val)) {
         $val = implode(', ', $val);
       }
-      $clean_product[$key] = substr($val, 0, 255);
+      $clean_product[$key] = $val;
     }
     $product = $clean_product;
 
@@ -573,6 +572,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     // TODO support multiple stores (see 'is_global' below)
 
+    if ($attribute_type === 'varchar') {
+      $frontend_type  = 'text';
+    } else {
+      $frontend_type  = $attribute_type;
+    }
+
     $attribute_data = array(
       'attribute_code' => $code,
       'note' => 'Added automatically during Salsify import',
@@ -585,7 +590,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // These are available but shouldn't be set here.
       // # attribute_model
       // # backend_model
-      // # backend_type - set below
       // # backend_table
       // # source_model
 
@@ -609,18 +613,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'used_for_sort_by' => 0,
       // # position?
 
-      // FIXME Is this wrong? Magento seems to be using varchar and not text
-      //       for the attributes here...
+      // TODO is type even required here?
       'type' => $attribute_type,
+      'backend_type' => $attribute_type,
 
+      'frontend_input' => $frontend_type, //'boolean','text', etc.
+      'frontend_label' => $name,
       // # frontend_model
       // # frontend_class
-      // FIXME even if the type is varchar here frontend type should be text
-      'frontend_input' => $attribute_type, //'boolean','text', etc.
-      'frontend_label' => $name,
       // # frontend_input_renderer
 
       // without this it will not show up in the UI
+      // TODO we we have to set this here if the group is being set below?
       'group' => 'General',
 
       // TODO apply_to multiple types by default? right now Salsify itself only
@@ -629,17 +633,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     );
 
     $model = Mage::getModel('catalog/resource_eav_attribute');
-
-    if (is_null($model->getIsUserDefined()) || $model->getIsUserDefined() != 0) {
-      // required to let Magento know how to store the values for this attribute
-      // in their EAV setup.
-
-      // FIXME this is possibly overriding the attribute type set above, and
-      //       thereby causing the 256 character limitation problem.
-      $backend_type = $model->getBackendTypeByInput($attribute_data['frontend_input']);
-      $this->_log("ATTRIBUTE TYPE vs. BACKEND_TYPE: " . $attribute_type . ' vs ' . $backend_type);
-      $attribute_data['backend_type'] = $backend_type;
-    }
 
     $default_value_field = $model->getDefaultValueByInput($attribute_data['frontend_input']);
     if ($default_value_field) {
@@ -731,6 +724,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     $this->_prepare_category_hierarchy();
     foreach ($this->_categories as $category) {
+      if (!array_key_exists('id', $category)) {
+        // FIXME remove
+        $this->_log("NO ID???? " . var_export($category, true));
+      }
       $id = $category['id'];
       $this->_create_category_and_ancestors($category);
     }
