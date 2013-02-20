@@ -51,11 +51,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // current category that we're building up
   private $_category;
 
-  // this is created while processing the categories and keeps track of all the
-  // category IDs so that when we process products we know whether a particular
-  // value is a category ID or simple an attribute value.
-  private $_category_ids;
-
   // Current product batch that has been read in.
   const BATCH_SIZE = 1000;
   private $_batch;
@@ -373,6 +368,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       } elseif ($this->_in_products) {
         if (!array_key_exists($key, $this->_attributes)) {
           $this->_log('ERROR: skipping unrecognized property id on product: ' . $key);
+        } elseif (array_key_exists($key, $this->_categories)) {
+          if (array_key_exists($value, $this->_categories[$key])) {
+            $category = $this->_categories[$key][$value];
+            // TODO allow multiple category assignments per product
+            $product[_category] = $this->_get_path($category);
+          } else {
+            $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
+          }
         } else {
           $attribute = $this->_attributes[$key];
           $code = $this->_attribute_code($attribute);
@@ -464,6 +467,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   private function _delete_attribute_from_salsify_id($attribute_id) {
+    $this->_log("attribute " . $attribute_id . " is really a category. deleting");
+
     $attribute = array();
     $attribute['id'] = $attribute_id;
     
@@ -472,6 +477,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     $attribute['type'] = self::PRODUCT;
     $this->_delete_attribute($attribute);
+
+    unset($this->_attributes[$attribute_id]);
   }
 
 
@@ -747,8 +754,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // loaded into the DB). Makes sure all child values for each category value
   // are set.
   private function _prepare_category_hierarchy() {
-    $this->_category_ids = array();
-
     $prepped_categories = array();
     foreach ($this->_categories as $id => $category) {
       if (!array_key_exists('attribute_id', $category)) {
@@ -757,9 +762,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
       $attribute_id = $category['attribute_id'];
 
-      if (!in_array($attribute_id, $this->_category_ids)) {
-        $this->_category_ids[] = $attribute_id;
-
+      if (in_array($attribute_id, $this->_attributes)) {
         // First time seeing this. If it exists, let's make sure to delete the
         // actual attribute from the system. The reason we do this here is so
         // that we don't have to keep all of the attributes in memory as we go
@@ -772,6 +775,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $categories = $prepped_categories[$attribute_id];
       } else {
         $categories = array();
+      }
+
+      if (!array_key_exists('name', $category)) {
+        $this->_log("WARNING: name not given for category. using ID as name: " . var_export($category, true));
+        $category['name'] = $category['id'];
       }
 
       // can't used _set_load_status here since we're about to overwrite the 
@@ -825,6 +833,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
         return false;
       }
+
+      $parent_path = $this->_get_path($parent_category);
+      $this->_set_path($category, $parent_path . '/' . $category['name']);
+    } else {
+      // root category. need to seed the path here!
+      $this->_set_path($category, $category['name']);
     }
 
     // finally, create the category
@@ -851,6 +865,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     return null;
   }
 
+  private function _get_path($category) {
+    return $this->_categories[$attribute_id][$category['id']]['__path'];
+  }
+
+  private function _set_path($category, $path) {
+    $attribute_id = $category['attribute_id'];
+    $this->_categories[$attribute_id][$category['id']]['__path'] = $path;
+  }
+
   private function _get_load_status($attribute_id, $category) {
     return $this->_categories[$attribute_id][$category['id']]['__load_status'];
   }
@@ -870,13 +893,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //      store. Either way at some point we need to support multiple stores.
     // $category->setStoreId(0);
 
-    $id = $category['id'];
-    if (array_key_exists('name', $category)) {
-      $dbcategory->setName($category['name']);
-    } else {
-      $dbcategory->setName($id);
-    }
-    $dbcategory->setSalsifyCategoryId($id);
+    $dbcategory->setName($category['name']);
+    $dbcategory->setSalsifyCategoryId($category['id']);
     $dbcategory->setDescription('Created during Salsify import.');
 
     // TODO what are the other options? is this a reasonable default that I
