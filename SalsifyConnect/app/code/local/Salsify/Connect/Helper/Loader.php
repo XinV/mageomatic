@@ -372,7 +372,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           if (array_key_exists($value, $this->_categories[$key])) {
             $category = $this->_categories[$key][$value];
             // TODO allow multiple category assignments per product
-            $product[_category] = $this->_get_path($category);
+            $product['_category'] = $this->_get_path($category);
           } else {
             $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
