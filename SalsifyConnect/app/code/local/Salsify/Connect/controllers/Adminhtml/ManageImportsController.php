@@ -125,7 +125,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_log("Attempting to get a category that does not exist...");
     $dbcategory = Mage::getModel('catalog/category')
                       ->loadByAttribute('salsify_category_id', 'BITCHES');
-    $this->_log("Value: " var_export($dbcategory, true));
+    $this->_log("Value: " . var_export($dbcategory, true));
   }
 
 
