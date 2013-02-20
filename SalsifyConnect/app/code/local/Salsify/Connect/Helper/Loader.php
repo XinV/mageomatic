@@ -737,4 +737,59 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     $this->_categories = $prepped_categories;
   }
+
+
+  // returns the database model category for the given category if it exists.
+  private function _get_category($category) {
+    // FIXME not sure if this works
+    return Mage::getModel('catalog/category')
+               ->loadByAttribute('salsifyCategoryId', $category['id']);
+  }
+
+
+  // TODO can't update existing categories (i.e. re-parent)
+  private function _create_category($category) {
+    $id = $category['id'];
+    
+    $category = new Mage_Catalog_Model_Category();
+    // TODO we're currently ignoring this. I *think* this sets the default store.
+    // $category->setStoreId(0);
+    $category->setName('Joel Momma');
+    $category->setUrlKey('joel-momma');
+    $category->setDescription('Created during Salsify import.');
+
+    // TODO what are the other options?
+    $category->setDisplayMode('PRODUCTS_AND_PAGE');
+
+    $category->setIsActive('1');
+    $category->setIncludeInMenu('1');
+    $category->setIsAnchor('0');
+    $category->setLevel('1');
+    $category->setParentId('1');
+
+    $category->setSalsifyCategoryId('BITCHES');
+
+    // Even though this is a 'root' category, it's parent is still the global
+    // Magento root category, which never shows up in display anywhere.
+    $parent_category = Mage::getModel('catalog/category')->load('1');
+    $category->setPath($parent_category->getPath()); 
+
+    // FIXME this seemed to fuck things up
+    // $attribute_set_id = $parent_category->getResource()
+    //                                     ->getEntityType()
+    //                                     ->getDefaultAttributeSetId();
+    // $model->setAttributeSetId($attribute_set_id);
+
+    // FIXME need this?
+    // $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
+    // $model->setAttributeGroupId($attributeGroupId);
+
+    try {
+      $category->save();
+    } catch (Exception $e) {
+      $this->_log("ERROR creating category: " . $e->getMessage());
+    }
+
+    $this->_log("Category entity type: " . $category->getEntityTypeId());
+  }
 }
