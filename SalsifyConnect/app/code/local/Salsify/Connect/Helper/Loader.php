@@ -834,6 +834,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         return false;
       }
 
+      // FIXME remove
+      $this->_log("PARENT: " . var_export($parent_category, true));
       $parent_path = $this->_get_path($parent_category);
       $this->_set_path($category, $parent_path . '/' . $category['name']);
     } else {
