@@ -229,36 +229,36 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     // TODO get these from Salsify, but need more metadata in the export to
     //      get them.
-    if (!array_key_exists('price', 'product')) {
+    if (!array_key_exists('price', $product)) {
       $product['price'] = 0.01;
     }
-    if (!array_key_exists('short_description', 'product')) {
+    if (!array_key_exists('short_description', $product)) {
       $product['short_description'] = 'IMPORTED FROM SALSIFY';
     }
-    if (!array_key_exists('description', 'product')) {
+    if (!array_key_exists('description', $product)) {
       $product['description'] = 'IMPORTED FROM SALSIFY';
     }
-    if (!array_key_exists('weight', 'product')) {
+    if (!array_key_exists('weight', $product)) {
       $product['weight'] = 0;
     }
 
-    if (!array_key_exists('status', 'product')) {
+    if (!array_key_exists('status', $product)) {
       // TODO what does the status value mean?
       $product['status'] = 1;
     }
 
-    if (!array_key_exists('visibility', 'product')) {
+    if (!array_key_exists('visibility', $product)) {
       // TODO what does visibility '4' mean?
       $product['visibility'] = 4;
     }
 
-    if (!array_key_exists('tax_class_id', 'product')) {
+    if (!array_key_exists('tax_class_id', $product)) {
       // TODO should we be setting a different tax class? can we get the system
       //      default?
       $product['tax_class_id'] = 2;
     }
 
-    if (!array_key_exists('qty', 'product')) {
+    if (!array_key_exists('qty', $product)) {
       $product['qty'] = 0;
     }
 
