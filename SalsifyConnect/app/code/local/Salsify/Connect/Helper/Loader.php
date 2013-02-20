@@ -810,7 +810,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // first must create ancestry
     if (array_key_exists('parent_id', $category)) {
       $parent_id = $category['parent_id'];
-      if (!array_key_exists($parent_id), $this->_categories[$attribute_id]) {
+      if (!array_key_exists($parent_id, $this->_categories[$attribute_id])) {
         $this->_log("ERROR: parent ID mentioned for category was not included in import file: " . var_export($category, true));
         $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
         return false;
