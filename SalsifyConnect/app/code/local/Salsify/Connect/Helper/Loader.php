@@ -840,6 +840,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $this->_set_path($category, $parent_path . '/' . $category['name']);
     } else {
       // root category. need to seed the path here!
+      $this->_log("SETTING PATH: " . var_export($category, true)); // FIXME remove
       $this->_set_path($category, $category['name']);
     }
 
