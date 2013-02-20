@@ -112,7 +112,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // called just to make sure that the salsify external id exists
     $loader->start_document();
 
-    $this->_get_category();
+    $this->_get_fake_category();
 
     // $this->_create_category();
     // $this->_log("Done creating category");
@@ -121,12 +121,28 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  private function _get_category() {
+  private function _get_fake_category() {
     $this->_log("Attempting to get a category that does not exist...");
     try {
       $dbcategory = Mage::getModel('catalog/category')
                         ->loadByAttribute('salsify_category_id', 'THIS DOES NOT EXIST');
       $this->_log("Value: " . var_export($dbcategory, true));
+    } catch (Exception $e) {
+      $this->_log("Error fetching nonexistant thing: " . $e->getMessage());
+    }
+  }
+
+
+  private function _get_real_category() {
+    $this->_log("Attempting to get a category that does not exist...");
+    try {
+      $dbcategory = Mage::getModel('catalog/category')
+                        ->loadByAttribute('salsify_category_id', 'BITCHES');
+      $this->_log("Value: " . var_export($dbcategory, true));
+      if ($dbcategory) {
+        $level = $dbcategory.getLevel() + 1;
+        $this->_log("Level increment: " . $dbcategory.getLevel() . " < " . $level);
+      }
     } catch (Exception $e) {
       $this->_log("Error fetching nonexistant thing: " . $e->getMessage());
     }

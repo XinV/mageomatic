@@ -771,6 +771,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   // returns the database model category for the given category if it exists.
+  //         null otherwise.
   private function _get_category($category) {
     return Mage::getModel('catalog/category')
                ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
@@ -782,27 +783,40 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $id = $category['id'];
     
     $category = new Mage_Catalog_Model_Category();
-    // TODO we're currently ignoring this. I *think* this sets the default store.
+    // TODO we're currently ignoring this. I *think* doing so sets the default
+    //      store. Either way at some point we need to support multiple stores.
     // $category->setStoreId(0);
-    $category->setName('Joel Momma');
-    $category->setUrlKey('joel-momma');
+
+    if (array_key_exists('name', $category)) {
+      $category->setName($category['name']);
+    } else {
+      $category->setName($category['id']);
+    }
+    $category->setUrlKey($this->_get_url_key($category));
+    $category->setSalsifyCategoryId($category['id']);
     $category->setDescription('Created during Salsify import.');
 
-    // TODO what are the other options?
+    // TODO what are the other options? is this a reasonable default that I
+    //      should be picking?
     $category->setDisplayMode('PRODUCTS_AND_PAGE');
 
     $category->setIsActive('1');
     $category->setIncludeInMenu('1');
+
+    // TODO what is this?
     $category->setIsAnchor('0');
-    $category->setLevel('1');
-    $category->setParentId('1');
 
-    $category->setSalsifyCategoryId('BITCHES');
-
-    // Even though this is a 'root' category, it's parent is still the global
-    // Magento root category, which never shows up in display anywhere.
-    $parent_category = Mage::getModel('catalog/category')->load('1');
-    $category->setPath($parent_category->getPath()); 
+    if (array_key_exists('parent_id', $category)) {
+      $parent_category = $this->_get_category($category['parent_id']);
+    } else {
+      // even though this is a 'root' category, it's parent is still the global
+      // Magento root category (id 1), which never shows up in display anywhere.
+      $parent_category = Mage::getModel('catalog/category')->load('1');
+    }
+    $category->setParentId($parent_category->getId());
+    $parent_level = $parent_category->getLevel();
+    $category->setLevel($parent_level + 1);
+    $category->setPath($parent_category->getPath());
 
     // FIXME this seemed to fuck things up
     // $attribute_set_id = $parent_category->getResource()
@@ -821,5 +835,19 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
     $this->_log("Category entity type: " . $category->getEntityTypeId());
+  }
+
+  // creates a URL-friendly key for this category. it will replace whitespace
+  // with friendlier dashes, lowerase the string, and urlencode it in case there
+  // are unfriendly characters in the name.
+  private function _get_url_key($category) {
+    if (array_key_exists('name', $category)) {
+      $key = $category['name'];
+    } else {
+      $key = $category ['id'];
+    }
+    $key = strtolower($key);
+    $key = preg_replace('/\s\s+/', '-', $key);
+    return urlencode($key);
   }
 }
