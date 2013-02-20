@@ -25,6 +25,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   const CATEGORY = 1;
   const PRODUCT  = 2;
 
+  // For keeping track of whether specific categories were successfully loaded.
+  const LOAD_FAILED        = -1;
+  const LOAD_NOT_ATTEMPTED = 1;
+  const LOAD_SUCCEEDED     = 2;
+
   // Current keys and values that we're building up. We have to do it this way
   // vs. just having a current object stack because php deals with arrays as
   // pass-by-value.
@@ -77,13 +82,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_type_stack = array();
 
     $this->_attributes = array();
-    $this->_attribute = null;
+    // $this->_attribute = null;
 
     $this->_categories = array();
-    $this->_category = null;
+    // $this->_category = null;
 
     $this->_batch = array();
-    $this->_product = null;
+    // $this->_product = null;
 
     $this->_nesting_level = 0;
     $this->_in_attributes = false;
@@ -93,6 +98,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_create_salsify_id_attributes_if_needed();
 
     // FIXME set the salsify_id for ALL objects coming into the system
+    //       currently missing: attributes
   }
 
 
@@ -147,7 +153,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $this->_end_nested_thing();
     } elseif ($this->_nesting_level === self::HEADER_NESTING_LEVEL) {
         if ($this->_in_attribute_values) {
-          $this->_create_categories_if_required();
+          $this->_create_categories_if_needed();
         }
 
         $this->_in_attributes = false;
@@ -173,11 +179,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _end_attribute() {
     // FIXME Salsify ID is not being set on these
-    // FIXME need to distinguish a root category vs. other attriubtes that need
-    //       to be created.
 
+    // NOTE: if the attribute turns out to be a category, it will be deleted
+    //       from Magento during category loading.
     $this->_create_attribute_if_needed($this->_attribute);
-    $this->_attribute = null;
+    unset($this->_attribute);
   }
 
 
@@ -187,65 +193,92 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _end_category() {
     $this->_categories[$this->_category['id']] = $this->_category;
-    $this->_category = null;
+    unset($this->_category);
   }
 
 
   private function _start_product() {
     $this->_product = array();
-
-    // Add fields required by Magento.
-    // FIXME query the system to get the full list of required attributes.
-    //       otherwise the bulk import fails silently...
-    // FIXME move this cleaning stuff to the END and combine with other cleaning
-    //       (noteably the 256 character limit currently in value())
-
-    // TODO Salsify only supports simple products right now
-    $this->_product['_type'] = 'simple';
-
-    // TODO we should be able to get the attribute set from the category
-    //      somehow
-    $this->_product['_attribute_set'] = 'Default';
-
-    $this->_product['_product_websites'] = 'base';
-
-    // TODO get these from Salsify, but need more metadata in the export to
-    //      get them.
-    $this->_product['price'] = 0.01;
-    $this->_product['description'] = 'IMPORTED FROM SALSIFY';
-    $this->_product['short_description'] = 'IMPORTED FROM SALSIFY';
-    $this->_product['weight'] = 0;
-
-    // TODO what are status 1 and visibility 4?
-    $this->_product['status'] = 1;
-    $this->_product['visibility'] = 4;
-
-    // TODO seriously?
-    $this->_product['tax_class_id'] = 2;
-    $this->_product['qty'] = 0;
   }
 
   private function _end_product() {
-    // TODO figure out the best solution to get multi-valued properties into
-    //      Magento. This *might* just work, but we'd have to be careful to remove
-    //      commas from incoming data.
-    $clean_product = array();
-    foreach($this->_product as $key => $val) {
-      if (is_array($val)) {
-        $clean_product[$key] = implode(', ', $val);
-      } else {
-        $clean_product[$key] = $val;
-      }
-    }
-
-    // FIXME the Salsify ID is not being set on this here
-
+    $clean_product = $this->_prepare_product($this->_product);
     array_push($this->_batch, $clean_product);
-    $this->_product = null;
+    unset($this->_product);
 
     if (count($this->_batch) > self::BATCH_SIZE) {
       $this->_flush_batch();
     }
+  }
+
+  // Prepares the product that we've loaded from Salsify for Magento.
+  private function _prepare_product($product) {
+    // FIXME query the system to get the full list of required attributes.
+    //       otherwise the bulk import fails silently...
+
+    // TODO when Salsify supports Kits, this will have to change.
+    $product['_type'] = 'simple';
+
+    // TODO get the attribute set from the category. we could be precalculating
+    //      the attributes that are used in each of the categories in Salsify
+    //      in order to get a rough cut into Magento.
+    $product['_attribute_set'] = 'Default';
+
+    // TODO multi-store support
+    $product['_product_websites'] = 'base';
+
+    // TODO get these from Salsify, but need more metadata in the export to
+    //      get them.
+    if (!array_key_exists('price', 'product')) {
+      $product['price'] = 0.01;
+    }
+    if (!array_key_exists('short_description', 'product')) {
+      $product['short_description'] = 'IMPORTED FROM SALSIFY';
+    }
+    if (!array_key_exists('description', 'product')) {
+      $product['description'] = 'IMPORTED FROM SALSIFY';
+    }
+    if (!array_key_exists('weight', 'product')) {
+      $product['weight'] = 0;
+    }
+
+    if (!array_key_exists('status', 'product')) {
+      // TODO what does the status value mean?
+      $product['status'] = 1;
+    }
+
+    if (!array_key_exists('visibility', 'product')) {
+      // TODO what does visibility '4' mean?
+      $product['visibility'] = 4;
+    }
+
+    if (!array_key_exists('tax_class_id', 'product')) {
+      // TODO should we be setting a different tax class? can we get the system
+      //      default?
+      $product['tax_class_id'] = 2;
+    }
+
+    if (!array_key_exists('qty', 'product')) {
+      $product['qty'] = 0;
+    }
+
+    // FIXME figure out the best solution to get multi-valued properties into
+    //       Magento. This *might* just work, but we'd have to be careful to remove
+    //       commas from incoming data.
+    // FIXME deal with teh 256 character limit
+    $clean_product = array();
+    foreach($product as $key => $val) {
+      if (is_array($val)) {
+        $val = implode(', ', $val);
+      }
+      $clean_product[$key] = substr($val, 0, 255);
+    }
+    $product = $clean_product;
+
+    // add the Salsify ID for good measure, even though it is mapped to the sku.
+    $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
+
+    return $product;
   }
 
 
@@ -344,9 +377,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         } else {
           $attribute = $this->_attributes[$key];
           $code = $this->_attribute_code($attribute);
-
-          // FIXME how can we store longer properties?
-          $this->_product[$code] = substr($value, 0, 255);
+          $this->_product[$code] = $value;
         }
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
@@ -413,10 +444,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
-      // TODO enable product type configuration here when relevant. For now we're
-      //      just supporting simple products anyway (not grouped, configurable,
-      //      etc.).
-      //      When Salsify has bundles we'll have to deal with this.
+      // TODO  when Salsify has bundles we'll have to deal with this.
       $product_type = 'simple';
 
       // At the moment we only get text properties from Salsify. In fact, since
@@ -424,7 +452,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // theory, have a numeric value and a text value, so for now we have to
       // pick 'text' here to be safe.
       $type = 'text';
-
       
       $dbattribute = $this->_get_attribute($attribute);
       if (!$dbattribute) {
@@ -544,8 +571,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // I *think* this is everything we COULD be setting, with some properties
     // commented out. I got values from eav_attribute and catalog_eav_attribute
 
-    // TODO should we be flexible on global vs. store? what elements here should
-    //      be configurable during an import?
+    // TODO support multiple stores (see 'is_global' below)
 
     $attribute_data = array(
       'attribute_code' => $code,
@@ -610,7 +636,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
       // FIXME this is possibly overriding the attribute type set above, and
       //       thereby causing the 256 character limitation problem.
-      $attribute_data['backend_type'] = $model->getBackendTypeByInput($attribute_data['frontend_input']);
+      $backend_type = $model->getBackendTypeByInput($attribute_data['frontend_input']);
+      $this->_log("ATTRIBUTE TYPE vs. BACKEND_TYPE: " . $attribute_type . ' vs ' . $backend_type);
+      $attribute_data['backend_type'] = $backend_type;
     }
 
     $default_value_field = $model->getDefaultValueByInput($attribute_data['frontend_input']);
@@ -643,6 +671,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // The type of the attribute. NOT boolean, etc. But rather whether it's an
+  // attribute that's used for products, categories, etc.
   private function _get_attribute_type($attribute) {
     if (array_key_exists('type', $attribute)) {
       return $attribute['type'];
@@ -694,22 +724,23 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  private function _create_categories_if_required() {
+  // This goes through all the categories that were seen in the import and makes
+  // sure that they and their ancestors are all loaded into Magento.
+  private function _create_categories_if_needed() {
     $this->_log("finished reading categories.");
 
     $this->_prepare_category_hierarchy();
-    // FIXME HERE
+    foreach ($this->_categories as $category) {
+      $id = $category['id'];
+      $this->_create_category_and_ancestors($category);
+    }
 
-    $this->_log(var_export($this->_categories, true));
-
-    // FIXME for reference:
-    // {"id":"1049","attribute_id":"ICEcat Product Category","name":"Fineliners","parent_id":"453"}
-    $this->_categories = null;
+    unset($this->_categories);
   }
 
 
   // Divides all the category values by attribute_id. Makes sure each category
-  // value has __loaded set to false (keeps track of whether or not it's been
+  // value has __load_status set to false (keeps track of whether or not it's been
   // loaded into the DB). Makes sure all child values for each category value
   // are set.
   private function _prepare_category_hierarchy() {
@@ -762,7 +793,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $category['__children'] = $categories[$id]['__children'];
       }
 
-      $category['__loaded'] = false;
+      // can't used _set_load_status here since we're about to overwrite the 
+      // global _categories variable.
+      $category['__load_status'] = self::LOAD_NOT_ATTEMPTED;
       $categories[$id] = $category;
       $prepped_categories[$attribute_id] = $categories;
     }
@@ -778,45 +811,101 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // ensures that a category and all of it's ancestors are in the DB. this will
+  // start from the root and work its way up. returns true if successful.
+  private function _create_category_and_ancestors($category) {
+    $load_status = $this->_get_load_status($category);
+    if ($load_status === self::LOAD_SUCCEEDED) {
+      return true;
+    } elseif ($load_status === self::LOAD_FAILED) {
+      return false;
+    }
+
+    // check if the category already exists in the DB
+    $dbcategory = $this->_get_category($category);
+    if ($dbcategory) {
+      $this->_set_load_status(self::LOAD_SUCCEEDED);
+      return true;
+    }
+
+    // first must create ancestry
+    if (array_key_exists('parent_id', $category)) {
+      $parent_id = $category['parent_id'];
+      if (!array_key_exists($parent_id)) {
+        $this->_log("ERROR: parent ID mentioned for category was not included in import file: " . var_export($category, true));
+        $this->_set_load_status($category, self::LOAD_FAILED);
+        return false;
+      }
+      $parent_category = $this->_categories[$parent_id];
+      $parent_loaded = $this->_create_category_and_ancestors($parent_category);
+      if (!$parent_loaded) {
+        $this->_log("ERROR: could not load ancestry for category: " . var_export($category, true));
+        $this->_set_load_status($category, self::LOAD_FAILED);
+        return false;
+      }
+    }
+
+    // finally, create the category
+    $dbcategory = $this->_create_category($category);
+    if ($dbcategory) {
+      $this->_set_load_status($category, self::LOAD_SUCCEEDED);
+      return true;
+    } else {
+      $this->_set_load_status($category, self::LOAD_FAILED);
+      return false;
+    }
+  }
+
+
+  private function _get_load_status($category) {
+    return $this->_categories[$category['id']]['__load_status'];
+  }
+
+  private function _set_load_status($category, $load_status) {
+    $this->_categories[$category['id']]['__load_status'] = $load_status;
+  }
+
+
+  // returns the Magento Category model instance if successful, null if not.
+  //
   // TODO can't update existing categories (i.e. re-parent)
   private function _create_category($category) {
-    $id = $category['id'];
-    
-    $category = new Mage_Catalog_Model_Category();
+    $dbcategory = new Mage_Catalog_Model_Category();
+
     // TODO we're currently ignoring this. I *think* doing so sets the default
     //      store. Either way at some point we need to support multiple stores.
     // $category->setStoreId(0);
 
+    $id = $category['id'];
     if (array_key_exists('name', $category)) {
-      $category->setName($category['name']);
+      $dbcategory->setName($category['name']);
     } else {
-      $category->setName($category['id']);
+      $dbcategory->setName($id);
     }
-    $category->setUrlKey($this->_get_url_key($category));
-    $category->setSalsifyCategoryId($category['id']);
-    $category->setDescription('Created during Salsify import.');
+    $dbcategory->setSalsifyCategoryId($id);
+    $dbcategory->setDescription('Created during Salsify import.');
 
     // TODO what are the other options? is this a reasonable default that I
     //      should be picking?
-    $category->setDisplayMode('PRODUCTS_AND_PAGE');
+    $dbcategory->setDisplayMode('PRODUCTS_AND_PAGE');
 
-    $category->setIsActive('1');
-    $category->setIncludeInMenu('1');
+    $dbcategory->setIsActive('1');
+    $dbcategory->setIncludeInMenu('1');
 
     // TODO what is this?
-    $category->setIsAnchor('0');
+    $dbcategory->setIsAnchor('0');
 
     if (array_key_exists('parent_id', $category)) {
       $parent_category = $this->_get_category($category['parent_id']);
-      $category->setLevel($parent_category->getLevel() + 1);
     } else {
       // even though this is a 'root' category, it's parent is still the global
       // Magento root category (id 1), which never shows up in display anywhere.
       $parent_category = Mage::getModel('catalog/category')->load('1');
-      $category->setLevel(1);
     }
-    $category->setParentId($parent_category->getId());
-    $category->setPath($parent_category->getPath());
+    $dbcategory->setParentId($parent_category->getId());
+    $dbcategory->setLevel($parent_category->getLevel() + 1);
+    $dbcategory->setUrlKey($this->_get_url_key($category));
+    $dbcategory->setPath($parent_category->getPath());
 
     // FIXME this seemed to fuck things up
     // $attribute_set_id = $parent_category->getResource()
@@ -829,12 +918,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // $model->setAttributeGroupId($attributeGroupId);
 
     try {
-      $category->save();
+      $dbcategory->save();
+      return $dbcategory;
     } catch (Exception $e) {
-      $this->_log("ERROR creating category: " . $e->getMessage());
+      $this->_log("ERROR creating category (will not try entire tree): " . $e->getMessage());
+      return null;
     }
-
-    $this->_log("Category entity type: " . $category->getEntityTypeId());
   }
 
   // creates a URL-friendly key for this category. it will replace whitespace
