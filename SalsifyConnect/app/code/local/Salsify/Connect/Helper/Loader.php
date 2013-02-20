@@ -425,10 +425,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // pick 'text' here to be safe.
       $type = 'text';
 
-      $code = $this->_attribute_code($attribute);
-      $dbattribute = $this->_get_attribute_from_code($code);
+      
+      $dbattribute = $this->_get_attribute($attribute);
       if (!$dbattribute) {
-        $dbattribute = $this->_create_attribute($code, $attribute, $type, $product_type);
+        $dbattribute = $this->_create_attribute($attribute, $type, $product_type);
       }
 
       $this->_attributes[$id] = $attribute;
@@ -440,8 +440,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _delete_attribute_from_salsify_id($attribute_id) {
     $attribute = array();
     $attribute['id'] = $attribute_id;
-    $code = $this->_attribute_code($attribute);
-    $dbattribute = $this->_get_attribute_from_code($code);
+    $dbattribute = $this->_get_attribute($attribute);
     if ($dbattribute) {
       $dbattribute->delete();
     }
@@ -495,12 +494,26 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
-  private function _get_attribute_from_code($code) {
-    $attribute_id = Mage::getResourceModel('eav/entity_attribute')
-                        ->getIdByCode('catalog_product', $code);
+  // return database model of given attribute
+  private function _get_attribute($attribute) {
+    if (!array_key_exists('type', $attribute)) {
+      $type = self::PRODUCT;
+    } else {
+      $type = $attribute['type'];
+    }
+
+    $model = Mage::getResourceModel('eav/entity_attribute');
+
+    if ($type === self::CATEGORY) {
+      $attribute_id = $model->getIdByCode('catalog_category', $code);
+    } elseif ($type === self::PRODUCT) {
+      $attribute_id = $model->getIdByCode('catalog_product', $code);
+    }
+
     if (!$attribute_id) {
       return null;
     }
+
     $attribute = Mage::getModel('catalog/resource_eav_attribute')
                      ->load($attribute_id);
     return $attribute;
@@ -514,6 +527,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // There are even more options that we're not setting here. For example:
     // http://alanstorm.com/magento_attribute_migration_generator
 
+    $code = $this->_attribute_code($attribute);
     $name = $attribute['name'];
 
     // I *think* this is everything we COULD be setting, with some properties
@@ -608,7 +622,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
     // should be in the DB now
-    return $this->_get_attribute_from_code($code);
+    return $this->_get_attribute($attribute);
   }
 
 

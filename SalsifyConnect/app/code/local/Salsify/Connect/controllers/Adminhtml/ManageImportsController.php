@@ -164,14 +164,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $this->_log("ERROR creating category: " . $e->getMessage());
     }
 
-    // $this->_log("attempting to load from DB...");
-    // try {
-    //   $dbcategory = Mage::getModel('catalog/category')
-    //                     ->loadByAttribute('salsifyCategoryId', 'BITCHES');
-    // } catch (Exception $e) {
-    //   $this->_log("ERROR: could not load: " . $e->getMessage());
-    // }
-    // $this->_log("DB CATEGORY: " . var_export($dbcategory, true));
+    $this->_log("attempting to load from DB...");
+    try {
+      $dbcategory = Mage::getModel('catalog/category')
+                        ->loadByAttribute('salsify_category_id', 'BITCHES');
+    } catch (Exception $e) {
+      $this->_log("ERROR: could not load: " . $e->getMessage());
+    }
+    $this->_log("DB CATEGORY: " . var_export($dbcategory, true));
   }
 
 
