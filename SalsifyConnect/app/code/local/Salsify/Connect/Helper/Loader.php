@@ -828,7 +828,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
     // finally, create the category
-    $dbcategory = $this->_create_category($category);
+    $dbcategory = $this->_create_category($attribute_id, $category);
     if ($dbcategory) {
       $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
       return true;
@@ -838,6 +838,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
   }
 
+
+  private function _get_parent_category($category) {
+    if (array_key_exists('parent_id', $category)) {
+      $parent_id = $category['parent_id'];
+      $attribute_id = $category['attribute_id'];
+      if (array_key_exists($parent_id, $this->_categories[$attribute_id])) {
+        return $this->_categories[$attribute_id][$parent_id];
+      }
+      $this->_log("ERROR: parent_id mentioned in category but not seen in import: " . var_export($category, true));
+    }
+    return null;
+  }
 
   private function _get_load_status($attribute_id, $category) {
     return $this->_categories[$attribute_id][$category['id']]['__load_status'];
@@ -851,7 +863,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // returns the Magento Category model instance if successful, null if not.
   //
   // TODO can't update existing categories (i.e. re-parent)
-  private function _create_category($category) {
+  private function _create_category($attribute_id, $category) {
     $dbcategory = new Mage_Catalog_Model_Category();
 
     // TODO we're currently ignoring this. I *think* doing so sets the default
@@ -878,9 +890,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $dbcategory->setIsAnchor('0');
 
     if (array_key_exists('parent_id', $category)) {
-      $this->_log("1");
-      $parent_dbcategory = $this->_get_category($category['parent_id']);
-      $this->_log("2");
+      $parent_category = $this->_get_parent_category($category);
+      $parent_dbcategory = $this->_get_category($parent_category);
     } else {
       // even though this is a 'root' category, it's parent is still the global
       // Magento root category (id 1), which never shows up in display anywhere.
