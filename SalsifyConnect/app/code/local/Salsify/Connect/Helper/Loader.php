@@ -811,12 +811,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       return false;
     }
 
-    // check if the category already exists in the DB
+    // check if the category already exists in the DB. we still go through the
+    // rest of this instead of shortcutting here to make sure the entire
+    // ancestry is loaded.
     $dbcategory = $this->_get_category($category);
-    if ($dbcategory) {
-      $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
-      return true;
-    }
 
     // first must create ancestry
     if (array_key_exists('parent_id', $category)) {
@@ -834,18 +832,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         return false;
       }
 
-      // FIXME remove
-      $this->_log("PARENT: " . var_export($parent_category, true));
       $parent_path = $this->_get_path($parent_category);
       $this->_set_path($category, $parent_path . '/' . $category['name']);
     } else {
-      // root category. need to seed the path here!
-      $this->_log("SETTING PATH: " . var_export($category, true)); // FIXME remove
       $this->_set_path($category, $category['name']);
     }
 
-    // finally, create the category
-    $dbcategory = $this->_create_category($attribute_id, $category);
+    // finally, create the category if it hasn't been created
+    if (!$dbcategory) {
+      $dbcategory = $this->_create_category($attribute_id, $category);
+    }
     if ($dbcategory) {
       $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
       return true;
@@ -874,8 +870,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _set_path($category, $path) {
-    // FIXME remove
-    $this->_log("SETTING PATH: " . var_export($category, true) . " -- " . $path);
     $attribute_id = $category['attribute_id'];
     $this->_categories[$attribute_id][$category['id']]['__path'] = $path;
   }
