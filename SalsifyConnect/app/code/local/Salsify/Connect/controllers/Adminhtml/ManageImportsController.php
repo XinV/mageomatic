@@ -113,6 +113,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $loader->start_document();
 
     $this->_get_fake_category();
+    $this->_get_real_category();
 
     // $this->_create_category();
     // $this->_log("Done creating category");
