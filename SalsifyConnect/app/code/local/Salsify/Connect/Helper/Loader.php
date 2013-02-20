@@ -524,7 +524,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
   // as a starting point.
   // More docs: http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
-  private function _create_attribute($code, $attribute, $attribute_type, $product_type) {
+  private function _create_attribute($attribute, $attribute_type, $product_type) {
     // There are even more options that we're not setting here. For example:
     // http://alanstorm.com/magento_attribute_migration_generator
 
