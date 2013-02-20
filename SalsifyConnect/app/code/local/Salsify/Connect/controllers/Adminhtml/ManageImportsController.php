@@ -142,7 +142,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $this->_log("Value: " . var_export($dbcategory, true));
       $this->_log("Trying to get level");
       if ($dbcategory) {
-        $level = $dbcategory.getLevel() + 1;
+        $level = $dbcategory.getLevel();
         $this->_log("Level increment: " . $dbcategory.getLevel() . " < " . $level);
       }
     } catch (Exception $e) {
