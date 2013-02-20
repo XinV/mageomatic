@@ -873,6 +873,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _set_path($category, $path) {
+    // FIXME remove
+    $this->_log("SETTING PATH: " . var_export($category, true) . " -- " . $path);
     $attribute_id = $category['attribute_id'];
     $this->_categories[$attribute_id][$category['id']]['__path'] = $path;
   }
