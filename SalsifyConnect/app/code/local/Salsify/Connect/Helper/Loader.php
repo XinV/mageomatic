@@ -1,6 +1,11 @@
 <?php
 require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
+
+// FIXME remove
+// "digital_assets":[{"url":"https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/1/7068108-8110.jpg",
+//                    "name":"7068108-8110.jpg","is_primary_image":"true"}]
+
 /**
  * Parser of Salsify data. Also loads into the Magento database.
  */
@@ -260,6 +265,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // FIXME figure out the best solution to get multi-valued properties into
     //       Magento. This *might* just work, but we'd have to be careful to remove
     //       commas from incoming data.
+    // SOLUTION https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
     $clean_product = array();
     foreach($product as $key => $val) {
       if (is_array($val)) {

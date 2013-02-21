@@ -66,142 +66,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/test');
 
     $loader = Mage::helper('salsify_connect/loader');
-
-    // $attribute = array();
-    // $attribute['name'] = "TESTING";
-    // $loader->_create_attribute('salsify_12345', $attribute, 'text', 'simple');
-
-    // $attribute = $loader->_get_attribute_from_code('color');
-    // $this->_render_html("attribute: " . var_export($attribute, true));
-
-    // $data = array();
-    // $data[] = array(
-    //   '_root' => 'TESTING',
-    //   '_category' => 'Test2',
-    //   'name' => 'Test2',
-    //   // 'description' => 'Test2',
-    //   'is_active' => 'yes',
-    //   'include_in_menu' => 'yes',
-    //   // 'meta_description' => 'Meta Test'
-    //   'available_sort_by' => 'Price',
-    //   'default_sort_by' => 'Price',
-    //   'position' => '1', // note: integer value of this doesn't work
-    // );
-    // $data[] = array(
-    //   '_root' => 'TESTING',
-    //   '_category' => 'Test2/Test3',
-    //   'name' => 'TestTest',
-    //   // 'description' => 'Test3',
-    //   'is_active' => 'yes',
-    //   'include_in_menu' => 'yes',
-    //   // 'meta_description' => 'Meta Test'
-    //   'available_sort_by' => 'Price',
-    //   'default_sort_by' => 'Price',
-    //   'position' => '1',
-    // );
-
-    // $import = Mage::getModel('fastsimpleimport/import');
-    // try {
-    //   $import->processCategoryImport($data);
-    //   $this->_render_html("Created new categories. You should reindex.");
-    // } catch (Exception $e) {
-    //   $this->_render_html("EXCEPTION: " . $e->getMessage());
-    //   $this->_render_html("ERROR: " . var_export($import->getErrorMessages(), true));
-    // }
-
     // called just to make sure that the salsify external id exists
     $loader->start_document();
 
-    $this->_get_fake_category();
-    $this->_get_real_category();
-
-    // $this->_create_category();
-    // $this->_log("Done creating category");
-
     $this->_end_render();
-  }
-
-
-  private function _get_fake_category() {
-    $this->_log("Attempting to get a category that does not exist...");
-    try {
-      $dbcategory = Mage::getModel('catalog/category')
-                        ->loadByAttribute('salsify_category_id', 'THIS DOES NOT EXIST');
-      $this->_log("Value: " . var_export($dbcategory, true));
-    } catch (Exception $e) {
-      $this->_log("Error fetching nonexistant thing: " . $e->getMessage());
-    }
-  }
-
-
-  private function _get_real_category() {
-    $this->_log("Attempting to get a category that does not exist...");
-    try {
-      // $dbcategory = Mage::getModel('catalog/category')
-      //                   ->loadByAttribute('salsify_category_id', 'BITCHES');
-      $dbcategory = $parent_category = Mage::getModel('catalog/category')->load('1');
-      // $this->_log("Value: " . var_export($dbcategory, true));
-      $level = $dbcategory->getLevel() + 1;
-      $this->_log("Level: " . $level);
-    } catch (Exception $e) {
-      $this->_log("Error fetching nonexistant thing: " . $e->getMessage());
-    }
-  }
-
-
-  private function _create_category() {
-    // $category = Mage::getModel('catalog/category')
-    //                 ->loadByAttribute('name','Joel Momma');
-    // $this->_log("category: " . var_export($category, true));
-    // return true;
-    
-    $category = new Mage_Catalog_Model_Category();
-    // TODO we're currently ignoring this. I *think* this sets the default store.
-    // $category->setStoreId(0);
-    $category->setName('Joel Momma');
-    $category->setUrlKey('joel-momma');
-    $category->setDescription('Created during Salsify import.');
-
-    // TODO what are the other options?
-    $category->setDisplayMode('PRODUCTS_AND_PAGE');
-
-    $category->setIsActive('1');
-    $category->setIncludeInMenu('1');
-    $category->setIsAnchor('0');
-    $category->setLevel('1');
-    $category->setParentId('1');
-
-    $category->setSalsifyCategoryId('BITCHES');
-
-    // Even though this is a 'root' category, it's parent is still the global
-    // Magento root category, which never shows up in display anywhere.
-    $parent_category = Mage::getModel('catalog/category')->load('1');
-    $category->setPath($parent_category->getPath()); 
-
-    // FIXME this seemed to fuck things up
-    // $attribute_set_id = $parent_category->getResource()
-    //                                     ->getEntityType()
-    //                                     ->getDefaultAttributeSetId();
-    // $model->setAttributeSetId($attribute_set_id);
-
-    // FIXME need this?
-    // $attributeGroupId = $setup->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
-    // $model->setAttributeGroupId($attributeGroupId);
-
-    try {
-      $category->save();
-    } catch (Exception $e) {
-      $this->_log("ERROR creating category: " . $e->getMessage());
-    }
-
-    $this->_log("attempting to load from DB...");
-    try {
-      $dbcategory = Mage::getModel('catalog/category')
-                        ->loadByAttribute('salsify_category_id', 'BITCHES');
-    } catch (Exception $e) {
-      $this->_log("ERROR: could not load: " . $e->getMessage());
-    }
-    $this->_log("DB CATEGORY: " . var_export($dbcategory, true));
   }
 
 
@@ -256,6 +124,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_end_render();
   }
 
+
   // FIXME make this into a form that the user can use to enter a configuration
   public function configAction() {
     $this->_start_render('salsify_connect_menu/config');
@@ -306,6 +175,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_redirectUrl($url);
   }
 
+
   // FIXME make this into some kind of polling/monitoring/restful thing that
   //       is called by JS from the manage_imports main area
   public function chimportAction() {
@@ -353,12 +223,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_js($sneaky);
   }
 
+
   public function workerAction() {
     // TODO add a one-time token or something like that to enable this to be
     //      called safely.
     $job = Mage::getModel('salsify_connect/importjob');
     $job->start_worker();
   }
+  
 
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
