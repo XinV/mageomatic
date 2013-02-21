@@ -1107,12 +1107,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // with friendlier dashes, lowerase the string, and urlencode it in case there
   // are unfriendly characters in the name.
   private function _get_url_key($category) {
-    if (array_key_exists('name', $category)) {
-      $key = $category['name'];
-    } else {
-      $key = $category ['id'];
-    }
-    $key = strtolower($key);
+    $key = strtolower($category['name']);
     $key = preg_replace('/\s\s+/', '-', $key);
     return urlencode($key);
   }

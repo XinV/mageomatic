@@ -79,18 +79,18 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function test_load_categories() {
     $data = array();
 
-    $data[] = array(
+    $data[] = array (
       '_root' => 'ICEcat Product Categories',
-      '_category' => 'Cameras',
-      'salsify_category_id' => '571',
-      'name' => 'Cameras',
+      '_category' => 'ICEcat Product Categories/Components',
+      'salsify_category_id' => '106',
+      'name' => 'Components',
       'description' => 'Created during import from Salsify.',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
       'position' => '1',
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
-      'url_key' => 'cameras',
+      'url_key' => 'components',
     );
 
     // $data[] = array(
