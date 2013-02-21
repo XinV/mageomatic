@@ -223,9 +223,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     unset($this->_product);
 
-    if (count($this->_batch) > self::BATCH_SIZE) {
-      $this->_flush_batch();
-    }
+    // TODO unfortunately this does not work with accessory relationships, since
+    //      you cannot create an accessory relationship until you import the
+    //      product
+    // if (count($this->_batch) > self::BATCH_SIZE) {
+    //   $this->_flush_batch();
+    // }
   }
 
   // Prepares the product that we've loaded from Salsify for Magento.
@@ -240,15 +243,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // second values as new entries just after the main entry (the analogy is
     // a new row in a CSV with only a single value for the column filled out).
     $products = array();
-
     $extra_product_values = array();
+
     foreach ($product as $key => $value) {
       if ($key === 'accessories') {
         $accessory_skus = $this->_prepare_product_accessories($value);
         if (!empty($accessory_skus)) {
           $products['_links_crosssell_sku'] = array_pop($accessory_skus);
           foreach ($accessory_skus as $accessory_sku) {
-            array_push($extra_product_values, array('_links_crosssell_sku' => $accessory_sku));
+            array_push($extra_product_values,
+                       array('_links_crosssell_sku' => $accessory_sku,
+                             '_links_crosssell_position' => 1)); // FIXME
           }
         }
       } elseif (is_array($value)) {
