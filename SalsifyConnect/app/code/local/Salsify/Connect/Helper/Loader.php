@@ -242,14 +242,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // The Magento Import API handles multi-valued assignments is to have the
     // second values as new entries just after the main entry (the analogy is
     // a new row in a CSV with only a single value for the column filled out).
-    $products = array();
+    $prepped_product = array();
     $extra_product_values = array();
 
     foreach ($product as $key => $value) {
       if ($key === 'accessories') {
         $accessory_skus = $this->_prepare_product_accessories($value);
         if (!empty($accessory_skus)) {
-          $products['_links_crosssell_sku'] = array_pop($accessory_skus);
+          $product['_links_crosssell_sku'] = array_pop($accessory_skus);
           foreach ($accessory_skus as $accessory_sku) {
             array_push($extra_product_values,
                        array('_links_crosssell_sku' => $accessory_sku));
@@ -269,9 +269,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // add the Salsify ID for good measure, even though it is mapped to the sku.
     $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
 
-    array_push($products, $product);
+    array_push($prepped_product, $product);
     if (!empty($extra_product_values)) {
-      $products = array_merge($products, $extra_product_values);
+      $prepped_product = array_merge($prepped_product, $extra_product_values);
     }
 
 // FIXME remove
