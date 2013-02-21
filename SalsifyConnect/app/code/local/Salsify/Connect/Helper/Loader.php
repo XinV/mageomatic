@@ -786,9 +786,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
 
       foreach ($categories_for_attribute as $id => $category) {
-$this->_log("1");
         $cat = $this->_clean_and_prepare_category($category);
-$this->_log("2");
         if ($cat) {
           $categories[] = $cat;
         }
@@ -838,7 +836,7 @@ $this->_log("2");
         $this->_log("WARNING: parent_id for category refers to an unknown parent. Skipping: " . var_export($category, true));
         return null;
       }
-      $parent_category = $this->_build_path($this->_categories[$attribute_id][$parent_id]);
+      $parent_category = $this->_clean_and_prepare_category($this->_categories[$attribute_id][$parent_id]);
       if (!$parent_category) {
         return null;
       }
