@@ -396,6 +396,11 @@ $this->_log("ACCESSORIES: " . var_export($accessories, true));
         if (array_key_exists($key, $this->_attributes)) {
           $code = $this->_attribute_code($this->_attributes[$key]);
           $this->_product[$code] = $value;
+        } elseif ($key === 'accessories') {
+          $this->_product[$key] = $value;
+        } elseif ($key === 'digital_assets') {
+          // TODO digital assets
+          // $this->_product[$key] = $value;
         } else {
           $this->_log("ERROR: product has key of undeclared attribute: " . $key);
         }
