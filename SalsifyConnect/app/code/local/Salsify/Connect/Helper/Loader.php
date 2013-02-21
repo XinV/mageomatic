@@ -245,7 +245,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $products = array();
 
     $extra_product_values = array();
-    foreach ($products as $key => $value) {
+    foreach ($product as $key => $value) {
       if (is_array($value)) {
         // multi-valued thing
         $product[$key] = array_pop($value);
@@ -307,12 +307,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // add the Salsify ID for good measure, even though it is mapped to the sku.
     $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
 
-$this->_log("1: " . var_export($products, true));
     array_push($products, $product);
-$this->_log("2: " . var_export($products, true));
     if (!empty($extra_product_values)) {
       $products = array_merge($products, $extra_product_values);
-$this->_log("3: " . var_export($products, true));
     }
     return $products;
   }
