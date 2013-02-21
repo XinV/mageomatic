@@ -197,7 +197,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         if (array_key_exists('accessories', $roles)) {
           $accessory_roles = $roles['accessories'];
           if (in_array('target_product_id', $accessory_roles)) {
-            $this->_target_product_attribute = $attribute['id'];
+            $this->_target_product_attribute = $this->_attribute['id'];
           }
         }
       }
