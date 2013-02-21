@@ -90,6 +90,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'default_sort_by' => 'Price',
       'position' => '1',
       'salsify_category_id' => 'YES',
+      'url-key' => 'MY-SPECIAL-URL-KEY',
     );
     // $data[] = array(
     //   '_root' => 'Test2',
