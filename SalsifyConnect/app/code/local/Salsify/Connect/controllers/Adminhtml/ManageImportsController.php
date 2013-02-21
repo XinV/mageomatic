@@ -81,7 +81,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $data[] = array(
       '_root' => 'ICEcat Product Categories',
-      '_category' => 'ICEcat Product Categories/Cameras',
+      '_category' => 'Cameras',
       'salsify_category_id' => '571',
       'name' => 'Cameras',
       'description' => 'Created during import from Salsify.',
