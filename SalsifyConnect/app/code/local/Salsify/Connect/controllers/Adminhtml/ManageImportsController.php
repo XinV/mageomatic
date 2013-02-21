@@ -81,16 +81,16 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $data[] = array (
       '_root' => 'ICEcat Product Categories',
-      '_category' => 'ICEcat Product Categories/Components',
-      'salsify_category_id' => '106',
-      'name' => 'Components',
+      '_category' => 'Audio &#38; Video',
+      'salsify_category_id' => '1058',
+      'name' => 'Audio &#38; Video',
       'description' => 'Created during import from Salsify.',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
       'position' => '1',
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
-      'url_key' => 'components',
+      'url_key' => 'audio+%26%2338%3B+video',
     );
 
     // $data[] = array(
