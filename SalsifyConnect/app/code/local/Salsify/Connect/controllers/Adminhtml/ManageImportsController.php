@@ -88,6 +88,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
       'position' => '1',
+      'salsify_category_id' => 'YES',
     );
     $data[] = array(
       '_root' => 'Root Catalog',
@@ -100,6 +101,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
       'position' => '1',
+      'salsify_category_id' => 'NO',
     );
 
     /** @var $import AvS_FastSimpleImport_Model_Import */
