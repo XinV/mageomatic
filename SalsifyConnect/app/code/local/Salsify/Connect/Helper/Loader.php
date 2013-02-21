@@ -811,9 +811,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         array_push($prepped_categories, $this->_prepare_category_for_import($category));
       }
     }
-
-    $this->_log("PREPPED: " . var_export($prepped_categories, true));
-
     return $prepped_categories;
   }
 
