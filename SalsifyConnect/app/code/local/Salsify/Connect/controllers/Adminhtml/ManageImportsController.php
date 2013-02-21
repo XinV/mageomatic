@@ -69,6 +69,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // called just to make sure that the salsify external id exists
     $loader->start_document();
 
+    $this->_render_html("TESTING");
     $this->test_load_categories();
 
     $this->_end_render();
@@ -77,19 +78,48 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   private function test_load_categories() {
     $data = array();
-    $data[] = array(
-      '_root' => 'Root Catalog',
-      '_category' => 'Test2',
-      'name' => 'Test2',
-      'description' => 'Test2',
+
+    $data[] = array (
+      '_root' => 'ICEcat Product Categories',
+      '_category' => 'Audio &#38; Video',
+      'salsify_category_id' => '1058',
+      'name' => 'Audio &#38; Video',
+      'description' => 'Created during import from Salsify.',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
-      // 'meta_description' => 'Meta Test',
+      'position' => '1',
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
-      'position' => '1',
-      'salsify_category_id' => 'YES',
+      'url_key' => 'audio+%26%2338%3B+video',
     );
+    $data[] = array(
+      '_root' => 'ICEcat Product Categories',
+      '_category' => 'Audio &#38; Video/Audio turntables',
+      'salsify_category_id' => '1580',
+      'name' => 'Audio turntables',
+      'description' => 'Created during import from Salsify.',
+      'is_active' => 'yes',
+      'include_in_menu' => 'yes',
+      'position' => '1',
+      'available_sort_by' => 'Price',
+      'default_sort_by' => 'Price',
+      'url_key' => 'audio+turntables',
+    );
+
+    // $data[] = array(
+    //   '_root' => 'Root Catalog',
+    //   '_category' => 'Test2',
+    //   'name' => 'Test2',
+    //   'description' => 'Test2',
+    //   'is_active' => 'yes',
+    //   'include_in_menu' => 'yes',
+    //   // 'meta_description' => 'Meta Test',
+    //   'available_sort_by' => 'Price',
+    //   'default_sort_by' => 'Price',
+    //   'position' => '1',
+    //   'salsify_category_id' => 'YES',
+    //   'url_key' => 'MY-SPECIAL-URL-KEY',
+    // );
     // $data[] = array(
     //   '_root' => 'Test2',
     //   '_category' => 'Test2/Test3',
