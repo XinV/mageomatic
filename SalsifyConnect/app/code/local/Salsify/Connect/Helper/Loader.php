@@ -88,7 +88,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_categories = array();
     // $this->_category = null;
 
-    $this->_batch = array();
+    // $this->_batch = array();
     // $this->_product = null;
 
     $this->_nesting_level = 0;
@@ -160,6 +160,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $this->_in_attributes = false;
         $this->_in_attribute_values = false;
         $this->_in_products = false;
+
+        if ($this->_batch) {
+          unset($this->_batch);
+        }
     }
 
     $this->_nesting_level--;
@@ -390,6 +394,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       } elseif ($key === 'products') {
         $this->_log("Starting to parse products.");
         $this->_in_products = true;
+        $this->_batch = array();
       }
     }
   }
