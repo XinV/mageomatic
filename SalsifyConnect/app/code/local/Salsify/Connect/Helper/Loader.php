@@ -50,7 +50,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // current attribute
   private $_attribute;
 
-  // category hierarchy
+  // category hierarchy.
+  // _categories[attribute_id][salsify_category_id] = category
   private $_categories;
 
   // current category that we're building up
@@ -153,7 +154,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $this->_end_nested_thing();
     } elseif ($this->_nesting_level === self::HEADER_NESTING_LEVEL) {
         if ($this->_in_attribute_values) {
-          $this->_create_categories_if_needed();
+          $this->_import_categories();
         }
 
         $this->_in_attributes = false;
@@ -192,7 +193,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _end_category() {
-    $this->_categories[$this->_category['id']] = $this->_category;
+    if (!array_key_exists('attribute_id', $this->_category)) {
+      $this->_log("ERROR: no attribute_id specified for category, so skipping: " . var_export($this->_category, true));
+    } elseif (!array_key_exists('id', $this->_category)) {
+      $this->_log("ERROR: no id specified for category, so skipping: " . var_export($this->_category, true));
+    } else {
+      $attribute_id = $this->_category['attribute_id'];
+      $id = $this->_category['id'];
+      $this->_categories[$attribute_id][$id] = $this->_category;
+    }
     unset($this->_category);
   }
 
@@ -372,9 +381,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       } elseif ($this->_in_attribute_values) {
         $this->_category[$key] = $value;
       } elseif ($this->_in_products) {
-        if (!array_key_exists($key, $this->_attributes)) {
-          $this->_log('ERROR: skipping unrecognized property id on product: ' . $key);
-        } elseif (array_key_exists($key, $this->_categories)) {
+        if (array_key_exists($key, $this->_categories)) {
           if (array_key_exists($value, $this->_categories[$key])) {
             $category = $this->_categories[$key][$value];
             // TODO allow multiple category assignments per product
@@ -382,6 +389,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           } else {
             $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
+        } elseif (!array_key_exists($key, $this->_attributes)) {
+          $this->_log('ERROR: skipping unrecognized property id on product: ' . $key);
         } else {
           $attribute = $this->_attributes[$key];
           $code = $this->_attribute_code($attribute);
@@ -408,19 +417,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("Flushing product batch of size: ".count($this->_batch));
 
     try {
-      // TODO decide which of these APIs to use. Right now I prefer the
-      //      FastSimpleImport. It has a slightly nicer API, different modes,
-      //      and gives much better error reporting. For example, when import
-      //      was failing due to 256-character properties, FastSimple gave me
-      //      error messages, but ApiImport did not.
-
       Mage::getSingleton('fastsimpleimport/import')
           ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
           ->processProductImport($this->_batch);
 
-      // $api = Mage::getModel('api_import/import_api');
-      // $api->importEntities($this->_batch);
-
+      // for PHP GC
+      unset($this->_batch);
       $this->_batch = array();
     } catch (Exception $e) {
       $this->_log('ERROR could not flush batch: ' . $e->getMessage());
@@ -487,7 +489,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     unset($this->_attributes[$attribute_id]);
   }
 
-
   private function _delete_attribute($attribute) {
     $dbattribute = $this->_get_attribute($attribute);
     if ($dbattribute) {
@@ -544,6 +545,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
   // return database model of given attribute
+  // TODO possibly use the same way I get categories (byAttribute) which would
+  //      be cleaner
   private function _get_attribute($attribute) {
     if (!array_key_exists('type', $attribute)) {
       $type = self::PRODUCT;
@@ -583,7 +586,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // I *think* this is everything we COULD be setting, with some properties
     // commented out. I got values from eav_attribute and catalog_eav_attribute
 
-    // TODO support multiple stores (see 'is_global' below)
+    // TODO support multi-store (see 'is_global' below)
 
     if ($attribute_type === 'varchar') {
       $frontend_type  = 'text';
@@ -732,14 +735,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // This goes through all the categories that were seen in the import and makes
   // sure that they and their ancestors are all loaded into Magento.
-  private function _create_categories_if_needed() {
+  private function _import_categories() {
     $this->_log("finished parsing category data. now loading into database.");
 
     $this->_prepare_category_hierarchy();
-    // after preparing the categories, the categories are grouped by the
-    // attribute that they're associated with.
-    // TODO we should be organizing them like this all along during parsing to
-    //      make the treatment of _categories more consistent and maintainable.
     // TODO should be we be creating new roots per attribute? Right now the data
     //      we're getting takes care of rooting itself, so that feels like it
     //      would create an additional, unnatural attribute type.
@@ -754,6 +753,48 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // Prepares the categories for import, returning an import-friendly array.
+  // Notes:
+  // * Categories already in the system (as identified by salsify_category_id)
+  //   will be ignored.
+  // * New root categories will be loaed here on a one-off basis, since the
+  //   import API doesn't seem to be able to create new roots.
+  private function _prepare_categories() {
+    $prepped_categories = array();
+    foreach ($this->_categories as $id => $category) {
+      $attribute_id = $category['attribute_id'];
+
+      if (in_array($attribute_id, $this->_attributes)) {
+        // First time seeing this. If it exists, let's make sure to delete the
+        // actual attribute from the system. The reason we do this here is so
+        // that we don't have to keep all of the attributes in memory as we go
+        // through the prior attributes section. So we just assume that they're
+        // all valid and then delete here.
+        $this->_delete_attribute_from_salsify_id($attribute_id);
+      }
+
+      if (array_key_exists($attribute_id, $prepped_categories)) {
+        $categories = $prepped_categories[$attribute_id];
+      } else {
+        $categories = array();
+      }
+
+      if (!array_key_exists('name', $category)) {
+        $this->_log("WARNING: name not given for category. using ID as name: " . var_export($category, true));
+        $category['name'] = $category['id'];
+      }
+
+      // can't used _set_load_status here since we're about to overwrite the 
+      // global _categories variable.
+      $category['__load_status'] = self::LOAD_NOT_ATTEMPTED;
+      $categories[$id] = $category;
+      $prepped_categories[$attribute_id] = $categories;
+    }
+
+    $this->_categories = $prepped_categories;
+  }
+
+
   // Divides all the category values by attribute_id. Makes sure each category
   // value has __load_status set to false (keeps track of whether or not it's been
   // loaded into the DB). Makes sure all child values for each category value
@@ -761,10 +802,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _prepare_category_hierarchy() {
     $prepped_categories = array();
     foreach ($this->_categories as $id => $category) {
-      if (!array_key_exists('attribute_id', $category)) {
-        $this->_log("ERROR: no attribute_id specified for category: " . var_export($category, true));
-        continue;
-      }
       $attribute_id = $category['attribute_id'];
 
       if (in_array($attribute_id, $this->_attributes)) {

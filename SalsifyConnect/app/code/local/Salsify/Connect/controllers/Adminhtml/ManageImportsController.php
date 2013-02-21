@@ -70,7 +70,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $loader->start_document();
 
     $this->_render_html("TESTING");
-    // $this->test_load_categories();
+    $this->test_load_categories();
 
     $this->_end_render();
   }
@@ -79,7 +79,6 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function test_load_categories() {
     $data = array();
     $data[] = array(
-      '_root' => 'Root Catalog',
       '_category' => 'Test2',
       'name' => 'Test2',
       'description' => 'Test2',
