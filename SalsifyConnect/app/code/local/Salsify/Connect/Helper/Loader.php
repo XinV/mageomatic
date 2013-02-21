@@ -769,6 +769,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // TODO should be we be creating new roots per attribute? Right now the data
   //      we're getting takes care of rooting itself, so that feels like it
   //      would create an additional, unnatural attribute type.
+  //      The biggest argument to add another level, however, is that the PATH
+  //      (and therefore URL) does not include the root, and maybe it should?
+  //      This greatly depends on the data, however.
   private function _prepare_categories_for_import() {
 
     $categories = array();
@@ -835,13 +838,22 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
 
       $category['__root']  = $parent_category['__root'];
-      $category['__path']  = $parent_category['__path'] . '/' . $category['name'];
-      $category['__depth'] = $parent_category['__depth'] + 1;
+
+      $parent_depth = $parent_category['__depth'];
+      $category['__depth'] = $parent_depth + 1;
+      if ($parent_depth == 0) {
+        // path is relative not to the root, but to the first child of the root...
+        $category['__path']  = $category['name'];
+      } else {
+        $category['__path']  = $parent_category['__path'] . '/' . $category['name'];
+      }
     } else {
       // root category
       $category['__root']  = $category['name'];
-      $category['__path']  = $category['name'];
       $category['__depth'] = 0;
+
+      // not currently used
+      // $category['__path']  = $category['name'];
     }
     return $category;
   }
