@@ -3,6 +3,10 @@ require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 
 // FIXME remove
+//{"attributes":[
+//  {"id":"sku","name":"sku","roles":{"products":["id"],"accessories":["target_product_id"]}}
+
+// FIXME remove
 // "digital_assets":[{"url":"https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/1/7068108-8110.jpg",
 //                    "name":"7068108-8110.jpg","is_primary_image":"true"}]
 
@@ -49,6 +53,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // current attribute
   private $_attribute;
+
+  // holds the target product attribute
+  private $_target_product_attribute;
 
   // category hierarchy.
   // _categories[attribute_id][salsify_category_id] = category
@@ -183,7 +190,19 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     // NOTE: if the attribute turns out to be a category, it will be deleted
     //       from Magento during category loading.
-    $this->_create_attribute_if_needed($this->_attribute);
+    $success = $this->_create_attribute_if_needed($this->_attribute);
+    if ($success) {
+      if (array_key_exists('roles', $attribute)) {
+        $roles = $attribute['roles'];
+        if (array_key_exists('accessories', $roles)) {
+          $accessory_roles = $roles['products'];
+          if (in_array('target_product_id', $accessory_roles)) {
+            $this->_target_product_attribute = $attribute['id'];
+          }
+        }
+      }
+    }
+
     unset($this->_attribute);
   }
 
@@ -247,14 +266,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     foreach ($product as $key => $value) {
       if ($key === 'accessories') {
-        $accessory_skus = $this->_prepare_product_accessories($value);
-        if (!empty($accessory_skus)) {
-          $product['_links_crosssell_sku'] = array_pop($accessory_skus);
-          foreach ($accessory_skus as $accessory_sku) {
-            array_push($extra_product_values,
-                       array('_links_crosssell_sku' => $accessory_sku));
-                             // '_links_crosssell_position' => 1)); // FIXME
+        if ($this->_target_product_attribute) {
+          $accessory_skus = $this->_prepare_product_accessories($value);
+          if (!empty($accessory_skus)) {
+            $product['_links_crosssell_sku'] = array_pop($accessory_skus);
+            foreach ($accessory_skus as $accessory_sku) {
+              array_push($extra_product_values,
+                         array('_links_crosssell_sku' => $accessory_sku));
+            }
           }
+        } else {
+          $this->_log("WARNING: accessories for product when no attribute for role target_product_id was set: " . var_export($product, true));
         }
         unset($product['accessories']);
       } elseif (is_array($value)) {
@@ -286,9 +308,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _prepare_product_accessories($accessories) {
     $accessory_skus = array();
     foreach ($accessories as $accessory) {
-      // FIXME need to use the specific property that has the role of accessory
-      $sku = $accessory['sku'];
-
+      $sku = $accessory[$this->_target_product_attribute];
       array_push($accessory_skus, $sku);
     }
     return $accessory_skus;
@@ -534,7 +554,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $dbattribute = $this->_create_attribute($attribute, $type, $product_type);
       }
 
-      $this->_attributes[$id] = $attribute;
+      if ($dbattribute) {
+        $this->_attributes[$id] = $attribute;
+      } else {
+        // failed to create attribute
+        return null;
+      }
     }
     return $this->_attributes[$id];
   }
