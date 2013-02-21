@@ -223,9 +223,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     unset($this->_product);
 
-    // FIXME remove
-    $this->_log("BATCH UPDATE: " . var_export($this->_batch, true));
-
     if (count($this->_batch) > self::BATCH_SIZE) {
       $this->_flush_batch();
     }
@@ -246,13 +243,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     $extra_product_values = array();
     foreach ($product as $key => $value) {
-      if (is_array($value)) {
-        // multi-valued thing
-        $product[$key] = array_pop($value);
-        foreach ($value as $v) {
-          $extra_value = array($key => $v, 'sku' => null);
-          array_push($extra_product_values, $extra_value);
+      if ($key === 'accessories') {
+        $accessory_skus = $this->_prepare_product_accessories($value);
+        if (!empty($accessory_skus)) {
+          $products['_links_crosssell_sku'] = array_pop($accessory_skus);
+          foreach ($accessory_skus as $accessory_sku) {
+            array_push($extra_product_values, array('_links_crosssell_sku' => $accessory_sku));
+          }
         }
+      } elseif (is_array($value)) {
+        // multi-valued thing. wish we could do better, but see this for why not:
+        // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
+        $product[$key] = implode(', ', $value);
       }
     }
 
@@ -313,6 +315,23 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $products = array_merge($products, $extra_product_values);
     }
     return $products;
+  }
+
+
+  // accessories is as per the salsify import format in terms of nesting.
+  //
+  // TODO right now we're just doing cross-sells, but we should have a
+  //      mapping from the specific accessory categories to cross/up/etc.
+  //      sells in Magento.
+  private function _prepare_product_accessories($accessories) {
+    $accessory_skus = array();
+    foreach ($accessory_skus as $accessory) {
+      // FIXME need to use the specific property that has the role of accessory
+      $sku = $accessory['sku'];
+
+      array_push($accessory_skus, $sku);
+    }
+    return $accessory_skus;
   }
 
 
@@ -831,6 +850,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       if ($category['__depth'] == 0) {
         // create root category by hand. it's required for the mass import of
         // the other categories.
+
+        // FIXME if the category has a accessory role don't output it here as
+        //       Magento can't really do anything with it.
         if (!$this->_create_category($category)) {
           $msg = "ERROR: creating root category. Aborting import: " . var_export($category, true);
           $this->_log($msg);
