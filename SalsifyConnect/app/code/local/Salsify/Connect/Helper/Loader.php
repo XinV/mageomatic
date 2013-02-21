@@ -792,16 +792,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         }
       }
     }
-
+$this->_log("1");
     $categories = $this->_sort_categories_by_depth($categories);
-
+$this->_log("2");
     $prepped_categories = array();
     foreach ($categories as $category) {
       if ($this->_get_category($category)) {
         // already exists in database. continue.
         continue;
       }
-
+$this->_log("3");
       if ($category['__depth'] == 0) {
         // create root category by hand. it's required for the mass import of
         // the other categories.
@@ -857,7 +857,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $category['__depth'] = 0;
 
       // not currently used
-      $category['__path']  = $category['name'];
+      // $category['__path']  = $category['name'];
     }
     return $category;
   }
