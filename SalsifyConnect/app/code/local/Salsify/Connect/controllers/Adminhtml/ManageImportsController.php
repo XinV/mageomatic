@@ -78,7 +78,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function test_load_categories() {
     $data = array();
     $data[] = array(
-      '_root' => '',
+      '_root' => null,
       '_category' => 'Test2',
       'name' => 'Test2',
       'description' => 'Test2',
