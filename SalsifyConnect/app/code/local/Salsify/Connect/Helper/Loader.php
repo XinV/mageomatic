@@ -391,7 +391,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           if (array_key_exists($value, $this->_categories[$key])) {
             $category = $this->_categories[$key][$value];
             // TODO allow multiple category assignments per product
-            $this->_product['_category'] = $this->_get_path($category);
+            $this->_product['_category'] = $this->_get_category_path($category);
           } else {
             $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
@@ -818,6 +818,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // returns the database model category for the given category if it exists.
+  //         null otherwise.
+  private function _get_category($category) {
+    return Mage::getModel('catalog/category')
+               ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
+  }
+
+
   private function _clean_and_prepare_category($category) {
     if (array_key_exists('__depth', $category)) {
       // already processed this one
@@ -855,9 +863,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // root category
       $category['__root']  = $category['name'];
       $category['__depth'] = 0;
-
-      // not currently used
-      // $category['__path']  = $category['name'];
+      $category['__path']  = $category['name'];
     }
     return $category;
   }
@@ -887,6 +893,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     );
   }
 
+
+  // creates a URL-friendly key for this category. it will replace whitespace
+  // with friendlier dashes, lowerase the string, and urlencode it in case there
+  // are unfriendly characters in the name.
+  private function _get_url_key($category) {
+    $key = strtolower($category['name']);
+    $key = preg_replace('/\s\s+/', '-', $key);
+    return urlencode($key);
+  }
+  
+
   private function _sort_categories_by_depth($categories) {
     $bins = array();
     $max_depth = 0;
@@ -910,146 +927,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // Divides all the category values by attribute_id. Makes sure each category
-  // value has __load_status set to false (keeps track of whether or not it's been
-  // loaded into the DB). Makes sure all child values for each category value
-  // are set.
-  private function _prepare_category_hierarchy() {
-    $prepped_categories = array();
-    foreach ($this->_categories as $id => $category) {
-      $attribute_id = $category['attribute_id'];
-
-      if (in_array($attribute_id, $this->_attributes)) {
-        // First time seeing this. If it exists, let's make sure to delete the
-        // actual attribute from the system. The reason we do this here is so
-        // that we don't have to keep all of the attributes in memory as we go
-        // through the prior attributes section. So we just assume that they're
-        // all valid and then delete here.
-        $this->_delete_attribute_from_salsify_id($attribute_id);
-      }
-
-      if (array_key_exists($attribute_id, $prepped_categories)) {
-        $categories = $prepped_categories[$attribute_id];
-      } else {
-        $categories = array();
-      }
-
-      if (!array_key_exists('name', $category)) {
-        $this->_log("WARNING: name not given for category. using ID as name: " . var_export($category, true));
-        $category['name'] = $category['id'];
-      }
-
-      // can't used _set_load_status here since we're about to overwrite the 
-      // global _categories variable.
-      $category['__load_status'] = self::LOAD_NOT_ATTEMPTED;
-      $categories[$id] = $category;
-      $prepped_categories[$attribute_id] = $categories;
-    }
-
-    $this->_categories = $prepped_categories;
-  }
-
-
-  // returns the database model category for the given category if it exists.
-  //         null otherwise.
-  private function _get_category($category) {
-    return Mage::getModel('catalog/category')
-               ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
-  }
-
-
-  // ensures that a category and all of it's ancestors are in the DB. this will
-  // start from the root and work its way up. returns true if successful.
-  private function _create_category_and_ancestors($attribute_id, $category) {
-    $load_status = $this->_get_load_status($attribute_id, $category);
-    if ($load_status === self::LOAD_SUCCEEDED) {
-      return true;
-    } elseif ($load_status === self::LOAD_FAILED) {
-      return false;
-    }
-
-    // check if the category already exists in the DB. we still go through the
-    // rest of this instead of shortcutting here to make sure the entire
-    // ancestry is loaded.
-    $dbcategory = $this->_get_category($category);
-
-    // first must create ancestry
-    if (array_key_exists('parent_id', $category)) {
-      $parent_id = $category['parent_id'];
-      if (!array_key_exists($parent_id, $this->_categories[$attribute_id])) {
-        $this->_log("ERROR: parent ID mentioned for category was not included in import file: " . var_export($category, true));
-        $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
-        return false;
-      }
-      $parent_category = $this->_categories[$attribute_id][$parent_id];
-      $parent_loaded = $this->_create_category_and_ancestors($attribute_id, $parent_category);
-      if (!$parent_loaded) {
-        $this->_log("ERROR: could not load ancestry for category: " . var_export($category, true));
-        $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
-        return false;
-      }
-
-      $parent_path = $this->_get_path($parent_category);
-      $this->_set_path($category, $parent_path . '/' . $category['name']);
-      $parent_depth = $this->_get_depth($parent_category);
-      $this->_set_depth($category, $parent_depth + 1);
-    } else {
-      $this->_set_path($category, $category['name']);
-      $this->_set_depth($category, 1);
-    }
-
-    // finally, create the category if it hasn't been created
-    if (!$dbcategory) {
-      $dbcategory = $this->_create_category($category);
-    }
-    if ($dbcategory) {
-      $this->_set_load_status($attribute_id, $category, self::LOAD_SUCCEEDED);
-      return true;
-    } else {
-      $this->_set_load_status($attribute_id, $category, self::LOAD_FAILED);
-      return false;
-    }
-  }
-
-
-  private function _get_parent_category($category) {
-    if (array_key_exists('parent_id', $category)) {
-      $parent_id = $category['parent_id'];
-      $attribute_id = $category['attribute_id'];
-      if (array_key_exists($parent_id, $this->_categories[$attribute_id])) {
-        return $this->_categories[$attribute_id][$parent_id];
-      }
-      $this->_log("ERROR: parent_id mentioned in category but not seen in import: " . var_export($category, true));
-    }
-    return null;
-  }
-
-  private function _get_path($category) {
+  private function _get_category_path($category) {
     $attribute_id = $category['attribute_id'];
     return $this->_categories[$attribute_id][$category['id']]['__path'];
-  }
-
-  private function _set_path($category, $path) {
-    $attribute_id = $category['attribute_id'];
-    $this->_categories[$attribute_id][$category['id']]['__path'] = $path;
-  }
-
-  private function _get_depth($category) {
-    $attribute_id = $category['attribute_id'];
-    return $this->_categories[$attribute_id][$category['id']]['__depth'];
-  }
-
-  private function _set_depth($category, $depth) {
-    $attribute_id = $category['attribute_id'];
-    $this->_categories[$attribute_id][$category['id']]['__depth'] = $depth;
-  }
-
-  private function _get_load_status($attribute_id, $category) {
-    return $this->_categories[$attribute_id][$category['id']]['__load_status'];
-  }
-
-  private function _set_load_status($attribute_id, $category, $load_status) {
-    $this->_categories[$attribute_id][$category['id']]['__load_status'] = $load_status;
   }
 
 
@@ -1107,12 +987,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
   }
 
-  // creates a URL-friendly key for this category. it will replace whitespace
-  // with friendlier dashes, lowerase the string, and urlencode it in case there
-  // are unfriendly characters in the name.
-  private function _get_url_key($category) {
-    $key = strtolower($category['name']);
-    $key = preg_replace('/\s\s+/', '-', $key);
-    return urlencode($key);
+
+  private function _get_parent_category($category) {
+    if (array_key_exists('parent_id', $category)) {
+      $parent_id = $category['parent_id'];
+      $attribute_id = $category['attribute_id'];
+      if (array_key_exists($parent_id, $this->_categories[$attribute_id])) {
+        return $this->_categories[$attribute_id][$parent_id];
+      }
+      $this->_log("ERROR: parent_id mentioned in category but not seen in import: " . var_export($category, true));
+    }
+    return null;
   }
 }
