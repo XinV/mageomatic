@@ -78,20 +78,35 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   private function test_load_categories() {
     $data = array();
+
     $data[] = array(
-      '_root' => 'Root Catalog',
-      '_category' => 'Test2',
-      'name' => 'Test2',
-      'description' => 'Test2',
+      '_root' => 'ICEcat Product Categories',
+      '_category' => 'ICEcat Product Categories/Cameras',
+      'salsify_category_id' => '571',
+      'name' => 'Cameras',
+      'description' => 'Created during import from Salsify.',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
-      // 'meta_description' => 'Meta Test',
+      'position' => '1',
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
-      'position' => '1',
-      'salsify_category_id' => 'YES',
-      'url_key' => 'MY-SPECIAL-URL-KEY',
-    );
+      'url_key' => 'cameras',
+    )
+
+    // $data[] = array(
+    //   '_root' => 'Root Catalog',
+    //   '_category' => 'Test2',
+    //   'name' => 'Test2',
+    //   'description' => 'Test2',
+    //   'is_active' => 'yes',
+    //   'include_in_menu' => 'yes',
+    //   // 'meta_description' => 'Meta Test',
+    //   'available_sort_by' => 'Price',
+    //   'default_sort_by' => 'Price',
+    //   'position' => '1',
+    //   'salsify_category_id' => 'YES',
+    //   'url_key' => 'MY-SPECIAL-URL-KEY',
+    // );
     // $data[] = array(
     //   '_root' => 'Test2',
     //   '_category' => 'Test2/Test3',
