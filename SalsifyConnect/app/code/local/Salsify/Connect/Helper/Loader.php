@@ -274,9 +274,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $prepped_product = array_merge($prepped_product, $extra_product_values);
     }
 
-// FIXME remove
-$this->_log("PRODUCT: " . var_export($prepped_product, true));
-    return $products;
+    return $prepped_product;
   }
 
 
@@ -286,8 +284,6 @@ $this->_log("PRODUCT: " . var_export($prepped_product, true));
   //      mapping from the specific accessory categories to cross/up/etc.
   //      sells in Magento.
   private function _prepare_product_accessories($accessories) {
-// FIXME remove
-$this->_log("ACCESSORIES: " . var_export($accessories, true));
     $accessory_skus = array();
     foreach ($accessories as $accessory) {
       // FIXME need to use the specific property that has the role of accessory
@@ -295,8 +291,6 @@ $this->_log("ACCESSORIES: " . var_export($accessories, true));
 
       array_push($accessory_skus, $sku);
     }
-// FIXME remove
-$this->_log("ACCESSORY SKUS: " . var_export($accessory_skus, true));
     return $accessory_skus;
   }
 
