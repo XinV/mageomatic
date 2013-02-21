@@ -763,9 +763,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //   will be ignored.
   // * New root categories will be loaed here on a one-off basis, since the
   //   import API doesn't seem to be able to create new roots.
-  // * The array will be sorted by depth. Not sure if this is strictly required
-  //   by Magento, but it seems reasonable that the parents would be in a CSV
-  //   format before children (and the API mimics the CSV format for import).
+  // * The array will be sorted by depth. Required by import (parents must be
+  //   created before their children).
   //
   // TODO should be we be creating new roots per attribute? Right now the data
   //      we're getting takes care of rooting itself, so that feels like it
@@ -796,6 +795,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $prepped_categories = array();
     foreach ($categories as $category) {
       if ($this->_get_category($category)) {
+        $this->_log("SKIPPING: " . var_export($category, true));
         // already exists in database. continue.
         continue;
       }
