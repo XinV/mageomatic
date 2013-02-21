@@ -775,8 +775,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //      (and therefore URL) does not include the root, and maybe it should?
   //      This greatly depends on the data, however.
   private function _prepare_categories_for_import() {
-
     $categories = array();
+    $cleaned_categories = array();
     foreach ($this->_categories as $attribute_id => $categories_for_attribute) {
       if (in_array($attribute_id, $this->_attributes)) {
         // First time seeing this. If it exists, let's make sure to delete the
@@ -787,13 +787,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $this->_delete_attribute_from_salsify_id($attribute_id);
       }
 
+      $cleaned_categories[$attribute_id] = array();
+
       foreach ($categories_for_attribute as $id => $category) {
         $cat = $this->_clean_and_prepare_category($category);
         if ($cat) {
+          $cleaned_categories[$attribute_id][$id] = $cat;
           $categories[] = $cat;
         }
       }
     }
+    $this->_categories = $cleaned_categories;
 
     $categories = $this->_sort_categories_by_depth($categories);
 
@@ -931,7 +935,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   private function _get_category_path($category) {
     $attribute_id = $category['attribute_id'];
-    return $this->_categories[$attribute_id][$category['id']]['__path'];
+    $id = $category['id'];
+    return $this->_categories[$attribute_id][$id]['__path'];
   }
 
 
