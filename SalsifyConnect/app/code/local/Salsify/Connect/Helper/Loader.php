@@ -256,6 +256,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
                              '_links_crosssell_position' => 1)); // FIXME
           }
         }
+        unset($product['accessories']);
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
@@ -272,6 +273,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if (!empty($extra_product_values)) {
       $products = array_merge($products, $extra_product_values);
     }
+
+// FIXME remove
+$this->_log("PRODUCT: " . var_export($products, true));
     return $products;
   }
 
