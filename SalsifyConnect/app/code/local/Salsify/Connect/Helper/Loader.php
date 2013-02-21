@@ -867,6 +867,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'default_sort_by' => 'Price',
 
       // optional
+      'url_key' => $this->_get_url_key($category),
       // 'meta_description' => $category['name'],
     );
   }
