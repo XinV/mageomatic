@@ -786,22 +786,24 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
 
       foreach ($categories_for_attribute as $id => $category) {
+$this->_log("1");
         $cat = $this->_clean_and_prepare_category($category);
+$this->_log("2");
         if ($cat) {
           $categories[] = $cat;
         }
       }
     }
-$this->_log("1");
+
     $categories = $this->_sort_categories_by_depth($categories);
-$this->_log("2");
+
     $prepped_categories = array();
     foreach ($categories as $category) {
       if ($this->_get_category($category)) {
         // already exists in database. continue.
         continue;
       }
-$this->_log("3");
+
       if ($category['__depth'] == 0) {
         // create root category by hand. it's required for the mass import of
         // the other categories.
