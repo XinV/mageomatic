@@ -105,7 +105,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     try {
       $import->processCategoryImport($data);
     } catch (Exception $e) {
-      print_r($import->getErrorMessages());
+      $this->_log("ERROR: " . $e->getMessage());
     }
   }
 
