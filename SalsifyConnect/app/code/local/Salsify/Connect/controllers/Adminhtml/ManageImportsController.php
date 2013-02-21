@@ -69,7 +69,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // called just to make sure that the salsify external id exists
     $loader->start_document();
 
-    $loader->test_load_categories();
+    $this->test_load_categories();
 
     $this->_end_render();
   }
