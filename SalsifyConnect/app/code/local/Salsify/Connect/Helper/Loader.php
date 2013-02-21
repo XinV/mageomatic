@@ -747,9 +747,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $categories_for_import = $this->_prepare_categories_for_import();
     $import = Mage::getModel('fastsimpleimport/import');
     try {
-      // FIXME remove
-      $this->_log('PREPPED: ' . var_export($categories_for_import, true));
-
       $import->processCategoryImport($categories_for_import);
     } catch (Exception $e) {
       $this->_log("ERROR: loading categories into the database. aborting load: " . $e->getMessage());
@@ -789,7 +786,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
 
       foreach ($categories_for_attribute as $id => $category) {
-        $cat = $this->_build_path($category);
+        $cat = $this->_clean_and_prepare_category($category);
         if ($cat) {
           $categories[] = $cat;
         }
@@ -821,11 +818,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  private function _build_path($category) {
+  private function _clean_and_prepare_category($category) {
     if (array_key_exists('__depth', $category)) {
       // already processed this one
       return $category;
     }
+
+    // TODO figure out how to encode front-slashes so that the import API will
+    //      allow them in the path.
+    $category['name'] = preg_replace('/\//', '|', $category['name']);
 
     $id = $category['id'];
     $attribute_id = $category['attribute_id'];
