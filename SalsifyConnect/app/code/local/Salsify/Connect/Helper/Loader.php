@@ -286,6 +286,8 @@ $this->_log("PRODUCT: " . var_export($products, true));
   //      mapping from the specific accessory categories to cross/up/etc.
   //      sells in Magento.
   private function _prepare_product_accessories($accessories) {
+// FIXME remove
+$this->_log("ACCESSORIES: " . var_export($accessories, true));
     $accessory_skus = array();
     foreach ($accessory_skus as $accessory) {
       // FIXME need to use the specific property that has the role of accessory
