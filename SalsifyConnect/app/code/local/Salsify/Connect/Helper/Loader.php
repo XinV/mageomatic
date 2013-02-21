@@ -217,8 +217,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _end_product() {
-    $clean_product = $this->_prepare_product($this->_product);
-    array_push($this->_batch, $clean_product);
+    $clean_products = $this->_prepare_product($this->_product);
+    if ($clean_products) {
+      $this->_batch = array_merge($this->_batch, $clean_products);
+    }
     unset($this->_product);
 
     if (count($this->_batch) > self::BATCH_SIZE) {
@@ -228,8 +230,30 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
   // Prepares the product that we've loaded from Salsify for Magento.
   private function _prepare_product($product) {
-    // FIXME query the system to get the full list of required attributes.
-    //       otherwise the bulk import fails silently...
+    if (!array_key_exists('sku', $product)) {
+      $this->_log("ERROR: product must have a SKU and does not: " . var_export($product, true));
+      return null;
+    }
+
+    // We return an array of entries here for multi-valued things. The way that
+    // The Magento Import API handles multi-valued assignments is to have the
+    // second values as new entries just after the main entry (the analogy is
+    // a new row in a CSV with only a single value for the column filled out).
+    $products = array();
+
+    $extra_product_values = array();
+    foreach ($products as $key => $value) {
+      if (is_array($value)) {
+        // multi-valued thing
+        $product[$key] = array_pop($value);
+        foreach ($value as $v) {
+          array_push($extra_product_values, array($key => $v));
+        }
+      }
+    }
+
+    // TODO query the system to get the full list of required attributes.
+    //      otherwise the bulk import fails silently...
 
     // TODO when Salsify supports Kits, this will have to change.
     $product['_type'] = 'simple';
@@ -277,23 +301,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $product['qty'] = 0;
     }
 
-    // FIXME figure out the best solution to get multi-valued properties into
-    //       Magento. This *might* just work, but we'd have to be careful to remove
-    //       commas from incoming data.
-    // SOLUTION https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
-    $clean_product = array();
-    foreach($product as $key => $val) {
-      if (is_array($val)) {
-        $val = implode(', ', $val);
-      }
-      $clean_product[$key] = $val;
-    }
-    $product = $clean_product;
-
     // add the Salsify ID for good measure, even though it is mapped to the sku.
     $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
 
-    return $product;
+    array_push($products, $product);
+    if (!empty($extra_product_values)) {
+      $products = array_merge($products, $extra_product_values);
+    }
+    return $products;
   }
 
 
