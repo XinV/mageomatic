@@ -258,9 +258,42 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
     }
 
-    // TODO query the system to get the full list of required attributes.
-    //      otherwise the bulk import fails silently...
+    $product = $this->_prepare_product_add_required_values($product);
 
+    // add the Salsify ID for good measure, even though it is mapped to the sku.
+    $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
+
+    array_push($products, $product);
+    if (!empty($extra_product_values)) {
+      $products = array_merge($products, $extra_product_values);
+    }
+    return $products;
+  }
+
+
+  // accessories is as per the salsify import format in terms of nesting.
+  //
+  // TODO right now we're just doing cross-sells, but we should have a
+  //      mapping from the specific accessory categories to cross/up/etc.
+  //      sells in Magento.
+  private function _prepare_product_accessories($accessories) {
+    $accessory_skus = array();
+    foreach ($accessory_skus as $accessory) {
+      // FIXME need to use the specific property that has the role of accessory
+      $sku = $accessory['sku'];
+
+      array_push($accessory_skus, $sku);
+    }
+    return $accessory_skus;
+  }
+
+
+  // adds values for all the properties required by Magento so that the product
+  // can be imported.
+  //
+  // TODO query the system to get the full list of required attributes.
+  //      otherwise the bulk import fails silently...
+  private function _prepare_product_add_required_values($product) {
     // TODO when Salsify supports Kits, this will have to change.
     $product['_type'] = 'simple';
 
@@ -307,31 +340,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $product['qty'] = 0;
     }
 
-    // add the Salsify ID for good measure, even though it is mapped to the sku.
-    $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
-
-    array_push($products, $product);
-    if (!empty($extra_product_values)) {
-      $products = array_merge($products, $extra_product_values);
-    }
-    return $products;
-  }
-
-
-  // accessories is as per the salsify import format in terms of nesting.
-  //
-  // TODO right now we're just doing cross-sells, but we should have a
-  //      mapping from the specific accessory categories to cross/up/etc.
-  //      sells in Magento.
-  private function _prepare_product_accessories($accessories) {
-    $accessory_skus = array();
-    foreach ($accessory_skus as $accessory) {
-      // FIXME need to use the specific property that has the role of accessory
-      $sku = $accessory['sku'];
-
-      array_push($accessory_skus, $sku);
-    }
-    return $accessory_skus;
+    return $product;
   }
 
 
