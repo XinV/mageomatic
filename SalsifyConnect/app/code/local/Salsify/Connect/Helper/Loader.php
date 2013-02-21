@@ -192,8 +192,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //       from Magento during category loading.
     $success = $this->_create_attribute_if_needed($this->_attribute);
     if ($success) {
-      if (array_key_exists('roles', $attribute)) {
-        $roles = $attribute['roles'];
+      if (array_key_exists('roles', $this->_attribute)) {
+        $roles = $this->_attribute['roles'];
         if (array_key_exists('accessories', $roles)) {
           $accessory_roles = $roles['products'];
           if (in_array('target_product_id', $accessory_roles)) {
