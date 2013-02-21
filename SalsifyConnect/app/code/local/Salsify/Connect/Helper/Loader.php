@@ -275,7 +275,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
 
 // FIXME remove
-$this->_log("PRODUCT: " . var_export($products, true));
+$this->_log("PRODUCT: " . var_export($prepped_product, true));
     return $products;
   }
 
