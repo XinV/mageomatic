@@ -745,15 +745,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("finished parsing category data. now loading into database.");
 
     $categories_for_import = $this->_prepare_categories_for_import();
-    $import = Mage::getModel('fastsimpleimport/import');
-    try {
-      $import->processCategoryImport($categories_for_import);
-    } catch (Exception $e) {
-      $this->_log("ERROR: loading categories into the database. aborting load: " . $e->getMessage());
-      throw $e;
+    if (!empty($categories_for_import)) {
+      $import = Mage::getModel('fastsimpleimport/import');
+      try {
+        $import->processCategoryImport($categories_for_import);
+      } catch (Exception $e) {
+        $this->_log("ERROR: loading categories into the database. aborting load: " . $e->getMessage());
+        throw $e;
+      }
     }
 
-    $this->_log("done loading categories into database.");
+    $this->_log("done loading categories into database. " . count($categories_for_import) . " new categories imported.");
   }
 
 
@@ -902,7 +904,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $key = preg_replace('/\s\s+/', '-', $key);
     return urlencode($key);
   }
-  
+
 
   private function _sort_categories_by_depth($categories) {
     $bins = array();
