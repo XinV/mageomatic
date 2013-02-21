@@ -795,7 +795,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $prepped_categories = array();
     foreach ($categories as $category) {
       if ($this->_get_category($category)) {
-        $this->_log("SKIPPING: " . var_export($category, true));
         // already exists in database. continue.
         continue;
       }
@@ -809,9 +808,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           throw new Exception($msg);
         }
       } else {
-        $prepped_categories[] = $this->_prepare_category_for_import($category);
+        array_push($prepped_categories, $this->_prepare_category_for_import($category));
       }
     }
+
+    $this->_log("PREPPED: " . var_export($prepped_categories, true));
+
     return $prepped_categories;
   }
 
