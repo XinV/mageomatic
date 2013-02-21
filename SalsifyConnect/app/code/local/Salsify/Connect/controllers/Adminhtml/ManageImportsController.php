@@ -69,7 +69,44 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // called just to make sure that the salsify external id exists
     $loader->start_document();
 
+    $loader->test_load_categories();
+
     $this->_end_render();
+  }
+
+
+  private function test_load_categories() {
+    $data = array();
+    $data[] = array(
+      '_root' => 'Default Category',
+      '_category' => 'Test2',
+      'name' => 'Test2',
+      'description' => 'Test2',
+      'is_active' => 'yes',
+      'include_in_menu' => 'yes',
+      'meta_description' => 'Meta Test',
+      'available_sort_by' => 'position',
+      'default_sort_by' => 'position',
+    );
+    $data[] = array(
+      '_root' => 'Default Category',
+      '_category' => 'Test2/Test3',
+      'name' => 'TestTest',
+      'description' => 'Test3',
+      'is_active' => 'yes',
+      'include_in_menu' => 'yes',
+      'meta_description' => 'Meta Test',
+      'available_sort_by' => 'position',
+      'default_sort_by' => 'position',
+    );
+
+    /** @var $import AvS_FastSimpleImport_Model_Import */
+    $import = Mage::getModel('fastsimpleimport/import');
+    try {
+      $import->processCategoryImport($data);
+    } catch (Exception $e) {
+      print_r($import->getErrorMessages());
+    }
   }
 
 
@@ -230,7 +267,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $job = Mage::getModel('salsify_connect/importjob');
     $job->start_worker();
   }
-  
+
 
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
