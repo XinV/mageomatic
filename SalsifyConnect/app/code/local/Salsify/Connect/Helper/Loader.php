@@ -217,9 +217,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _end_product() {
-    $clean_products = $this->_prepare_product($this->_product);
-    if ($clean_products) {
-      $this->_batch = array_merge($this->_batch, $clean_products);
+    $prepared_products = $this->_prepare_product($this->_product);
+    if ($prepared_products) {
+      $this->_batch = array_merge($this->_batch, $prepared_products);
     }
     unset($this->_product);
 
@@ -307,9 +307,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // add the Salsify ID for good measure, even though it is mapped to the sku.
     $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
 
+$this->_log("1: " . var_export($products, true));
     array_push($products, $product);
+$this->_log("2: " . var_export($products, true));
     if (!empty($extra_product_values)) {
       $products = array_merge($products, $extra_product_values);
+$this->_log("3: " . var_export($products, true));
     }
     return $products;
   }
