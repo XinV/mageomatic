@@ -160,10 +160,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $this->_in_attributes = false;
         $this->_in_attribute_values = false;
         $this->_in_products = false;
-
-        if ($this->_batch) {
-          unset($this->_batch);
-        }
     }
 
     $this->_nesting_level--;
