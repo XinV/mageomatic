@@ -92,6 +92,19 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'default_sort_by' => 'Price',
       'url_key' => 'audio+%26%2338%3B+video',
     );
+    $data[] = array(
+      '_root' => 'ICEcat Product Categories',
+      '_category' => 'Audio &#38; Video/Audio turntables',
+      'salsify_category_id' => '1580',
+      'name' => 'Audio turntables',
+      'description' => 'Created during import from Salsify.',
+      'is_active' => 'yes',
+      'include_in_menu' => 'yes',
+      'position' => '1',
+      'available_sort_by' => 'Price',
+      'default_sort_by' => 'Price',
+      'url_key' => 'audio+turntables',
+    );
 
     // $data[] = array(
     //   '_root' => 'Root Catalog',
