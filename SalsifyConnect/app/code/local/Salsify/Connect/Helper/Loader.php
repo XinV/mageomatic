@@ -826,9 +826,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     // TODO figure out how to encode front-slashes so that the import API will
     //      allow them in the path.
-    $this->_log("1");
     $category['name'] = preg_replace('/\//', '|', $category['name']);
-    $this->_log("2");
 
     $id = $category['id'];
     $attribute_id = $category['attribute_id'];
@@ -859,7 +857,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $category['__depth'] = 0;
 
       // not currently used
-      // $category['__path']  = $category['name'];
+      $category['__path']  = $category['name'];
     }
     return $category;
   }
