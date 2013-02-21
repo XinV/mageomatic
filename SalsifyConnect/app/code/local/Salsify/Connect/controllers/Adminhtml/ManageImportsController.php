@@ -84,10 +84,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'description' => 'Test2',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
-      'meta_description' => 'Meta Test',
+      // 'meta_description' => 'Meta Test',
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
-      'possition' => '1',
+      'position' => '1',
     );
     $data[] = array(
       '_root' => 'Root Catalog',
@@ -96,10 +96,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'description' => 'Test3',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
-      'meta_description' => 'Meta Test',
+      // 'meta_description' => 'Meta Test',
       'available_sort_by' => 'Price',
       'default_sort_by' => 'Price',
-      'possition' => '1',
+      'position' => '1',
     );
 
     /** @var $import AvS_FastSimpleImport_Model_Import */
