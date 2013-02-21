@@ -289,7 +289,7 @@ $this->_log("PRODUCT: " . var_export($products, true));
 // FIXME remove
 $this->_log("ACCESSORIES: " . var_export($accessories, true));
     $accessory_skus = array();
-    foreach ($accessory_skus as $accessory) {
+    foreach ($accessories as $accessory) {
       // FIXME need to use the specific property that has the role of accessory
       $sku = $accessory['sku'];
 
