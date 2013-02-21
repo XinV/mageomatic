@@ -223,6 +223,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     unset($this->_product);
 
+    // FIXME remove
+    $this->log("BATCH UPDATE: " . var_export($this->_batch, true));
+
     if (count($this->_batch) > self::BATCH_SIZE) {
       $this->_flush_batch();
     }
