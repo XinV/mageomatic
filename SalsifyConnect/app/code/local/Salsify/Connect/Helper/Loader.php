@@ -252,8 +252,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           $products['_links_crosssell_sku'] = array_pop($accessory_skus);
           foreach ($accessory_skus as $accessory_sku) {
             array_push($extra_product_values,
-                       array('_links_crosssell_sku' => $accessory_sku,
-                             '_links_crosssell_position' => 1)); // FIXME
+                       array('_links_crosssell_sku' => $accessory_sku));
+                             // '_links_crosssell_position' => 1)); // FIXME
           }
         }
         unset($product['accessories']);
@@ -295,6 +295,8 @@ $this->_log("ACCESSORIES: " . var_export($accessories, true));
 
       array_push($accessory_skus, $sku);
     }
+// FIXME remove
+$this->_log("ACCESSORY SKUS: " . var_export($accessory_skus, true));
     return $accessory_skus;
   }
 
