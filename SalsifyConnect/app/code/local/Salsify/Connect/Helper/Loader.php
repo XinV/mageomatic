@@ -250,7 +250,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         // multi-valued thing
         $product[$key] = array_pop($value);
         foreach ($value as $v) {
-          $extra_value = array($key => $v, 'sku' => '');
+          $extra_value = array($key => $v, 'sku' => $product['sku']);
           array_push($extra_product_values, $extra_value);
         }
       }
