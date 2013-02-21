@@ -747,6 +747,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $categories_for_import = $this->_prepare_categories_for_import();
     $import = Mage::getModel('fastsimpleimport/import');
     try {
+      // FIXME remove
+      $this->_log('PREPPED: ' . var_export($categories_for_import, true));
+
       $import->processCategoryImport($categories_for_import);
     } catch (Exception $e) {
       $this->_log("ERROR: loading categories into the database. aborting load: " . $e->getMessage());
