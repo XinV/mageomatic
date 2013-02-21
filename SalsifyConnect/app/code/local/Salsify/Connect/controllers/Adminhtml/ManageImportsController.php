@@ -78,7 +78,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function test_load_categories() {
     $data = array();
     $data[] = array(
-      '_root' => 'Root Catalog',
+      '_root' => '',
       '_category' => 'Test2',
       'name' => 'Test2',
       'description' => 'Test2',
@@ -90,19 +90,19 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       'position' => '1',
       'salsify_category_id' => 'YES',
     );
-    $data[] = array(
-      '_root' => 'Root Catalog',
-      '_category' => 'Test2/Test3',
-      'name' => 'TestTest',
-      'description' => 'Test3',
-      'is_active' => 'yes',
-      'include_in_menu' => 'yes',
-      // 'meta_description' => 'Meta Test',
-      'available_sort_by' => 'Price',
-      'default_sort_by' => 'Price',
-      'position' => '1',
-      'salsify_category_id' => 'NO',
-    );
+    // $data[] = array(
+    //   '_root' => 'Test2',
+    //   '_category' => 'Test2/Test3',
+    //   'name' => 'TestTest',
+    //   'description' => 'Test3',
+    //   'is_active' => 'yes',
+    //   'include_in_menu' => 'yes',
+    //   // 'meta_description' => 'Meta Test',
+    //   'available_sort_by' => 'Price',
+    //   'default_sort_by' => 'Price',
+    //   'position' => '1',
+    //   'salsify_category_id' => 'NO',
+    // );
 
     /** @var $import AvS_FastSimpleImport_Model_Import */
     $import = Mage::getModel('fastsimpleimport/import');

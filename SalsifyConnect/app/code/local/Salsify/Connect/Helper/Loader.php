@@ -839,8 +839,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
       $parent_path = $this->_get_path($parent_category);
       $this->_set_path($category, $parent_path . '/' . $category['name']);
+      $parent_depth = $this->_get_depth($parent_category);
+      $this->_set_depth($category, $parent_depth + 1);
     } else {
       $this->_set_path($category, $category['name']);
+      $this->_set_depth($category, 1);
     }
 
     // finally, create the category if it hasn't been created
@@ -877,6 +880,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _set_path($category, $path) {
     $attribute_id = $category['attribute_id'];
     $this->_categories[$attribute_id][$category['id']]['__path'] = $path;
+  }
+
+  private function _get_depth($category) {
+    $attribute_id = $category['attribute_id'];
+    return $this->_categories[$attribute_id][$category['id']]['__depth'];
+  }
+
+  private function _set_depth($category, $depth) {
+    $attribute_id = $category['attribute_id'];
+    $this->_categories[$attribute_id][$category['id']]['__depth'] = $depth;
   }
 
   private function _get_load_status($attribute_id, $category) {
