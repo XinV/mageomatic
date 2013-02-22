@@ -950,7 +950,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     DROP TABLE catalog_category_entity_tmp;
     COMMIT;";
     try {
-      $db->query($sql);
+      // $db->query($sql);
     } catch (Exception $e) {
       $this->_log("FAIL: " . $e->getMessage());
       throw $e;
