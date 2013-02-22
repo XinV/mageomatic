@@ -80,7 +80,9 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
   // FIXME images coming from salsify should have an external ID or something to
   //       uniquely identify them between runs. what if someone updates the name
   //       and then we do another import?
-  // TODO deal with different digital asset roles (thumbnail vs. image, etc.)
+  //
+  // TODO get images for different digital asset roles (thumbnail vs. image,
+  //      etc.) from salsify.
   public function load_digital_assets($digital_assets) {
     foreach ($digital_assets as $sku => $das) {
       $product = Mage::getModel('catalog/product')
@@ -98,7 +100,11 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           }
 
           // TODO figure out if the media gallery already includes the thing
-          // FIXME this doesn't work
+          // $galleryData = $prod->getData('media_gallery');
+          // foreach ($galleryData['images'] as &$image) {
+          //     var_dump($image);
+          // }
+
           // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery
           $product->addImageToMediaGallery($filename, null, false, false);
           $product->save();

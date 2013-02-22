@@ -302,8 +302,25 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
 
-    // TODO clear out the salsify tables
-    // TODO clear out the jobs table as well.
+    try {
+      $db = Mage::getSingleton('core/resource')
+                ->getConnection('core_write');
+
+      $db->query("drop table jobs;");
+      $this->_render_html("<li>Jobs table dropped.</li>");
+
+      $db->query("drop table salsify_connect_import_run;");
+      $this->_render_html("<li>Import run table dropped.</li>");
+
+      $db->query("drop table salsify_connect_configuration;");
+      $this->_render_html("<li>Import configuration table dropped.</li>");
+
+      $db->query("delete from core_resource where code = 'salsify_connect_setup';")
+      $this->_render_html("<li>Salsify db installation removed (hitting any Salsify admin URL will recreate the tables).</li>");
+    } catch (Exception $e) {
+      $this->_log("FAIL: " . $e->getMessage());
+      throw $e;
+    }
 
     $this->_render_html("</ul>");
 
