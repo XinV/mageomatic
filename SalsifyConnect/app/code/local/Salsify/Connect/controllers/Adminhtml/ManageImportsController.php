@@ -264,7 +264,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                         ->items($attribute_set->getId());
                         // ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
       foreach($attributes as $attribute) {
-        $this->_render_html($attribute->getName() . '<br/>');
+        $this->_render_html(var_export($attribute,true) . '<br/><br/>');
       }
     }
 
