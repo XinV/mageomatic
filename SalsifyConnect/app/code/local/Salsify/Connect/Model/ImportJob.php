@@ -88,12 +88,19 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
         $url = $da['url'];
         $filename = $this->_get_local_filename($sku, $da);
         try {
-          $this->_download($url, $filename);
-          // TODO have more image types. 'thumbnail', 'small_image', and 'image'
-          $product->addImageToMediaGallery($filename, 'image', false);
-          $this->_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
+          if (file_exists($filename)) {
+            $this->_log('local file already exists for product ' . $sku . ' from ' . $url);
+          } else {
+            $this->_download($url, $filename);
+            $this->_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
+          }
+
+          // TODO figure out if the media gallery already includes the thing
+          // FIXME this doesn't work
+          // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery
+          $product->addImageToMediaGallery($filename, null, false, false);
         } catch (Exception $e) {
-          $this->_log("error loading digital assets. skipping: " . var_export($da, true));
+          $this->_log("ERROR: could not load digital asset. skipping: " . var_export($da, true));
           if (file_exists($filename)) {
             try {
               unlink($filename);
