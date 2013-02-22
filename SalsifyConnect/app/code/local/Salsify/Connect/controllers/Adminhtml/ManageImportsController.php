@@ -252,12 +252,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_log("Cleaner: deleting categories...");
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
-    $this->_render_html("<li>Total categories to be deleted: " . (count($categories) - 1) . '</li>');
+    $cat_count = 0;
     foreach($categories as $category) {
       if ($category->getId() != 1) {
         $category->delete();
+        $cat_count++;
       }
     }
+    $this->_render_html("<li>Total categories deleted: " . $cat_count . '</li>');
     $this->_log("Cleaner: categories deleted.");
 
     $this->_log("Cleaner: deleting attributes...");
