@@ -110,9 +110,9 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           // foreach ($gallery_data['images'] as $image) {
           //   $this->_log("IMAGE: " . var_export($image, true));
           // }
-          $this->_log("PRODUCT: " .var_export($product, true));
-          // $gallery_data = $product->getMediaGallery();
-          // $this->_log("GALLERY: " . var_export($gallery_data, true));
+          // $this->_log("PRODUCT: " .var_export($product, true));
+          $gallery_data = $product->getMediaGalleryImages();
+          $this->_log("GALLERY: " . var_export($gallery_data, true));
           // foreach ($gallery_data['images'] as $image) {
           //   $this->_log("IMAGE: " . var_export($image, true));
           //   // if ($gallery->getBackend()->getImage($product, $image['file'])) {
