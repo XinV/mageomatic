@@ -4,8 +4,10 @@
     <reference name="content">
       <!-- <block type="salsify_connect/adminhtml_manageimports" name="manageimports" /> -->
       
+      <!--
       We know this works, so we know that this configuration file is being
       loaded correctly.
+      -->
       <block type="core/text" name="manageimports">
         <action method="setText">
           <val>TESTING</val>

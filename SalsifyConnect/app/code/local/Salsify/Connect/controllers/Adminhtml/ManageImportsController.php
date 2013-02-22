@@ -102,7 +102,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
     // tried this:
-    // $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
+    $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
     // $this->_addContent($imports_block);
 
     $this->_end_render();
