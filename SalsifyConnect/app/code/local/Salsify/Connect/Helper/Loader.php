@@ -944,7 +944,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //      (and therefore URL) does not include the root, and maybe it should?
   //      This greatly depends on the data, however.
   private function _prepare_categories_for_import() {
-$this->_log("1");
     $categories = array();
     $cleaned_categories = array();
     foreach ($this->_categories as $attribute_id => $categories_for_attribute) {
@@ -968,12 +967,12 @@ $this->_log("1");
       }
     }
     $this->_categories = $cleaned_categories;
-$this->_log("2");
+
     $categories = $this->_sort_categories_by_depth($categories);
 
     $prepped_categories = array();
     foreach ($categories as $category) {
-      if (in_array($this->_relationship_attributes($category['attribute_id']))) {
+      if (in_array($category['attribute_id'], $this->_relationship_attributes)) {
         // don't bother loading categories for accessory attributes
         // TODO can a single category hierarchy be used for both products AND
         //      accessory relationships? if so, it might be foolish of us to
