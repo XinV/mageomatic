@@ -103,7 +103,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     // tried this:
     $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
-    $this->_addContent($importsblock);
+    $this->_addContent($imports_block);
 
     $this->_end_render();
   }
