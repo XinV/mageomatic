@@ -1,21 +1,11 @@
 <?php
 require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
-
-// FIXME remove
-//{"attributes":[
-//  {"id":"sku","name":"sku","roles":{"products":["id"],"accessories":["target_product_id"]}}
-
-// FIXME remove
-// "digital_assets":[{"url":"https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/1/7068108-8110.jpg",
-//                    "name":"7068108-8110.jpg","is_primary_image":"true"}]
-
 /**
  * Parser of Salsify data. Also loads into the Magento database.
  */
 class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
 
-  // TODO factor into a log helper
   private function _log($msg) {
     Mage::log('Loader: ' . $msg, null, 'salsify.log', true);
   }
@@ -30,14 +20,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   const SALSIFY_PRODUCT_ID = 'salsify_product_id';
   const SALSIFY_PRODUCT_ID_NAME = 'Salsify Product ID';
 
-  // For types of attributes
+  // For types of attributes. In Magento's EAV struction attributes of products,
+  // categories, customers, etc., are stored in different EAV tables.
   const CATEGORY = 1;
   const PRODUCT  = 2;
-
-  // For keeping track of whether specific categories were successfully loaded.
-  const LOAD_FAILED        = -1;
-  const LOAD_NOT_ATTEMPTED = 1;
-  const LOAD_SUCCEEDED     = 2;
 
   // Current keys and values that we're building up. We have to do it this way
   // vs. just having a current object stack because php deals with arrays as
@@ -45,14 +31,19 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private $_key_stack;
   private $_value_stack;
   private $_type_stack; // since php doesn't have a separate hash
-  const ARRAY_TYPE  = 0;
-  const OBJECT_TYPE = 1;
+  const ARRAY_TYPE  = 1;
+  const OBJECT_TYPE = 2;
 
   // cached attributes
   private $_attributes;
 
   // current attribute
   private $_attribute;
+
+  // list of attribute IDs for relationships. our primary reason for keeping
+  // these around is to ignore them when loading products, since no product
+  // will ever be assigned to one of these.
+  private $_relationship_attributes;
 
   // holds the target product attribute
   private $_target_product_attribute;
@@ -61,25 +52,48 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // _categories[attribute_id][salsify_category_id] = category
   private $_categories;
 
-  // current category that we're building up
+  // current category that we're building up from parsing
   private $_category;
 
   // Current product batch that has been read in.
+  // NOTE: currently we're not batch loading anything because we want to bulk
+  //       load relations, and if a product that is the target of a relation
+  //       isn't in a batch the relation will fail to load.
+  // TODO verify that this is, in fact, true
   const BATCH_SIZE = 1000;
   private $_batch;
 
-  // Current product.
+  // current product that we're building up from parsing
   private $_product;
 
-  // keep track of nesting level during parsing
+  // hash of all digital assets. we're not actually going to load the digital
+  // assets during parsing (even though the bulk import API supports it), since
+  // that requires that all images be downloaded locally. so instead what we're
+  // going to do is save the assets and make them available in an accessor to
+  // whatever is using the loader.
+  private $_digital_assets;
+
+  // keep track of nesting level during parsing. this is handy to know whether
+  // the object you're leaving is nested, etc.
   private $_nesting_level;
   const HEADER_NESTING_LEVEL  = 2;
   const ITEM_NESTING_LEVEL = 4;
 
-  // keeps track of current state
+  // keeps track of current parsing state.
+  // TODO parser header info
   private $_in_attributes;
   private $_in_attribute_values;
   private $_in_products;
+
+
+  /**
+   * Returns digital assets seen during import.
+   * 
+   * Format of digital assets is an array of sku => array(array(url,name)).
+   */
+  public function get_digital_assets() {
+    return $this->_digital_assets;
+  }
 
 
   public function start_document() {
@@ -89,36 +103,32 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_value_stack = array();
     $this->_type_stack = array();
 
-    $this->_attributes = array();
-    // $this->_attribute = null;
-
-    $this->_categories = array();
-    // $this->_category = null;
-
-    // $this->_batch = array();
-    // $this->_product = null;
-
     $this->_nesting_level = 0;
     $this->_in_attributes = false;
     $this->_in_attribute_values = false;
     $this->_in_products = false;
 
+    // create the attributes to store the salsify ID for all object types.
+    //
+    // TODO set the salsify_id for ALL objects coming into the system
+    //      currently missing: attributes
     $this->_create_salsify_id_attributes_if_needed();
-
-    // FIXME set the salsify_id for ALL objects coming into the system
-    //       currently missing: attributes
   }
 
 
   public function end_document() {
-    $this->_log("Finished document. Flushing final product data and reindexing.");
+    $this->_log("Finished parsing document. Flushing final product data and reindexing.");
 
     $this->_flush_batch();
     $this->_reindex();
+
+    $this->_log("Finished parsing, loading, and reindexing. Only digital assets remain, and left as an exercise to the caller.");
   }
 
 
-  // Update all indexes in Magento.
+  // update all indexes in Magento. it doesn't really pay to be picky about this
+  // since most indexes update almost instantly, and the ones that don't we have
+  // to update anyway.
   private function _reindex() {
     $this->_log("Rebuilding all indexes.");
 
@@ -186,12 +196,12 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
   private function _end_attribute() {
-    // FIXME Salsify ID is not being set on these
-
     // NOTE: if the attribute turns out to be a category, it will be deleted
     //       from Magento during category loading.
     $success = $this->_create_attribute_if_needed($this->_attribute);
     if ($success) {
+      // check to see if the given attribute is the special target_product_id
+      // attribute
       if (array_key_exists('roles', $this->_attribute)) {
         $roles = $this->_attribute['roles'];
         if (array_key_exists('accessories', $roles)) {
@@ -199,6 +209,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           if (in_array('target_product_id', $accessory_roles)) {
             $this->_target_product_attribute = $this->_attribute['id'];
           }
+        }
+      }
+
+      // check to see if the given attribute is the attribute associated with
+      // a product relationship hierarchy (as opposed to a product hierarchy).
+      if (array_key_exists('global', $this->_attribute)) {
+        $roles = $this->_attribute['global'];
+        if (array_key_exists('accessory_label', $roles)) {
+          array_push($this->_relationship_attributes, $this->_attribute['id']);
         }
       }
     }
@@ -242,30 +261,39 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     unset($this->_product);
 
-    // TODO unfortunately this does not work with accessory relationships, since
-    //      you cannot create an accessory relationship until you import the
-    //      product
+    // TODO unfortunately this does not work with accessory relationships (see
+    //      note above by _batch declaration)
     // if (count($this->_batch) > self::BATCH_SIZE) {
     //   $this->_flush_batch();
     // }
   }
 
-  // Prepares the product that we've loaded from Salsify for Magento.
+  // prepares the product that we've loaded from salsify for Magento. this means
+  // returning an array of "products" that match what Magento's bulk import API
+  // requires.
+  //
+  // The way that the Magento Import API handles multi-valued assignments is to
+  // have the second values as new array items just after the main element (the
+  // analogy is a new row in a CSV with only a single value for the column
+  // filled out).
+  //
+  // Note: the only multi-valued assignments we currently deal with here are
+  //       product relationships. Multi-valued properties are squished into a
+  //       single value.
+  //
+  // TODO handle multiple category assignments.
   private function _prepare_product($product) {
     if (!array_key_exists('sku', $product)) {
       $this->_log("ERROR: product must have a SKU and does not: " . var_export($product, true));
       return null;
     }
 
-    // We return an array of entries here for multi-valued things. The way that
-    // The Magento Import API handles multi-valued assignments is to have the
-    // second values as new entries just after the main entry (the analogy is
-    // a new row in a CSV with only a single value for the column filled out).
     $prepped_product = array();
     $extra_product_values = array();
 
     foreach ($product as $key => $value) {
       if ($key === 'accessories') {
+        // process accessory relationships for the product
         if ($this->_target_product_attribute) {
           $accessory_skus = $this->_prepare_product_accessories($value);
           if (!empty($accessory_skus)) {
@@ -324,7 +352,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO when Salsify supports Kits, this will have to change.
     $product['_type'] = 'simple';
 
-    // TODO get the attribute set from the category. we could be precalculating
+    // TODO get the attribute set from its category? we could be precalculating
     //      the attributes that are used in each of the categories in Salsify
     //      in order to get a rough cut into Magento.
     $product['_attribute_set'] = 'Default';
@@ -400,14 +428,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $type = array_pop($this->_type_stack);
 
     if (empty($this->_value_stack)) {
-      $key = array_pop($this->_key_stack);
+      // at the root of an object, whether product, attribute, category, etc.
 
-      // at the root of an object
+      $key = array_pop($this->_key_stack);
+      
       if ($this->_in_attributes) {
         $this->_attribute[$key] = $value;
       } elseif ($this->_in_attribute_values) {
         $this->_log("ERROR: in a nested object in attribute_values, but shouldn't be: " . var_export($this->_category, true));
-        $this->_log("ERROR: nested thing for above: " . var_export($value,true));
+        $this->_log("ERROR: nested thing for above error: " . var_export($value, true));
       } elseif ($this->_in_products) {
         if (array_key_exists($key, $this->_attributes)) {
           $code = $this->_attribute_code($this->_attributes[$key]);
@@ -415,25 +444,31 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         } elseif ($key === 'accessories') {
           $this->_product[$key] = $value;
         } elseif ($key === 'digital_assets') {
-          // TODO digital assets
-          // $this->_product[$key] = $value;
+          array_push($this->_digital_assets, $value);
         } else {
-          $this->_log("ERROR: product has key of undeclared attribute: " . $key);
+          $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
       }
     } else {
       // within a nested object of some kind
-      $parent_value = array_pop($this->_value_stack);
-      $parent_type = array_pop($this->_type_stack);
-      if ($parent_type === self::ARRAY_TYPE) {
-        array_push($parent_value, $value);
-      } elseif ($parent_type === self::OBJECT_TYPE) {
-        $key = array_pop($this->_key_stack);
-        $parent_value[$key] = $value;
-      }
-      array_push($this->_value_stack, $parent_value);
-      array_push($this->_type_stack, $parent_type);
+      $this->_add_nested_value($value);
+  }
+
+  // nice helper method that adds the given value to the top of the nested
+  // stack of objects, whether that nested thing be an array or object (which,
+  // in both cases, is a PHP array).
+  private function _add_nested_value($value) {
+    // unbelievable how PHP doesn't have array_peek...
+    $parent_value = array_pop($this->_value_stack);
+    $parent_type = array_pop($this->_type_stack);
+    if ($parent_type === self::ARRAY_TYPE) {
+      array_push($parent_value, $value);
+    } elseif ($parent_type === self::OBJECT_TYPE) {
+      $key = array_pop($this->_key_stack);
+      $parent_value[$key] = $value;
     }
+    array_push($this->_value_stack, $parent_value);
+    array_push($this->_type_stack, $parent_type);
   }
 
 
@@ -445,13 +480,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       if ($key === 'attributes') {
         $this->_log("Starting to parse attributes.");
         $this->_in_attributes = true;
+        $this->_attributes = array();
+        $this->_relationship_attributes = array();
       } elseif ($key === 'attribute_values') {
         $this->_log("Starting to parse categories (attribute_values).");
         $this->_in_attribute_values = true;
+        $this->_categories = array();
       } elseif ($key === 'products') {
         $this->_log("Starting to parse products.");
         $this->_in_products = true;
         $this->_batch = array();
+        $this->_digital_assets = array();
       }
     }
   }
@@ -475,32 +514,22 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
           } else {
             $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
-        } elseif (!array_key_exists($key, $this->_attributes)) {
-          $this->_log('ERROR: skipping unrecognized property id on product: ' . $key);
-        } else {
+        } elseif (array_key_exists($key, $this->_attributes)) {
           $attribute = $this->_attributes[$key];
           $code = $this->_attribute_code($attribute);
           $this->_product[$code] = $value;
+        } else {
+          $this->_log('ERROR: skipping unrecognized attribute id on product: ' . $key);
         }
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
-      // unbelievable how PHP doesn't have array_peek...
-      $parent = array_pop($this->_value_stack);
-      $type = array_pop($this->_type_stack);
-      if ($type === self::ARRAY_TYPE) {
-        array_push($parent, $value);
-      } elseif ($type === self::OBJECT_TYPE) {
-        $key = array_pop($this->_key_stack);
-        $parent[$key] = $value;
-      }
-      array_push($this->_value_stack, $parent);
-      array_push($this->_type_stack, $type);
+      $this->_add_nested_value($value);
     }
   }
 
 
   private function _flush_batch() {
-    $this->_log("Flushing product batch of size: ".count($this->_batch));
+    $this->_log("Flushing product batch of size: " . count($this->_batch));
 
     try {
       Mage::getSingleton('fastsimpleimport/import')
@@ -537,21 +566,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // creates the given attribute in Magento if it doesn't already exist.
+  //
+  // TODO set salsify ID on attributes
   private function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
       // TODO  when Salsify has bundles we'll have to deal with this.
       $product_type = 'simple';
-
-      // At the moment we only get text properties from Salsify. In fact, since
-      // we don't enforce datatypes in Salsify a single attribute could, in
-      // theory, have a numeric value and a text value, so for now we have to
-      // pick 'text' here to be safe.
-      $type = 'text';
       
       $dbattribute = $this->_get_attribute($attribute);
       if (!$dbattribute) {
-        $dbattribute = $this->_create_attribute($attribute, $type, $product_type);
+        $dbattribute = $this->_create_attribute($attribute, $product_type);
       }
 
       if ($dbattribute) {
@@ -566,7 +592,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
 
   private function _delete_attribute_from_salsify_id($attribute_id) {
-    $this->_log("attribute " . $attribute_id . " is really a category. deleting");
+    $this->_log("attribute " . $attribute_id . " is really a category. deleting.");
 
     $attribute = array();
     $attribute['id'] = $attribute_id;
@@ -588,7 +614,21 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // returns an attribute_code for the given attribute.
+  //
+  // the unique identifier used by Magento for attributes is the attribute_code.
+  // a code is limited to 30 characters, and looks like it shouldn't contain
+  // any spaces. this must be consistent across import runs for a given salsify
+  // attribute.
   private function _attribute_code($attribute) {
+
+    // there are some special attributes that Magento treats differently from
+    // and admin and UI perspective, e.g. name, id, etc. right now there are a
+    // couple that map directly to salsify roles.
+    //
+    // TODO have a more broad mapping mapping strategy from salsify attributes
+    //      to Magento roles.
+
     $is_id = false;
     $is_name = false;
 
@@ -610,7 +650,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     } elseif ($is_name) {
       return 'name';
     }
-    // TODO get other OOTB type attributes via mapping from Salsify.
 
     $id = $attribute['id'];
 
@@ -625,17 +664,18 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // though it has the downside of creating opaque atttribute_ids which do
     // show up in the admin panel...
     //
-    // Could also have edited this file:
-    //   /app/code/core/Mage/Eav/Model/Entity/Attribute.php
-    //   CONST ATTRIBUTE_CODE_MAX_LENGTH = 60;
+    // TODO generate a more user-friendly attribute (certain admin features
+    //      inexplicably deal with attribute IDs instead of names, making it
+    //      pretty hard to manage the attributes without a key).
     $code = 'salsify_'.md5($id);
     $code = substr($code, 0, 30);
     return $code;
   }
 
 
-  // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
   // return database model of given attribute
+  // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
+  //
   // TODO possibly use the same way I get categories (byAttribute) which would
   //      be cleaner
   private function _get_attribute($attribute) {
@@ -664,9 +704,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // creates the given attribute in Magento.
+  //
   // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
   // as a starting point.
   // More docs: http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
+  //
+  // TODO support multi-store (see 'is_global' below)
   private function _create_attribute($attribute, $attribute_type, $product_type) {
     // There are even more options that we're not setting here. For example:
     // http://alanstorm.com/magento_attribute_migration_generator
@@ -674,16 +718,22 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $code = $this->_attribute_code($attribute);
     $name = $attribute['name'];
 
+    // At the moment we only get text properties from Salsify. In fact, since
+    // we don't enforce datatypes in Salsify a single attribute could, in
+    // theory, have a numeric value and a text value, so for now we have to
+    // pick 'text' here to be safe.
+    $attribute_type = 'text';
+    $frontend_type  = 'text';
+
+    // Keeping this around since it was tricky to figure out the first time.
+    // if ($attribute_type === 'varchar') {
+    //   $frontend_type  = 'text';
+    // } else {
+    //   $frontend_type  = $attribute_type;
+    // }
+
     // I *think* this is everything we COULD be setting, with some properties
     // commented out. I got values from eav_attribute and catalog_eav_attribute
-
-    // TODO support multi-store (see 'is_global' below)
-
-    if ($attribute_type === 'varchar') {
-      $frontend_type  = 'text';
-    } else {
-      $frontend_type  = $attribute_type;
-    }
 
     $attribute_data = array(
       'attribute_code' => $code,
@@ -735,13 +785,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       'group' => 'General',
 
       // TODO apply_to multiple types by default? right now Salsify itself only
-      //      really supports the simple type.
+      //      really supports the simple type. also, if we leave this out it
+      //      might automatically apply to everything, which is maybe what we
+      //      want by default.
       'apply_to' => array($product_type), //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
     );
 
     $model = Mage::getModel('catalog/resource_eav_attribute');
 
-    $default_value_field = $model->getDefaultValueByInput($attribute_data['frontend_input']);
+    $default_value_field = $model->getDefaultValueByInput($frontend_type);
     if ($default_value_field) {
       $attribute_data['default_value'] = $attribute_data[$default_value_field];
     }
@@ -763,7 +815,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     try {
       $model->save();
     } catch (Exception $e) {
-      $this->_log('ERROR: could not create attribute <'.$name.'>: '.$e->getMessage());
+      $this->_log('ERROR: could not create attribute <' . $attribute['id'] . '>: ' . $e->getMessage());
+      return null;
     }
 
     // should be in the DB now
@@ -777,11 +830,19 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if (array_key_exists('type', $attribute)) {
       return $attribute['type'];
     } else {
+      $this->_log("WARNING: no type (product, category, etc.) stored in given attribute: " . var_export($attribute, true));
+      // TODO should this be an error?
       return self::PRODUCT;
     }
   }
 
 
+  // returns the entity_type_id for the given attribute.
+  //
+  // the entity_type is used by Magento to determine the type of thing that
+  // something (e.g. attribute, etc.) deals with. a product is a type of thing,
+  // as is a customer, attribute, or category. there is a magento table that
+  // lists all the types. we are only concerned with products and categories.
   private function _get_entity_type_id($attribute) {
     $type = $this->_get_attribute_type($attribute);
     $model = Mage::getModel('eav/entity');
@@ -799,6 +860,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // returns the default attribute_set_id for the given attribute.
+  //
+  // Magento organizes attributes into attribute sets. these determine where in
+  // the admin and site given attributes are show, what types of products they
+  // are used with, etc.
   private function _get_attribute_set_id($attribute) {
     $type = $this->_get_attribute_type($attribute);
 
@@ -817,6 +883,11 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // returns the default attribute_group_id for the given entity type and
+  // attribute set.
+  //
+  // as with attribute sets, attribute groups are affect where given attributes
+  // show up in the admin, and what types of things they can be used with.
   private function _get_attribute_group_id($entity_type_id, $attribute_set_id) {
     # wish I knew a better way to do this without having to get the core setup...
     $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
@@ -824,10 +895,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // This goes through all the categories that were seen in the import and makes
+  // goes through all the categories that were seen in the import and makes
   // sure that they and their ancestors are all loaded into Magento.
+  //
+  // unlike most methods, this does not fail silently, but instead throws an
+  // exception if something goes wrong. it is assumed that if we cannot import
+  // categories it is simply not worth continuing on to import products.
   private function _import_categories() {
-    $this->_log("finished parsing category data. now loading into database.");
+    $this->_log("Done parsing category data. Ensuring they are in database.");
 
     $categories_for_import = $this->_prepare_categories_for_import();
     if (!empty($categories_for_import)) {
@@ -840,7 +915,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
     }
 
-    $this->_log("done loading categories into database. " . count($categories_for_import) . " new categories imported.");
+    $this->_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
   }
 
 
@@ -888,6 +963,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     $prepped_categories = array();
     foreach ($categories as $category) {
+      if (in_array($this->_relationship_attributes($category['attribute_id']))) {
+        // don't bother loading categories for accessory attributes
+        // TODO can a single category hierarchy be used for both products AND
+        //      accessory relationships? if so, it might be foolish of us to
+        //      not load them here...
+        continue;
+      }
+
       if ($this->_get_category($category)) {
         // already exists in database. continue.
         continue;
@@ -895,12 +978,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
       if ($category['__depth'] == 0) {
         // create root category by hand. it's required for the mass import of
-        // the other categories.
+        // the other categories, and the API can't create the roots itself.
 
-        // FIXME if the category has a accessory role don't output it here as
-        //       Magento can't really do anything with it.
         if (!$this->_create_category($category)) {
-          $msg = "ERROR: creating root category. Aborting import: " . var_export($category, true);
+          $msg = "ERROR: could not create root category. Aborting import: " . var_export($category, true);
           $this->_log($msg);
           throw new Exception($msg);
         }
@@ -920,6 +1001,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // returns a category array that is just liked the raw, parsed category array
+  // that is passed in, except that it is filled out for the purpose of bulk
+  // category import.
+  //
+  // primarily this means building up full path names that can be used in the
+  // bulk import API to identify where in a category hierarchy to insert the
+  // item. we also store the depth so that we might sort by it (curiously the
+  // bulk import API requires that parents appear before children).
+  //
+  // the "clean" aspect of this really means to make the name of the category
+  // safe for bulk import.
   private function _clean_and_prepare_category($category) {
     if (array_key_exists('__depth', $category)) {
       // already processed this one
@@ -938,6 +1030,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         $this->_log("WARNING: parent_id for category refers to an unknown parent. Skipping: " . var_export($category, true));
         return null;
       }
+
+      // need to all this recursively, since we need the parent's path and depth
+      // in order to calculate our own.
       $parent_category = $this->_clean_and_prepare_category($this->_categories[$attribute_id][$parent_id]);
       if (!$parent_category) {
         return null;
@@ -963,14 +1058,13 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // Returns a version of the category that is appropriate for the import API.
-  // Makes sure to include all the properties that are required by the import
+  // returns a version of the category that is appropriate for the import API.
+  // makes sure to include all the properties that are required by the import
   // API.
   private function _prepare_category_for_import($category) {
     return array(
       '_root' => $category['__root'],
       '_category' => $category['__path'],
-      self::SALSIFY_CATEGORY_ID => $category['id'],
       'name' => $category['name'],
       'description' => 'Created during import from Salsify.',
       'is_active' => 'yes',
@@ -984,13 +1078,17 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       // optional
       'url_key' => $this->_get_url_key($category),
       // 'meta_description' => $category['name'],
+
+      self::SALSIFY_CATEGORY_ID => $category['id'],
     );
   }
 
 
-  // creates a URL-friendly key for this category. it will replace whitespace
-  // with friendlier dashes, lowerase the string, and urlencode it in case there
-  // are unfriendly characters in the name.
+  // creates a URL-friendly key for the given category.
+  //
+  // it will replace whitespace with friendlier dashes, lowerase the string,
+  // and urlencode the result in case there are unfriendly characters in the
+  // name.
   private function _get_url_key($category) {
     $key = strtolower($category['name']);
     $key = preg_replace('/\s\s+/', '-', $key);
@@ -998,6 +1096,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // self-explanatory.
   private function _sort_categories_by_depth($categories) {
     $bins = array();
     $max_depth = 0;
@@ -1021,6 +1120,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
+  // helper method that frees other parts of the code from having to worry about
+  // the crazy nested array structure we've built up.
   private function _get_category_path($category) {
     $attribute_id = $category['attribute_id'];
     $id = $category['id'];
@@ -1028,14 +1129,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   }
 
 
-  // returns the Magento Category model instance if successful, null if not.
+  // returns the newly created Magento Category model instance if successful,
+  // or null if there was some problem in creating the category.
   //
   // TODO can't update existing categories (i.e. re-parent)
   private function _create_category($category) {
     $dbcategory = new Mage_Catalog_Model_Category();
 
     // TODO we're currently ignoring this. I *think* doing so sets the default
-    //      store. Either way at some point we need to support multiple stores.
+    //      store. Either way at some point we need to support multi-store.
     // $category->setStoreId(0);
 
     $dbcategory->setName($category['name']);
@@ -1066,8 +1168,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $dbcategory->setUrlKey($this->_get_url_key($category));
     $dbcategory->setPath($parent_dbcategory->getPath());
 
-    // TODO this broke things. attribute_set_id is a column in the category
-    //      table, however, so there must be some kind of way to set it...
+    // TODO this broke things. I wouldn't care except that there is a column in
+    //      the database for this value which seems to be set for the demo data.
+    //
     // $attribute_set_id = $parent_category->getResource()
     //                                     ->getEntityType()
     //                                     ->getDefaultAttributeSetId();
@@ -1077,12 +1180,15 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $dbcategory->save();
       return $dbcategory;
     } catch (Exception $e) {
-      $this->_log("ERROR: creating category (will not try entire tree): " . $e->getMessage());
+      $this->_log("ERROR: creating category: " . $e->getMessage());
       return null;
     }
   }
 
-
+  // helper function for _create_category. probably not necessary since that
+  // is only now used to create root categories, which have no parents. however,
+  // i like to keep it around since the method can be used (and has been) to
+  // create the entire category hierarchy in Magento.
   private function _get_parent_category($category) {
     if (array_key_exists('parent_id', $category)) {
       $parent_id = $category['parent_id'];
