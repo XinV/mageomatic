@@ -521,6 +521,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
             $category = $this->_categories[$key][$value];
             // TODO allow multiple category assignments per product
             $this->_product['_category'] = $this->_get_category_path($category);
+
+            $this->_log("SET CATEGORY: " . var_export($this->_product, true));
           } else {
             $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
