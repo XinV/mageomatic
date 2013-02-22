@@ -236,17 +236,20 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
 
-    $this->_render_html("Salsify Cleaner");
+    $this->_render_html("<h1>Salsify Data Cleaner</h1>");
+    $this->_render_html("<p>This will remove all products, all categories, and all Salsify attributes.</p>");
+    $this->_render_html("<ul>");
 
     $products = Mage::getModel('catalog/product')
                     ->getCollection();
                     // if you just wanted to delete salsify data...
                     // ->addFieldToFilter('price', array("eq"=>0.0100));
-    $this->_render_html("Total Salsify products deleted: " . count($products) . '<br/>');
+    $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
     foreach($products as $product) { $product->delete(); }
 
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
+    $this->_render_html("<li>Total categories to be deleted: " . (count($categories) - 1) . '</li>');
     foreach($categories as $category) {
       if ($category->getId() != 1) {
         $category->delete();
@@ -261,25 +264,28 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $attribute_set_collection = Mage::getModel('eav/entity_attribute_set')
                                     ->getCollection()
                                     ->setEntityTypeFilter($product_entity_type_id);
+    $attr_count = 0;
     foreach ($attribute_set_collection as $attribute_set) {
       $attributes = Mage::getModel('catalog/product_attribute_api')
                         ->items($attribute_set->getId());
       foreach($attributes as $attribute) {
         if (strcasecmp(substr($attribute['code'], 0, strlen('salsify_')), 'salsify_') === 0) {
-          // $this->_render_html(var_export($attribute,true) . '<br/><br/>');
-          $db_attribute = Mage::getModel('eav/entity_attribute')
-                              ->load($attribute['attribute_id']);
-          $this->_render_html(var_export($db_attribute,true) . '<br/><br/>');
-               // ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
+          Mage::getModel('eav/entity_attribute')
+              ->load($attribute['attribute_id']);
+              ->delete();
+          $attr_count++;
         }
       }
     }
+    $this->_render_html("<li>Total attributes deleted: " . $attr_count . '</li>');
 
     // In mysql the attributes can be deleted this way as well:
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
 
     // TODO clear out the jobs table as well.
+
+    $this->_render_html("</ul>");
 
     $this->_end_render();
   }
