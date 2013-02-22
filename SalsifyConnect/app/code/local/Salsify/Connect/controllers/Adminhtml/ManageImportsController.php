@@ -222,8 +222,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $worker_url = $this->_get_url('worker');
 
     // TODO add a local jquery fallback (mostly for offline testing)
+    // FIXME this is breaking the JS on the site currently...
     $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
-    $sneaky = '<script type="text/javascript">$.get("'.$worker_url.'");</script>';
+    $sneaky = '<script type="text/javascript">jQuery.get("'.$worker_url.'");</script>';
     $this->_render_js($jquery);
     $this->_render_js($sneaky);
   }
