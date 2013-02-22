@@ -93,8 +93,9 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
       $id = Mage::getModel('catalog/product')
                 ->loadByAttribute('sku', $sku)
                 ->getId();
+      // stupid, but this is necessary to have access to the media gallery...
       $product = Mage::getModel('catalog/product')
-                     ->load($product->getId());
+                     ->load($id);
 
       foreach ($das as $da) {
         $url = $da['url'];
