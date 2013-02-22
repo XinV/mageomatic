@@ -104,7 +104,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
             $this->_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
           }
 
-          TODO figure out if the media gallery already includes the thing
+          // TODO figure out if the media gallery already includes the thing
           $gallery_data = $product->getData('media_gallery');
           foreach ($gallery_data['images'] as &$image) {
             $this->_log("IMAGE: " . var_export($image, true));
