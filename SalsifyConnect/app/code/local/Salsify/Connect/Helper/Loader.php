@@ -107,12 +107,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_in_attributes = false;
     $this->_in_attribute_values = false;
     $this->_in_products = false;
-
-    // create the attributes to store the salsify ID for all object types.
-    //
-    // TODO set the salsify_id for ALL objects coming into the system
-    //      currently missing: attributes
-    $this->_create_salsify_id_attributes_if_needed();
   }
 
 
@@ -479,15 +473,30 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     if ($this->_nesting_level === self::HEADER_NESTING_LEVEL) {
       if ($key === 'attributes') {
+        // starting to parse attribute section of import document
+
         $this->_log("Starting to parse attributes.");
         $this->_in_attributes = true;
         $this->_attributes = array();
         $this->_relationship_attributes = array();
+
+        // create the attributes to store the salsify ID for all object types.
+        //
+        // TODO set the salsify_id for ALL objects coming into the system
+        //      currently missing: attributes
+        $this->_create_salsify_id_attributes_if_needed();
+
       } elseif ($key === 'attribute_values') {
+        // starting to parse attribute_values (e.g. categories) section of
+        // import document
+
         $this->_log("Starting to parse categories (attribute_values).");
         $this->_in_attribute_values = true;
         $this->_categories = array();
+
       } elseif ($key === 'products') {
+        // starting to parse products section of import document
+
         $this->_log("Starting to parse products.");
         $this->_in_products = true;
         $this->_batch = array();
