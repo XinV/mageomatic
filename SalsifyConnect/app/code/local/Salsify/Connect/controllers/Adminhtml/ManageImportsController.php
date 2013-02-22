@@ -221,12 +221,21 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function sneaky_worker_thread_start() {
     $worker_url = $this->_get_url('worker');
 
+    $worker_js = "
+      new Ajax.Request('" . $worker_url ."', {
+        onSuccess: function(response) {
+          // woo hoo!
+        }
+      });
+    ";
+    $this->_render_js($worker_js);
+
     // TODO add a local jquery fallback (mostly for offline testing)
     // FIXME this is breaking the JS on the site currently...
-    $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
-    $sneaky = '<script type="text/javascript">jQuery.get("'.$worker_url.'");</script>';
-    $this->_render_js($jquery);
-    $this->_render_js($sneaky);
+    // $jquery = '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+    // $sneaky = '<script type="text/javascript">jQuery.get("'.$worker_url.'");</script>';
+    // $this->_render_js($jquery);
+    // $this->_render_js($sneaky);
   }
 
 
