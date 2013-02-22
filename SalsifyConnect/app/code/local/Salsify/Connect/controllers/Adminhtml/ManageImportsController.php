@@ -276,7 +276,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       foreach($attributes as $attribute) {
         if (strcasecmp(substr($attribute['code'], 0, strlen('salsify_')), 'salsify_') === 0) {
           Mage::getModel('eav/entity_attribute')
-              ->load($attribute['attribute_id']);
+              ->load($attribute['attribute_id'])
               ->delete();
           $attr_count++;
         }
