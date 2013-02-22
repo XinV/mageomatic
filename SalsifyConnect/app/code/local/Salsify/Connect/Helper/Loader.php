@@ -947,7 +947,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $categories = array();
     $cleaned_categories = array();
     foreach ($this->_categories as $attribute_id => $categories_for_attribute) {
-      if (in_array($attribute_id, $this->_attributes)) {
+      if (array_key_exists($attribute_id, $this->_attributes)) {
         // First time seeing this. If it exists, let's make sure to delete the
         // actual attribute from the system. The reason we do this here is so
         // that we don't have to keep all of the attributes in memory as we go
