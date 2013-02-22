@@ -946,7 +946,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     DROP TABLE catalog_category_entity_tmp;
     COMMIT;";
     Mage::getResourceSingleton('core/resource')
-        ->getConnection('core_write');
+        ->getConnection('core_write')
         ->query($sql);
 
     $this->_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
