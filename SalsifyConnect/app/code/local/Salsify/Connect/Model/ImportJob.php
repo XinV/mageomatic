@@ -108,9 +108,9 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
             $this->_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
           }
 
-          $gallery_data = $product->getMediaGalleryImages();
+          $gallery_data = $product->getMediaGallery();
           $this->_log("GALLERY: " . var_export($gallery_data, true));
-          foreach ($gallery_data->_images as $image) {
+          foreach ($gallery_data['images'] as $image) {
             $this->_log("IMAGE: " . var_export($image, true));
             // if ($gallery->getBackend()->getImage($product, $image['file'])) {
             //   $gallery->getBackend()->removeImage($product, $image['file']);
