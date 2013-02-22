@@ -5,6 +5,11 @@
  */
 class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
 
+  private function _log($msg) {
+    Mage::log('SalsifyAPI: ' . $msg, null, 'salsify.log', true);
+  }
+
+
   private $_base_url;
   private $_api_key;
 
@@ -39,6 +44,8 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $url = $this->_get_export_url($id);
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
+
+    $this->_log("body of return: " . $mes->getBody());
     return json_decode($mes->getBody());
   }
 
