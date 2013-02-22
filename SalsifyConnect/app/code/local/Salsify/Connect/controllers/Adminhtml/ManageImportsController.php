@@ -249,12 +249,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     foreach($products as $product) { $product->delete(); }
     $this->_log("Cleaner: products deleted.");
 
-    $this->_log("Cleaner: deleting categories...");
+    $this->_log("Cleaner: deleting Salsify categories...");
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     $cat_count = 0;
     foreach($categories as $category) {
-      if ($category->getId() != 1) {
+      // this fucked things up for some reason...
+      // if ($category->getId() != 1) {
+      if ($category->getSalsifyCategoryId()) {
         $category->delete();
         $cat_count++;
       }
