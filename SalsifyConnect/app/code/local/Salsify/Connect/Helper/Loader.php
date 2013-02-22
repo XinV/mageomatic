@@ -209,7 +209,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
         // a product relationship hierarchy (as opposed to a product hierarchy).
         if (array_key_exists('global', $roles)) {
           $global_roles = $roles['global'];
-          if (array_key_exists('accessory_label', $global_roles)) {
+          if (in_array('accessory_label', $global_roles)) {
             array_push($this->_relationship_attributes, $this->_attribute['id']);
           }
         }
