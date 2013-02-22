@@ -240,6 +240,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
 
   public function workerAction() {
+    $this->_log("Worker: creating a worker!");
+
     // TODO add a one-time token or something like that to enable this to be
     //      called safely.
     $job = Mage::getModel('salsify_connect/importjob');
