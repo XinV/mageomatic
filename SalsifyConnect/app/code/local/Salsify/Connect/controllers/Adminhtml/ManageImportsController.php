@@ -222,12 +222,13 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $worker_url = $this->_get_url('worker');
 
     $worker_js = "
+    <script type=\"text/javascript\">
       new Ajax.Request('" . $worker_url ."', {
         onSuccess: function(response) {
           // woo hoo!
         }
       });
-    ";
+    </script>";
     $this->_render_js($worker_js);
 
     // TODO add a local jquery fallback (mostly for offline testing)
