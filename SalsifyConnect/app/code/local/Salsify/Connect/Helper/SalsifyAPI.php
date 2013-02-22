@@ -45,8 +45,14 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
 
-    $this->_log("body of return: " . $mes->getBody());
-    return json_decode($mes->getBody());
+    // TODO I don't agree with this serialization format
+    $body = json_decode($mes->getBody());
+    $url_structure = $body['url']
+    $url = $url_structure['scheme'] . '://' . $url_structure['host'] . ':' .
+           $url_structure['port'] . $url_structure['path'] . '?' .
+           $url_structure['query'];
+    $body['url'] = $url;
+    return $body;
   }
 
   private function _get_export_url($id) {
