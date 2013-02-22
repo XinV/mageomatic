@@ -100,7 +100,8 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery
           $product->addImageToMediaGallery($filename, null, false, false);
         } catch (Exception $e) {
-          $this->_log("ERROR: could not load digital asset. skipping: " . var_export($da, true));
+          $this->_log("ERROR: could not load digital asset. skipping: " . $e->getMessage());
+          $this->_log("       " . var_export($da, true));
           if (file_exists($filename)) {
             try {
               unlink($filename);
