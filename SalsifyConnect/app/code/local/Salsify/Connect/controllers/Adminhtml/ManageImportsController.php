@@ -88,7 +88,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // FIXME load the block that we want to load programatically
     //       try to load the Salsify_Connect_Block_Adminhtml_ManageImports
     //       block as it SHOULD be able to do the trick...
-    // $configurl = $this->_get_url('config');
+    $configurl = $this->_get_url('config');
     // $usage = '<h1>Import Process</h1>'
     //        . '<ul>'
     //        . '  <li><a href="'.$configurl.'">Create a configuration</a></li>'
