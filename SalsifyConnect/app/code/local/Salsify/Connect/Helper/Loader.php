@@ -934,27 +934,27 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("Running children_count fix sql...");
     $db = Mage::getResourceSingleton('core/resource')
               ->getConnection('core_write');
-    $sql = "START TRANSACTION;
-    DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
-    CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
-    INSERT INTO catalog_category_entity_tmp SELECT * FROM catalog_category_entity;
+    // $sql = "START TRANSACTION;
+    // DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
+    // CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
+    // INSERT INTO catalog_category_entity_tmp SELECT * FROM catalog_category_entity;
 
-    UPDATE catalog_category_entity cce
-    SET children_count =
-    (
-        SELECT count(cce2.entity_id) - 1 as children_county
-        FROM catalog_category_entity_tmp cce2
-        WHERE PATH LIKE CONCAT(cce.path,'%')
-    );
+    // UPDATE catalog_category_entity cce
+    // SET children_count =
+    // (
+    //     SELECT count(cce2.entity_id) - 1 as children_county
+    //     FROM catalog_category_entity_tmp cce2
+    //     WHERE PATH LIKE CONCAT(cce.path,'%')
+    // );
 
-    DROP TABLE catalog_category_entity_tmp;
-    COMMIT;";
-    try {
-      // $db->query($sql);
-    } catch (Exception $e) {
-      $this->_log("FAIL: " . $e->getMessage());
-      throw $e;
-    }
+    // DROP TABLE catalog_category_entity_tmp;
+    // COMMIT;";
+    // try {
+    //   $db->query($sql);
+    // } catch (Exception $e) {
+    //   $this->_log("FAIL: " . $e->getMessage());
+    //   throw $e;
+    // }
     $this->_log("Done. Hopefully it worked and you can expand categories on product detail pages.");
 
     $this->_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
