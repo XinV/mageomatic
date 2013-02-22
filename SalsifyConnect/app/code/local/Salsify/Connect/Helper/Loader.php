@@ -452,6 +452,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     } else {
       // within a nested object of some kind
       $this->_add_nested_value($value);
+    }
   }
 
   // nice helper method that adds the given value to the top of the nested
