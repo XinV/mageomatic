@@ -245,7 +245,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     foreach($salsify_products as $product) { $product->delete(); }
 
     $categories = Mage::getModel('catalog/category')
-                      ->getCollection()
+                      ->getCollection();
     foreach($categories as $category) { $category->delete(); }
 
     // TODO delete all the properties programtically.
