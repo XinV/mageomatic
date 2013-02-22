@@ -32,8 +32,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_setActiveMenu($menu_id);
 
     // add a left block to the layout
-    // FIXME add links to the menu items for easy use on the left
-    //       not sure how to create a link in magento to a resource, though...
+    // TODO add links to the menu items for easy use on the left
+    //      not sure how to create a link in magento to a resource, though...
     $this->_addLeft($this->getLayout()
                          ->createBlock('core/text')
                          ->setText('<h1>FUTURE SITE OF SWEET MENU</h1>'));
@@ -102,8 +102,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
     // tried this:
-    // $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
-    // $this->_addContent($importsblock);
+    $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
+    $this->_addContent($importsblock);
 
     $this->_end_render();
   }
