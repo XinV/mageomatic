@@ -204,14 +204,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
             $this->_target_product_attribute = $this->_attribute['id'];
           }
         }
-      }
 
-      // check to see if the given attribute is the attribute associated with
-      // a product relationship hierarchy (as opposed to a product hierarchy).
-      if (array_key_exists('global', $this->_attribute)) {
-        $roles = $this->_attribute['global'];
-        if (array_key_exists('accessory_label', $roles)) {
-          array_push($this->_relationship_attributes, $this->_attribute['id']);
+        // check to see if the given attribute is the attribute associated with
+        // a product relationship hierarchy (as opposed to a product hierarchy).
+        if (array_key_exists('global', $this->roles)) {
+          $roles = $this->_attribute['global'];
+          if (array_key_exists('accessory_label', $roles)) {
+            array_push($this->_relationship_attributes, $this->_attribute['id']);
+          }
         }
       }
     }
