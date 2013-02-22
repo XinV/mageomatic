@@ -106,7 +106,8 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
 
           // TODO figure out if the media gallery already includes the thing
           $gallery_data = $product->getData('media_gallery');
-          foreach ($gallery_data['images'] as &$image) {
+          $this->_log("GALLERY: " . var_export($gallery_data, true));
+          foreach ($gallery_data['images'] as $image) {
             $this->_log("IMAGE: " . var_export($image, true));
           }
 
