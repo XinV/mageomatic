@@ -47,11 +47,13 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
 
     // TODO I don't agree with this serialization format
     $body = json_decode($mes->getBody());
+    $this->_log("body (preprocessing): " . var_export($body, true));
     $url_structure = $body['url'];
     $url  = $url_structure['scheme'] . '://' . $url_structure['host'] . ':' .
             $url_structure['port'] . $url_structure['path'] .
             '?' . $url_structure['query'];
     $body['url'] = $url;
+    $this->_log("body: " . var_export($body, true));
     return $body;
   }
 
