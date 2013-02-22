@@ -238,11 +238,12 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $this->_render_html("Salsify Cleaner");
 
-    $salsify_products = Mage::getModel('catalog/product')
-                            ->getCollection()
-                            ->addFieldToFilter('price', array("eq"=>0.0100));
-    $this->_render_html("Total Salsify products deleted: " . count($salsify_products) . '<br/>');
-    foreach($salsify_products as $product) { $product->delete(); }
+    $products = Mage::getModel('catalog/product')
+                    ->getCollection();
+                    // if you just wanted to delete salsify data...
+                    // ->addFieldToFilter('price', array("eq"=>0.0100));
+    $this->_render_html("Total Salsify products deleted: " . count($products) . '<br/>');
+    foreach($products as $product) { $product->delete(); }
 
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
@@ -252,16 +253,15 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       }
     }
 
+    $attributes = Mage::getModel('catalog/resource_eav_attribute')
+                      ->getCollection()
+                      ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
+    foreach($attributes as $attribute) { $attribute->delete(); }
+
     // TODO delete all the properties programtically.
     // In mysql:
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
-    //
-    // $salsify_attributes = Mage::getModel('catalog/resource_eav_attribute')
-    //                           ->getCollection()
-    //                           ->addFieldToFilter('attribute_code', array('like'=>'salsify_%'));
-    // $this->_render_html("Total Salsify attributes deleted: " . count($salsify_attributes) . '<br/>');
-    // foreach($salsify_attributes as $attribute) { $attribute->delete(); }
 
     // TODO clear out the jobs table as well.
 
