@@ -253,10 +253,26 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       }
     }
 
-    $attributes = Mage::getModel('catalog/resource_eav_attribute')
-                      ->getCollection()
-                      ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
-    foreach($attributes as $attribute) { $attribute->delete(); }
+    $product_entity_type_id = Mage::getModel('eav/entity')
+                                  ->setType('catalog_product')
+                                  ->getTypeId();
+    $attribute_set_collection = Mage::getModel('eav/entity_attribute_set')
+                                    ->getCollection()
+                                    ->setEntityTypeFilter($product_entity_type_id);
+    foreach ($attribute_set_collection as $attribute_set) {
+      $attributes = Mage::getModel('catalog/product_attribute_api')
+                        ->items($attribute_set.getId())
+                        ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
+      foreach($attributes as $attribute) {
+        $this->_render_html($attribute);
+      }
+    }
+
+
+    // $attributes = Mage::getModel('catalog/resource_eav_attribute')
+    //                   ->getCollection()
+    //                   ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
+    // foreach($attributes as $attribute) { $attribute->delete(); }
 
     // TODO delete all the properties programtically.
     // In mysql:
