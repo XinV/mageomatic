@@ -261,8 +261,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                                     ->setEntityTypeFilter($product_entity_type_id);
     foreach ($attribute_set_collection as $attribute_set) {
       $attributes = Mage::getModel('catalog/product_attribute_api')
-                        ->items($attribute_set.getId())
-                        ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
+                        ->items($attribute_set->getId());
+                        // ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
       foreach($attributes as $attribute) {
         $this->_render_html($attribute);
       }
