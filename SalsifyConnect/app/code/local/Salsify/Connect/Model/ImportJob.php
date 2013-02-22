@@ -82,7 +82,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
   private function _load_digital_assets($digital_assets) {
     foreach ($digital_assets as $sku => $das) {
       $product = Mage::getModel('catalog/product')
-                     ->load($sku, 'sku');
+                     ->loadByAttribute('sku', $sku);
 
       foreach ($das as $da) {
         $url = $da['url'];
