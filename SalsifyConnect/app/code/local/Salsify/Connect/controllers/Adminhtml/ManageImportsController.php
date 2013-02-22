@@ -240,13 +240,16 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("<p>This will remove all products, all categories, and all Salsify attributes.</p>");
     $this->_render_html("<ul>");
 
+    $this->_log("Cleaner: deleting products...");
     $products = Mage::getModel('catalog/product')
                     ->getCollection();
                     // if you just wanted to delete salsify data...
                     // ->addFieldToFilter('price', array("eq"=>0.0100));
     $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
     foreach($products as $product) { $product->delete(); }
+    $this->_log("Cleaner: products deleted.");
 
+    $this->_log("Cleaner: deleting categories...");
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     $this->_render_html("<li>Total categories to be deleted: " . (count($categories) - 1) . '</li>');
@@ -255,7 +258,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
         $category->delete();
       }
     }
+    $this->_log("Cleaner: categories deleted.");
 
+    $this->_log("Cleaner: deleting attributes...");
     // delete salsify attributes only...we don't want to accidentally delete the
     // attributes that come with magento
     $product_entity_type_id = Mage::getModel('eav/entity')
@@ -278,6 +283,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       }
     }
     $this->_render_html("<li>Total attributes deleted: " . $attr_count . '</li>');
+    $this->_log("Cleaner: attributes deleted.");
 
     // In mysql the attributes can be deleted this way as well:
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
