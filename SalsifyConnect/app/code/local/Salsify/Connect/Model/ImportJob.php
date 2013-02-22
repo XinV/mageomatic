@@ -104,11 +104,11 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
             $this->_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
           }
 
-          // TODO figure out if the media gallery already includes the thing
-          // $galleryData = $prod->getData('media_gallery');
-          // foreach ($galleryData['images'] as &$image) {
-          //     var_dump($image);
-          // }
+          TODO figure out if the media gallery already includes the thing
+          $galleryData = $prod->getData('media_gallery');
+          foreach ($galleryData['images'] as &$image) {
+            $this->_log("IMAGE: " . var_export($image, true));
+          }
 
           // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery
           $product->addImageToMediaGallery($filename, null, false, false);

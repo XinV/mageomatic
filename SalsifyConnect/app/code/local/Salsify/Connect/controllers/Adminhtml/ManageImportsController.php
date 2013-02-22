@@ -65,12 +65,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
-    // $product = Mage::getModel('catalog/product')
-    //                ->loadByAttribute('sku', '15841186KIT');
+    $sku = '1899749';
+    $product = Mage::getModel('catalog/product')
+                   ->loadByAttribute('sku', $sku);
 
     $digital_assets = array();
-    $digital_assets['15841186KIT'] = array();
-    $digital_assets['15841186KIT'][] = array('url' => 'https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/2/2087913-5311.jpg');
+    $digital_assets[$sku] = array();
+    $digital_assets[$sku][] = array('url' => 'https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/10/1980692-3895.jpg');
+
     $job = Mage::getModel('salsify_connect/importjob');
     $job->load_digital_assets($digital_assets);
 
