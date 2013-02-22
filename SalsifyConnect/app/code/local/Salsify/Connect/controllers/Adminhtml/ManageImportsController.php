@@ -266,9 +266,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                         ->items($attribute_set->getId());
       foreach($attributes as $attribute) {
         if (strcasecmp(substr($attribute['code'], 0, strlen('salsify_')), 'salsify_') === 0) {
-          $this->_render_html(var_export($attribute,true) . '<br/><br/>');
-          // $db_attribute = Mage::getModel('eav/entity_attribute')
-          //                     ->load($attribute['id']);
+          // $this->_render_html(var_export($attribute,true) . '<br/><br/>');
+          $db_attribute = Mage::getModel('eav/entity_attribute')
+                              ->load($attribute['attribute_id']);
+          $this->_render_html(var_export($db_attribute,true) . '<br/><br/>');
                // ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
         }
       }
