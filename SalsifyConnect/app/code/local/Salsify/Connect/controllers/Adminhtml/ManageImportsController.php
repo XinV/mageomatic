@@ -93,7 +93,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
            . '<ul>'
            . '  <li><a href="'.$configurl.'">Create a configuration</a></li>'
            . '</ul>';
-    // $this->_render_html($usage);
+    $this->_render_html($usage);
 
 
     // FIXME how do we get the block to show here?
