@@ -66,7 +66,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/test');
 
     $product = Mage::getModel('catalog/product')
-                   ->load('15841186KIT', 'sku');
+                   ->loadByAttribute('sku', '15841186KIT');
 
     $this->_render_html(var_export($product, true));
 
