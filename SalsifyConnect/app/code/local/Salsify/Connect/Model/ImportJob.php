@@ -58,7 +58,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
       $import->set_loading_complete();
 
       // download and load digital assets
-      $digital_assets = $this->_load_digital_assets($import->get_digital_assets());
+      $digital_assets = $this->load_digital_assets($import->get_digital_assets());
       $import->set_loading_digital_assets_complete($digital_assets);
     } catch (Exception $e) {
       $import->set_error($e);
@@ -79,7 +79,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
   //       uniquely identify them between runs. what if someone updates the name
   //       and then we do another import?
   // TODO deal with different digital asset roles (thumbnail vs. image, etc.)
-  private function _load_digital_assets($digital_assets) {
+  public function load_digital_assets($digital_assets) {
     foreach ($digital_assets as $sku => $das) {
       $product = Mage::getModel('catalog/product')
                      ->loadByAttribute('sku', $sku);
