@@ -48,12 +48,19 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
     }
 
     try {
+      // fetch data from salsify
       $import->set_download_started();
       $filename = $this->_download($url, $filename);
       $import->set_download_complete();
 
+      // parse file and load data into Magento
       $this->_load_data($filename);
       $import->set_loading_complete();
+
+      // download and load digital assets
+      // FIXME need to complete loading digital assets
+      // $this->_load_digital_assets();
+      $import->set_loading_digital_assets_complete();
     } catch (Exception $e) {
       $import->set_error($e);
     }
