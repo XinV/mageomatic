@@ -948,9 +948,14 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     DROP TABLE catalog_category_entity_tmp;
     COMMIT;";
-    Mage::getResourceSingleton('core/resource')
-        ->getConnection('core_write')
-        ->query($sql);
+    try {
+      Mage::getResourceSingleton('core/resource')
+          ->getConnection('core_write')
+          ->query($sql);
+    } catch (Exception $e) {
+      $this->_log("FAIL: " . $e->getMessage());
+      throw $e;
+    }
     $this->_log("Done. Hopefully it worked and you can expand categories on product detail pages.");
 
     $this->_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
