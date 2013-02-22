@@ -931,9 +931,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //      the categories are not expandable in the product detail pages. this
     //      fix is from the bug filing:
     //      https://github.com/avstudnitz/AvS_FastSimpleImport/issues/26
-    $db = Mage::getResourceSingleton('core/resource')
-              ->getConnection('core_write')
     $this->_log("Running children_count fix sql...");
+    $db = Mage::getResourceSingleton('core/resource')
+              ->getConnection('core_write');
     $sql = "START TRANSACTION;
     DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
     CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
