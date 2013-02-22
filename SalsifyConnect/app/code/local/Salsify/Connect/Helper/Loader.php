@@ -932,9 +932,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     //      fix is from the bug filing:
     //      https://github.com/avstudnitz/AvS_FastSimpleImport/issues/26
     $this->_log("Running children_count fix sql...");
-    $db = Mage::getSingleton('core/resource')
-              ->getConnection('core_write');
-    $sql = "
+    $sql = "START TRANSACTION;
     DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
     CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
     INSERT INTO catalog_category_entity_tmp SELECT * FROM catalog_category_entity;
@@ -948,8 +946,10 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     );
 
     DROP TABLE catalog_category_entity_tmp;
-    ";
+    COMMIT;";
     try {
+      $db = Mage::getSingleton('core/resource')
+                ->getConnection('core_write');
       $db->query($sql);
     } catch (Exception $e) {
       $this->_log("FAIL: " . $e->getMessage());

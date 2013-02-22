@@ -65,8 +65,29 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
-    $loader = Mage::helper('salsify_connect/loader');
-    // called just to make sure that the salsify external id exists
+    $sql = "START TRANSACTION;
+    DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
+    CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
+    INSERT INTO catalog_category_entity_tmp SELECT * FROM catalog_category_entity;
+
+    UPDATE catalog_category_entity cce
+    SET children_count =
+    (
+        SELECT count(cce2.entity_id) - 1 as children_county
+        FROM catalog_category_entity_tmp cce2
+        WHERE PATH LIKE CONCAT(cce.path,'%')
+    );
+
+    DROP TABLE catalog_category_entity_tmp;
+    COMMIT;";
+    try {
+      $db = Mage::getSingleton('core/resource')
+                ->getConnection('core_write');
+      $db->query($sql);
+    } catch (Exception $e) {
+      $this->_log("FAIL: " . $e->getMessage());
+      throw $e;
+    }
 
     $this->_end_render();
   }
