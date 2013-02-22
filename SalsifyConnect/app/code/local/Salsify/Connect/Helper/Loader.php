@@ -967,9 +967,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
     }
     $this->_categories = $cleaned_categories;
-
+$this->_log("1");
     $categories = $this->_sort_categories_by_depth($categories);
-
+$this->_log("2");
     $prepped_categories = array();
     foreach ($categories as $category) {
       if (in_array($this->_relationship_attributes($category['attribute_id']))) {
@@ -1000,7 +1000,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     }
     return $prepped_categories;
   }
-
+$this->_log("3");
 
   // returns the database model category for the given category if it exists.
   //         null otherwise.
