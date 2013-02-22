@@ -73,6 +73,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $digital_assets[$sku] = array();
     $digital_assets[$sku][] = array('url' => 'https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/10/1980692-3895.jpg');
 
+    $this->_log("ASSETS TO LOAD: " . var_export($digital_assets, true));
+
     $job = Mage::getModel('salsify_connect/importjob');
     $job->load_digital_assets($digital_assets);
 
