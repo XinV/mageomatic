@@ -89,8 +89,6 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
       return null;
     }
 
-    $this->_log("DAS: " . var_export($digital_assets, true));
-
     foreach ($digital_assets as $sku => $das) {
       $product = Mage::getModel('catalog/product')
                      ->loadByAttribute('sku', $sku);
