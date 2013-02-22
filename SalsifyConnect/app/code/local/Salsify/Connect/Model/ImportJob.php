@@ -126,7 +126,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
 
 
   private function _download($url, $filename) {
-    $this->_log("starting download to: ".$filename);
+    $this->_log("starting download from " . $url . " to: " . $filename);
 
     $file = null;
     try {
