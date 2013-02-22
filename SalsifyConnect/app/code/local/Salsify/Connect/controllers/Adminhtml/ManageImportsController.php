@@ -146,7 +146,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // }
     // $url = urldecode($params['salsify_url']);
 
-    $api_key = 'i7KNnzss3V8iemProkFr';
+    $api_key = '3TSrv5Nu4mATy5cjsMbh';
     $url = 'http://127.0.0.1:5000/';
 
     $config = Mage::getModel('salsify_connect/configuration');
