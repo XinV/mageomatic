@@ -260,7 +260,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
         $category->delete();
         $cat_count++;
       } else {
-        $this->_log("NOT DELETING: " . var_export($category, true));
+        $id = $category->getAttributeValue('salsify_category_id');
+        $this->_render_html("<li>salsify_category_id: " . $id . "</li>");
       }
     }
     $this->_render_html("<li>Total categories deleted: " . $cat_count . '</li>');
