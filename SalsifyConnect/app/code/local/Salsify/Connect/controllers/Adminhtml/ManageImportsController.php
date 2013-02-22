@@ -68,7 +68,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $loader = Mage::helper('salsify_connect/loader');
     // called just to make sure that the salsify external id exists
 
-    // $db = Mage::getResourceSingleton('core/resource')
+    $db = Mage::getSingleton('core/resource');
     //           ->getConnection('core_write');
     // $sql = "START TRANSACTION;
     // DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
