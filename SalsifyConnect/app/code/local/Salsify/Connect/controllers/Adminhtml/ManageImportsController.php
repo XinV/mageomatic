@@ -76,7 +76,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_log("ASSETS TO LOAD: " . var_export($digital_assets, true));
 
     $job = Mage::getModel('salsify_connect/importjob');
-    $job->load_digital_assets($digital_assets);
+    // $job->load_digital_assets($digital_assets);
 
     $this->_end_render();
   }
