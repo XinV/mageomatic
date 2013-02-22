@@ -301,6 +301,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
 
+    // TODO clear out the salsify tables
     // TODO clear out the jobs table as well.
 
     $this->_render_html("</ul>");
