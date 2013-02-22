@@ -37,6 +37,8 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
     $filename = $this->getFilename();
     $import_run_id = $this->getImportRunId();
 
+    $this->_log("downloading salsify data from " . $url . " to " . $filename . " for import run " . $import_run_id);
+
     if (!($url && $filename && $import_run_id)) {
       throw new Exception("Must set url, filename, and import run id for import job.");
     }
