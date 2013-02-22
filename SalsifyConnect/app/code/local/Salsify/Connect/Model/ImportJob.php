@@ -84,6 +84,11 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
   // TODO get images for different digital asset roles (thumbnail vs. image,
   //      etc.) from salsify.
   public function load_digital_assets($digital_assets) {
+    if (!$digital_assets || empty($digital_assets)) {
+      $this->_log("no digital assets passed into process.");
+      return null;
+    }
+
     foreach ($digital_assets as $sku => $das) {
       $product = Mage::getModel('catalog/product')
                      ->loadByAttribute('sku', $sku);
