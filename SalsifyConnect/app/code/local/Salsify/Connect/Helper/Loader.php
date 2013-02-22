@@ -934,7 +934,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     $this->_log("Running children_count fix sql...");
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_write');
-    $sql = "START TRANSACTION;
+    $sql = "
     DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
     CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
     INSERT INTO catalog_category_entity_tmp SELECT * FROM catalog_category_entity;
@@ -948,7 +948,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     );
 
     DROP TABLE catalog_category_entity_tmp;
-    COMMIT;";
+    ";
     try {
       $db->query($sql);
     } catch (Exception $e) {

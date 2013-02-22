@@ -261,7 +261,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
         $cat_count++;
       }
     }
-    $this->_render_html("<li>Total categories deleted: " . $cat_count . '</li>');
+    $this->_render_html("<li>Total categories trees (e.g. roots) deleted: " . $cat_count . '</li>');
     $this->_log("Cleaner: categories deleted.");
 
     $this->_log("Cleaner: deleting attributes...");
