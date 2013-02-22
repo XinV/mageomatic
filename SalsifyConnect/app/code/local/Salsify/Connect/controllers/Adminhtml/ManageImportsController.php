@@ -246,7 +246,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
-    foreach($categories as $category) { $category->delete(); }
+    foreach($categories as $category) {
+      if ($category->getId() != 1) {
+        $category->delete();
+      }
+    }
 
     // TODO delete all the properties programtically.
     // In mysql:
