@@ -253,6 +253,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       }
     }
 
+    // delete salsify attributes only...we don't want to accidentally delete the
+    // attributes that come with magento
     $product_entity_type_id = Mage::getModel('eav/entity')
                                   ->setType('catalog_product')
                                   ->getTypeId();
@@ -262,22 +264,17 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     foreach ($attribute_set_collection as $attribute_set) {
       $attributes = Mage::getModel('catalog/product_attribute_api')
                         ->items($attribute_set->getId());
-                        // ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
       foreach($attributes as $attribute) {
         if (strcasecmp(substr($attribute['code'], 0, strlen('salsify_')), 'salsify_') === 0) {
-          $this->_render_html($attribute['code'] . '<br/><br/>');
+          $this->_render_html(var_export($attribute,true) . '<br/><br/>');
+          // $db_attribute = Mage::getModel('eav/entity_attribute')
+          //                     ->load($attribute['id']);
+               // ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
         }
       }
     }
 
-
-    // $attributes = Mage::getModel('catalog/resource_eav_attribute')
-    //                   ->getCollection()
-    //                   ->addFieldToFilter('attribute_code', array('like'=>'salsify%'));
-    // foreach($attributes as $attribute) { $attribute->delete(); }
-
-    // TODO delete all the properties programtically.
-    // In mysql:
+    // In mysql the attributes can be deleted this way as well:
     // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
     // delete from eav_attribute where attribute_code like 'salsify%';
 
