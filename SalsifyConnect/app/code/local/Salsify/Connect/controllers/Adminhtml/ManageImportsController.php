@@ -244,6 +244,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("<p>This will remove all products, all categories, and all Salsify attributes.</p>");
     $this->_render_html("<ul>");
 
+    // FIXME need to delete all the local images as well
+
     $this->_log("Cleaner: deleting products...");
     $products = Mage::getModel('catalog/product')
                     ->getCollection();
