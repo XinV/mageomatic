@@ -582,12 +582,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   private function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
-      // TODO  when Salsify has bundles we'll have to deal with this.
-      $product_type = 'simple';
-      
       $dbattribute = $this->_get_attribute($attribute);
       if (!$dbattribute) {
-        $dbattribute = $this->_create_attribute($attribute, $product_type);
+        $dbattribute = $this->_create_attribute($attribute);
       }
 
       if ($dbattribute) {
@@ -721,9 +718,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // More docs: http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
   //
   // TODO support multi-store (see 'is_global' below)
-  private function _create_attribute($attribute, $attribute_type, $product_type) {
-    // There are even more options that we're not setting here. For example:
-    // http://alanstorm.com/magento_attribute_migration_generator
+  private function _create_attribute($attribute) {
+    // TODO  when Salsify has bundles we'll have to deal with this.
+    $product_type = 'simple';
 
     $code = $this->_attribute_code($attribute);
     $name = $attribute['name'];
@@ -744,6 +741,8 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
 
     // I *think* this is everything we COULD be setting, with some properties
     // commented out. I got values from eav_attribute and catalog_eav_attribute
+    // For example:
+    // http://alanstorm.com/magento_attribute_migration_generator
 
     $attribute_data = array(
       'attribute_code' => $code,
