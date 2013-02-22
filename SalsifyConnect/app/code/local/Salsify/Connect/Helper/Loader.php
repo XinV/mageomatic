@@ -924,6 +924,31 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       }
     }
 
+    // TODO this is a problem with the bulk import API. Currently it does not
+    //      update the children_count in the database tables, which means that
+    //      the categories are not expandable in the product detail pages. this
+    //      fix is from the bug filing:
+    //      https://github.com/avstudnitz/AvS_FastSimpleImport/issues/26
+    $sql = "
+    START TRANSACTION;
+    DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
+    CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
+    INSERT INTO catalog_category_entity_tmp SELECT * FROM catalog_category_entity;
+
+    UPDATE catalog_category_entity cce
+    SET children_count =
+    (
+        SELECT count(cce2.entity_id) - 1 as children_county
+        FROM catalog_category_entity_tmp cce2
+        WHERE PATH LIKE CONCAT(cce.path,'%')
+    );
+
+    DROP TABLE catalog_category_entity_tmp;
+    COMMIT;";
+    Mage::getResourceSingleton('core/resource')
+        ->getConnection('core_write');
+        ->query($sql);
+
     $this->_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
   }
 
