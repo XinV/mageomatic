@@ -259,6 +259,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       if ($category->getSalsifyCategoryId()) {
         $category->delete();
         $cat_count++;
+      } else {
+        $this->_log("NOT DELETING: " . var_export($category, true));
       }
     }
     $this->_render_html("<li>Total categories deleted: " . $cat_count . '</li>');
