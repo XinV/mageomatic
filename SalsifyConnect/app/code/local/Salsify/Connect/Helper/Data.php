@@ -11,7 +11,10 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
   private $_config;
 
-  
+
+  private $_importer;
+
+
   /**
    * @param $configuration Salsify Connect Configuration model instance.
    */
@@ -28,8 +31,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
     $stream = fopen($file, 'r');
     try {
-      $importer = Mage::helper('salsify_connect/importer');
-      $parser = new \JsonStreamingParser\Parser($stream, $importer);
+      $this->_importer = Mage::helper('salsify_connect/importer');
+      $parser = new \JsonStreamingParser\Parser($stream, $this->_importer);
       $parser->parse();
     } catch (Exception $e) {
       fclose($stream);
@@ -37,6 +40,15 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     // TODO return some stats about the amount of data loaded.
+  }
+
+
+  // Returns the Salsify importer used to load data.
+  public function get_importer() {
+    if (!$this->_importer) {
+      throw new Exception("ERROR: cannot get_importer until load_data is called.");
+    }
+    return $this->_importer;
   }
 
 

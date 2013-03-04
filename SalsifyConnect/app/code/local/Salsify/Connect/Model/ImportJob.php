@@ -56,11 +56,11 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
       $import->set_download_complete();
 
       // parse file and load data into Magento
-      $this->_load_data($filename);
+      $importer = $this->_load_data($filename);
       $import->set_loading_complete();
 
       // download and load digital assets
-      $digital_assets = $this->load_digital_assets($import->get_digital_assets());
+      $digital_assets = $this->load_digital_assets($importer->get_digital_assets());
       $import->set_loading_digital_assets_complete($digital_assets);
     } catch (Exception $e) {
       $import->set_error($e);
@@ -170,17 +170,22 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
       throw $e;
     }
 
-    $this->_log("download successful. Local file: ".$filename);
+    $this->_log("download successful. Local file: " . $filename);
     return $filename;
   }
 
   private function _load_data($filename) {
-    $this->_log("starting data load from: ".$filename);
+    $this->_log("starting data load from: " . $filename);
 
     $salsify = Mage::helper('salsify_connect');
     $salsify->load_data($filename);
 
-    $this->_log("load successful. Local file: ".$filename);
+    $this->_log("load successful. Local file: " . $filename);
+
+    // This is clearly a weird return value here. Starting to feel like weird
+    // spagetti code, and only exists because we need somewhere to temporarily
+    // store digital assets during a load...
+    return $salsify->get_importer();
   }
 
   // TODO factor into a log helper
