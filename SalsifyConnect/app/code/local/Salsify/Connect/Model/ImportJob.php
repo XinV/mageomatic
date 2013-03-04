@@ -138,8 +138,14 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           $last_image = array_pop($gallery['images']);
           $this->_log("FIXME: LAST IMAGE: " . var_export($last_image,true));
           $last_image['label'] = $image_label;
+          $this->_log("FIXME: 1");
           array_push($gallery['images'], $last_image);
+
+          $this->_log("FIXME: 2");
+
           $product->setData('media_gallery', $gallery);
+
+          $this->_log("FIXME: 3");
 
           $product->save();
         } catch (Exception $e) {
