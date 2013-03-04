@@ -69,7 +69,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                     ->getCollection();
     $image_count = 0;
     foreach($products as $product) {
-      $product = Mage::getModel('catalog/product')->load($product->id);
+      $product = Mage::getModel('catalog/product')->load($product->getId());
 
       $gallery = $product->getMediaGalleryImages();
       $image_count += $gallery->count();
