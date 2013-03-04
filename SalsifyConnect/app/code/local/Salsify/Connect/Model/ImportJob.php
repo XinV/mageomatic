@@ -132,20 +132,15 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           //      small_image if that data comes from Salsify.
           $product->addImageToMediaGallery($filename, array('image'), true, false);
 
-          // this is terrible. thanks:
-          // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-          $gallery = $product->getData('media_gallery');
-          $last_image = array_pop($gallery['images']);
-          $this->_log("FIXME: LAST IMAGE: " . var_export($last_image,true));
-          $last_image['label'] = $image_label;
-          $this->_log("FIXME: 1");
-          array_push($gallery['images'], $last_image);
-
-          $this->_log("FIXME: 2");
-
-          $product->setData('media_gallery', $gallery);
-
-          $this->_log("FIXME: 3");
+          if (array_key_exists('name', $da)) {
+            // this is terrible. thanks:
+            // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+            $gallery = $product->getData('media_gallery');
+            $last_image = array_pop($gallery['images']);
+            $last_image['label'] = $da['name'];
+            array_push($gallery['images'], $last_image);
+            $product->setData('media_gallery', $gallery);
+          }
 
           $product->save();
         } catch (Exception $e) {
