@@ -74,13 +74,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
       $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
       $items = $mediaApi->items($product->getId());
-      $this->_render_html("IMAGES SO FAR: " . $image_count . "<br/>");
       foreach($items as $item) {
         $file = $item['file'];
         $mediaApi->remove($id, $file);
         $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
         unlink($file);
-        $this->_render_html("FILE: " . $file . "<br/>");
         $image_count += 1;
       }
     }
@@ -254,6 +252,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
+  // TODO should refactor this and move accessors that know a lot about Magento
+  //      internals into the generic Data.php for reuse elsewhere.
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
 
@@ -271,10 +271,14 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     foreach($products as $product) {
       $product = Mage::getModel('catalog/product')->load($product->getId());
 
-      $gallery = $product->getMediaGalleryImages();
-      $image_count += $gallery->count();
-      foreach ($gallery as $image) {
-        $image->delete();
+      $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+      $items = $mediaApi->items($product->getId());
+      foreach($items as $item) {
+        $file = $item['file'];
+        $mediaApi->remove($id, $file);
+        $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
+        unlink($file);
+        $image_count += 1;
       }
 
       $product->delete();
