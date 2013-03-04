@@ -269,10 +269,12 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
     $image_count = 0;
     foreach($products as $product) {
-      $product = Mage::getModel('catalog/product')->load($product->getId());
+      $id = $product->getId();
+
+      $product = Mage::getModel('catalog/product')->load($id);
 
       $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
-      $items = $mediaApi->items($product->getId());
+      $items = $mediaApi->items($id);
       foreach($items as $item) {
         $file = $item['file'];
         $mediaApi->remove($id, $file);
