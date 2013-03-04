@@ -65,18 +65,19 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
-    $sku = '1899749';
-    $product = Mage::getModel('catalog/product')
-                   ->loadByAttribute('sku', $sku);
+    $products = Mage::getModel('catalog/product')
+                    ->getCollection();
+    $image_count = 0;
+    foreach($products as $product) {
+      $product = Mage::getModel('catalog/product')->load($product->id);
 
-    $digital_assets = array();
-    $digital_assets[$sku] = array();
-    $digital_assets[$sku][] = array('url' => 'https://salsify-development.s3.amazonaws.com/rgonzalez/uploads/digital_asset/asset/10/1980692-3895.jpg');
-
-    $this->_log("ASSETS TO LOAD: " . var_export($digital_assets, true));
-
-    $job = Mage::getModel('salsify_connect/importjob');
-    $job->load_digital_assets($digital_assets);
+      $gallery = $product->getMediaGalleryImages();
+      $image_count += $gallery->count();
+      $this->_render_html("GALLERY SIZE: " . $image_count . "<br/>");
+      foreach ($gallery as $image) {
+        $this->_render_html("IMAGE: " . var_export($image) . "<br/>");
+      }
+    }
 
     $this->_end_render();
   }
@@ -272,7 +273,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
       $product->delete();
     }
-    $this->_render_html("<li>Total imags deleted: " . $image_count . '</li>');
+    $this->_render_html("<li>Total images deleted: " . $image_count . '</li>');
     $this->_log("Cleaner: products and images deleted.");
 
     $this->_log("Cleaner: deleting Salsify categories...");
