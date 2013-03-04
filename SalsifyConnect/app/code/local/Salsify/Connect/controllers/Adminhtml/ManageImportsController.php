@@ -76,6 +76,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $this->_render_html("GALLERY SIZE: " . $image_count . "<br/>");
       foreach ($gallery as $image) {
         $this->_render_html("IMAGE: " . var_export($image) . "<br/>");
+        $image->delete();
       }
     }
 
@@ -263,7 +264,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
     $image_count = 0;
     foreach($products as $product) {
-      $product = Mage::getModel('catalog/product')->load($product->id);
+      $product = Mage::getModel('catalog/product')->load($product->getId());
 
       $gallery = $product->getMediaGalleryImages();
       $image_count += $gallery->count();
