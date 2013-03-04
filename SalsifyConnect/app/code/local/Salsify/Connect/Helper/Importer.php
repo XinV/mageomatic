@@ -301,9 +301,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
           $this->_log("WARNING: accessories for product when no attribute for role target_product_id was set: " . var_export($product, true));
         }
         unset($product['accessories']);
-      } elseif ($key === '__digital_assets') {
+      } elseif ($key === 'digital_assets') {
         $this->_digital_assets[$product['sku']] = $value;
-        unset($product['__digital_assets']);
+        $this->_log("FIXME ASSETS: " . var_export($value,true));
+        unset($product['digital_assets']);
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
@@ -447,7 +448,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         } elseif ($key === 'accessories') {
           $this->_product[$key] = $value;
         } elseif ($key === 'digital_assets') {
-          $this->_product['__digital_assets'] = $value;
+          $this->_product[$key] = $value;
         } else {
           $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
