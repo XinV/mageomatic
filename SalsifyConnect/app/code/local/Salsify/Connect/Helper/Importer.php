@@ -92,7 +92,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
    * Format of digital assets is an array of sku => array(array(url,name)).
    */
   public function get_digital_assets() {
-    $this->_log("FIXME: DAS: " . var_export($this->_digital_assets,true));
     return $this->_digital_assets;
   }
 
