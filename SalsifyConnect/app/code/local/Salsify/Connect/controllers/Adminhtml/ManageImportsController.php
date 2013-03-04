@@ -267,7 +267,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $id = $product->getEntityId();
       $this->_log("FIXME ID: " . $id);
 
-      $p = Mage::getModel('catalog/product')->load($id);
+      // $p = Mage::getModel('catalog/product')->load($id);
+      $p = $products->load($id);
       $this->_log("FIXME: P: " . var_export($p,true));
 
       // FIXME need to delete all the local images as well
