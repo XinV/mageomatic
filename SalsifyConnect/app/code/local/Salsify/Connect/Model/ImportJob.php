@@ -77,9 +77,9 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
   //
   // Thanks http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image
   //
-  // FIXME images coming from salsify should have an external ID or something to
-  //       uniquely identify them between runs. what if someone updates the name
-  //       and then we do another import?
+  // TODO images coming from salsify should have an external ID or something to
+  //      uniquely identify them between runs. what if someone updates the name
+  //      and then we do another import?
   //
   // TODO get images for different digital asset roles (thumbnail vs. image,
   //      etc.) from salsify.
@@ -109,22 +109,12 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           }
 
 
-          // FIXME once we get a unique identifier from Salsify, we need to
-          //       create a new attribute for the image gallery to keep track
-          //       of whether or not we've imported the product already.
+          // TODO once we get a unique identifier from Salsify, we need to
+          //      create a new attribute for the image gallery to keep track
+          //      of whether or not we've imported the product already.
           //
-          // FIXME should see the code that's currently in the controller on how
-          //       to cycle through a product's images.
-          //
-          // $gallery_data = $product->getMediaGallery();
-          // $this->_log("GALLERY: " . var_export($gallery_data, true));
-          // foreach ($gallery_data['images'] as $image) {
-          //   $this->_log("FILE I FOUND: " . $filename);
-          //   $this->_log("IMAGE: " . var_export($image, true));
-            // if ($gallery->getBackend()->getImage($product, $image['file'])) {
-            //   $gallery->getBackend()->removeImage($product, $image['file']);
-            // }
-          // }
+          // TODO should see the code that's currently in the controller on how
+          //      to cycle through a product's images to check this.
 
 
           // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery

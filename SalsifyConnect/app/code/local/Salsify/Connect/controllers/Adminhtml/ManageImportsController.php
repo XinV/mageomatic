@@ -5,6 +5,10 @@ require_once('DJJob.php');
 
 class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_Controller_action {
 
+  private function _log($msg) {
+    Mage::log('ManageImports: ' . $msg, null, 'salsify.log', true);
+  }
+
 
   // All you need to add is the action!
   const BASE_ADMIN_URL = 'salsify/adminhtml_manageimports/';
@@ -12,12 +16,6 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
   const INDEX_MENU_ID  = 'salsify_connect_menu/manage_imports';
   const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
-
-
-  // FIXME factor into a log helper
-  private function _log($msg) {
-    Mage::log('ManageImports: ' . $msg, null, 'salsify.log', true);
-  }
 
 
   private function _get_url($action) {
@@ -61,7 +59,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
  
-  // FIXME remove when we're going live. this is just for testing.
+  // TODO remove when we're going live. this is just for testing.
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
@@ -124,7 +122,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  // FIXME only used for development purposes. remove once no longer necessary.
+  // TODO only used for development purposes. remove once no longer necessary.
   public function testloadAction() {
     $this->_start_render('salsify_connect_menu/testload');
     
@@ -139,7 +137,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  // FIXME make this into a form that the user can use to enter a configuration
+  // TODO make this into a form that the user can use to enter a configuration
   public function configAction() {
     $this->_start_render('salsify_connect_menu/config');
 
@@ -172,7 +170,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_end_render();
   }
 
-  // FIXME remove for dev
+  // TODO remove for production
   public function importAction() {
     $params = $this->getRequest()->getParams();
     if (!array_key_exists('config', $params)) {
@@ -190,8 +188,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  // FIXME make this into some kind of polling/monitoring/restful thing that
-  //       is called by JS from the manage_imports main area
+  // TODO make this into some kind of polling/monitoring/restful thing that
+  //      is called by JS from the manage_imports main area
   public function chimportAction() {
     $this->_start_render('salsify_connect_menu/chimport');
 
