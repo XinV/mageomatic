@@ -260,22 +260,20 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                     // if you just wanted to delete salsify data...
                     // ->addFieldToFilter('price', array("eq"=>0.0100));
     $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
+    $image_count = 0;
     foreach($products as $product) {
       $product = Mage::getModel('catalog/product')->load($product->id);
 
-      // FIXME need to delete all the local images as well
-      $method_names = get_class_methods($product);
-      $this->_log("FIXME METHODS: " . var_export($method_names,true));
-
       $gallery = $product->getMediaGalleryImages();
-      $this->_log("FIXME: GALLERY: " . var_export($gallery,true));
+      $image_count += $gallery_count;
       foreach ($gallery as $image) {
-        $this->_log("FIXME: IMAGE: " . var_export($image, true));
+        $image->delete();
       }
 
       $product->delete();
     }
-    $this->_log("Cleaner: products deleted.");
+    $this->_render_html("<li>Total imags deleted: " . $image_count . '</li>');
+    $this->_log("Cleaner: products and images deleted.");
 
     $this->_log("Cleaner: deleting Salsify categories...");
     $categories = Mage::getModel('catalog/category')
