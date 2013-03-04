@@ -136,6 +136,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
           $gallery = $product->getData('media_gallery');
           $last_image = array_pop($gallery['images']);
+          $this->_log("FIXME: LAST IMAGE: " . var_export($last_image,true));
           $last_image['label'] = $image_label;
           array_push($gallery['images'], $last_image);
           $product->setData('media_gallery', $gallery);
