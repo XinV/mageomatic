@@ -22,7 +22,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   }
 
   private function _response_valid($response) {
-    $response_code = $mes->getResponseCode();
+    $response_code = $response->getResponseCode();
     return ($response_code >= 200 && $response_code <= 299);
   }
 
