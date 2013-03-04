@@ -92,6 +92,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
    * Format of digital assets is an array of sku => array(array(url,name)).
    */
   public function get_digital_assets() {
+    $this->_log("FIXME: DAS: " . var_export($this->_digital_assets,true));
     return $this->_digital_assets;
   }
 
@@ -303,7 +304,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         unset($product['accessories']);
       } elseif ($key === 'digital_assets') {
         $this->_digital_assets[$product['sku']] = $value;
-        $this->_log("FIXME ASSETS SO FAR: " . var_export($this->_digital_assets,true));
         unset($product['digital_assets']);
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
