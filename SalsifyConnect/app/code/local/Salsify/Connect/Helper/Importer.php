@@ -4,10 +4,10 @@ require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 /**
  * Parser of Salsify data. Also loads into the Magento database.
  */
-class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
+class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
 
   private function _log($msg) {
-    Mage::log('Loader: ' . $msg, null, 'salsify.log', true);
+    Mage::log('Importer: ' . $msg, null, 'salsify.log', true);
   }
 
   // attribute_codes for attributes that store the Salsify IDs within Magento
@@ -70,7 +70,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   // assets during parsing (even though the bulk import API supports it), since
   // that requires that all images be downloaded locally. so instead what we're
   // going to do is save the assets and make them available in an accessor to
-  // whatever is using the loader.
+  // whatever is using the importer.
   private $_digital_assets;
 
   // keep track of nesting level during parsing. this is handy to know whether
@@ -342,6 +342,9 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
   //
   // TODO query the system to get the full list of required attributes.
   //      otherwise the bulk import fails silently...
+  //
+  // TODO get more sophisticated mapping of keys from Salsify properties to
+  //      Magento properties.
   private function _prepare_product_add_required_values($product) {
     // TODO when Salsify supports Kits, this will have to change.
     $product['_type'] = 'simple';
@@ -354,8 +357,6 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     // TODO multi-store support
     $product['_product_websites'] = 'base';
 
-    // TODO get these from Salsify, but need more metadata in the export to
-    //      get them.
     if (!array_key_exists('price', $product)) {
       $product['price'] = 0.01;
     }
@@ -366,11 +367,16 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
       $product['description'] = 'IMPORTED FROM SALSIFY';
     }
     if (!array_key_exists('weight', $product)) {
+      // TODO i read that this should be '1' if not used. currently using 0.
+      //      wondering if having '0' is a problem?
+      // source: http://www.mag-manager.com/useful-articles/tipstricks/how-should-the-sample-of-csv-file-for-magento-import-look-like?utm_source=social&utm_medium=marketing&utm_campaign=linkedin
       $product['weight'] = 0;
     }
 
     if (!array_key_exists('status', $product)) {
       // TODO what does the status value mean?
+      //      default should be something like "ENABLED". is there somewhere to
+      //      get this?
       $product['status'] = 1;
     }
 
@@ -382,7 +388,7 @@ class Salsify_Connect_Helper_Loader extends Mage_Core_Helper_Abstract implements
     if (!array_key_exists('tax_class_id', $product)) {
       // TODO should we be setting a different tax class? can we get the system
       //      default?
-      $product['tax_class_id'] = 2;
+      $product['tax_class_id'] = 0;
     }
 
     if (!array_key_exists('qty', $product)) {
