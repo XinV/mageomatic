@@ -66,6 +66,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     $this->setStartTime(date('Y-m-d h:m:s', time()));
     try {
       $salsify_api = $this->_get_salsify_api();
+      $this->_log("HERE");
       $export = $salsify_api->create_export();
     } catch (Exception $e) {
       $this->set_error($e);
