@@ -302,9 +302,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         }
         unset($product['accessories']);
       } elseif ($key === 'digital_assets') {
-        $this->_log("FIXME SKU: " . var_export($this->_product['sku'],true));
         $this->_digital_assets[$product['sku']] = $value;
-        $this->_log("FIXME ASSETS: " . var_export($value,true));
+        $this->_log("FIXME ASSETS SO FAR: " . var_export($this->_digital_assets,true));
         unset($product['digital_assets']);
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
@@ -450,7 +449,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
           $this->_product[$key] = $value;
         } elseif ($key === 'digital_assets') {
           $this->_product[$key] = $value;
-          $this->_log("FIXME ASSETS PARSED: " . var_export($value,true));
         } else {
           $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
