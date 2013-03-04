@@ -69,7 +69,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
             $url_structure['port'] . $url_structure['path'] .
             '?' . $url_structure['query'];
     $body['url'] = $url;
-    $this->_log("BODY: " . var_export($body));
+    $this->_log("BODY: " . var_export($body, true));
     return $body;
   }
 
