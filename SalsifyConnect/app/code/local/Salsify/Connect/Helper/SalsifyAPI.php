@@ -45,8 +45,9 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
 
-    // FIXME error responses
-    $this->_log('RESP: ' . var_export($mes, true));
+    if ($mes->getResponseCode() != 200) {
+      throw new Exception("Error received from Salsify: " . $mes->getResponseStatus());
+    }
 
     // TODO I don't agree with this serialization format
     $body = json_decode($mes->getBody(), true);
