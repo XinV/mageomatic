@@ -30,6 +30,11 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $url = $this->_get_create_export_url();
     $req = new HttpRequest($url, HTTP_METH_POST);
     $mes = $req->send();
+
+    if ($mes->getResponseCode() != 200) {
+      throw new Exception("Error received from Salsify when creating export: " . $mes->getResponseStatus());
+    }
+
     return json_decode($mes->getBody());
   }
 
@@ -46,7 +51,6 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $mes = $req->send();
 
     if ($mes->getResponseCode() != 200) {
-      $this->_log("ERROR: " . var_export($mes, true));
       throw new Exception("Error received from Salsify: " . $mes->getResponseStatus());
     }
 
