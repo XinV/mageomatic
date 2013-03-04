@@ -263,6 +263,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     foreach($products as $product) {
 
       // FIXME need to delete all the local images as well
+      $this->_log("FIXME: PRODUCT: " . var_export($product,true));
       $gallery = $product->getMediaGalleryImages();
       $this->_log("FIXME: GALLERY: " . var_export($gallery,true));
       foreach ($gallery as $image) {
