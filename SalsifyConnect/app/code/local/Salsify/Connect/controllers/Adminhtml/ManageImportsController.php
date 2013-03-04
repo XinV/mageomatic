@@ -261,6 +261,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                     // ->addFieldToFilter('price', array("eq"=>0.0100));
     $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
     foreach($products as $product) {
+      $product = Mage::getModel('catalog/product')->load($product->id);
 
       // FIXME need to delete all the local images as well
       $method_names = get_class_methods($product);
