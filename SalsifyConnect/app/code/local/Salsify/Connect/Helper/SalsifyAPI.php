@@ -46,6 +46,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $mes = $req->send();
 
     if ($mes->getResponseCode() != 200) {
+      $this->_log("ERROR: " . var_export($mes, true));
       throw new Exception("Error received from Salsify: " . $mes->getResponseStatus());
     }
 
