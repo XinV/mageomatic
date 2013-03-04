@@ -29,6 +29,8 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   // TODO make this configurable with "compressed" vs. not once we figure out
   //      how to deal with GZipped stuff in PHP.
   public function create_export() {
+    $this->_log("creating Salsify export...");
+
     if (!$this->_base_url || !$this->_api_key) {
       throw new Exception("Base URL and API key must be set to create a new export.");
     }
@@ -40,6 +42,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
       throw new Exception("Error received from Salsify when creating export: " . $mes->getResponseStatus());
     }
 
+    $this->_log("SUCCESS creating export");
     return json_decode($mes->getBody());
   }
 
