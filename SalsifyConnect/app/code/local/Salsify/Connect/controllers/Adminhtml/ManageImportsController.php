@@ -77,7 +77,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $this->_render_html("IMAGES SO FAR: " . $image_count . "<br/>");
       foreach($items as $item) {
         $file = $item['file'];
-        // $mediaApi->remove($id, $file);
+        $mediaApi->remove($id, $file);
+        $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
+        unlink($file);
         $this->_render_html("FILE: " . $file . "<br/>");
         $image_count += 1;
       }
