@@ -67,13 +67,12 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     try {
       $salsify_api = $this->_get_salsify_api();
       $export = $salsify_api->create_export();
-      $this->_log("HERE");
     } catch (Exception $e) {
       $this->set_error($e);
     }
 
     // FIXME HERE
-    $id = $export['id'];
+    $id = $export->id;
     $this->_log("ID: " . $id);
 
     $this->setToken($export->id);
