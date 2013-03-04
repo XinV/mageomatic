@@ -447,10 +447,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         } elseif ($key === 'accessories') {
           $this->_product[$key] = $value;
         } elseif ($key === 'digital_assets') {
-          if (!array_key_exists('__digital_assets', $this->_product)) {
-            $this->_product['__digital_assets'] = array();
-          }
-          array_push($this->_product['__digital_assets'], $value);
+          $this->_product['__digital_assets'] = $value;
         } else {
           $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
