@@ -65,7 +65,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     } catch (Exception $e) {
       $this->set_error($e);
     }
-    $this->setToken($export['id']);
+    $this->setToken($export->id);
     $this->save();
   }
 
