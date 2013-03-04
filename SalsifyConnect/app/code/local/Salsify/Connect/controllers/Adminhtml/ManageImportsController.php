@@ -261,9 +261,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                     // ->addFieldToFilter('price', array("eq"=>0.0100));
     $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
     foreach($products as $product) {
-      
+
       // FIXME need to delete all the local images as well
       $gallery = $product->getMediaGalleryImages();
+      $this->_log("FIXME: GALLERY: " . var_export($gallery,true));
       foreach ($gallery as $image) {
         $this->_log("FIXME: IMAGE: " . var_export($image, true));
       }
