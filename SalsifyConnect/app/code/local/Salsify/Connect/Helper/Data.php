@@ -28,8 +28,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
     $stream = fopen($file, 'r');
     try {
-      $loader = Mage::helper('salsify_connect/loader');
-      $parser = new \JsonStreamingParser\Parser($stream, $loader);
+      $importer = Mage::helper('salsify_connect/importer');
+      $parser = new \JsonStreamingParser\Parser($stream, $importer);
       $parser->parse();
     } catch (Exception $e) {
       fclose($stream);
