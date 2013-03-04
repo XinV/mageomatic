@@ -74,9 +74,12 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
       $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
       $items = $mediaApi->items($product->getId());
+      $this->_log("FIXME 1");
       $image_count += $items->count();
+      $this->_log("FIXME 2");
       $this->_render_html("IMAGES SO FAR: " . $image_count . "<br/>");
       foreach($items as $item) {
+        $this->_log("FIXME 3");
         $mediaApi->remove($id, $item['file']);
       }
     }
