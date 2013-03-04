@@ -21,6 +21,11 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $this->_api_key = $apikey;
   }
 
+  private function _response_valid($response) {
+    $response_code = $mes->getResponseCode();
+    return ($response_code >= 200 && $response_code <= 299);
+  }
+
   // TODO make this configurable with "compressed" vs. not once we figure out
   //      how to deal with GZipped stuff in PHP.
   public function create_export() {
@@ -31,8 +36,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $req = new HttpRequest($url, HTTP_METH_POST);
     $mes = $req->send();
 
-    if ($mes->getResponseCode() != 200) {
-      $this->_log("ERROR: " . var_export($mes, true));
+    if ($this->_response_valid($mes)) {
       throw new Exception("Error received from Salsify when creating export: " . $mes->getResponseStatus());
     }
 
@@ -51,7 +55,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
 
-    if ($mes->getResponseCode() != 200) {
+    if ($this->_response_valid($mes)) {
       throw new Exception("Error received from Salsify: " . $mes->getResponseStatus());
     }
 
