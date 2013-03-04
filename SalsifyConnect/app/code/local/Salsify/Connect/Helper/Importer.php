@@ -302,6 +302,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         }
         unset($product['accessories']);
       } elseif ($key === 'digital_assets') {
+        $this->_log("FIXME SKU: " . var_export($this->_product['sku'],true));
         $this->_digital_assets[$product['sku']] = $value;
         $this->_log("FIXME ASSETS: " . var_export($value,true));
         unset($product['digital_assets']);
@@ -449,6 +450,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
           $this->_product[$key] = $value;
         } elseif ($key === 'digital_assets') {
           $this->_product[$key] = $value;
+          $this->_log("FIXME ASSETS PARSED: " . var_export($value,true));
         } else {
           $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
