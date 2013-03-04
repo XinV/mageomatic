@@ -273,6 +273,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
       $product = Mage::getModel('catalog/product')->load($id);
 
+      // various ways to do this, none pretty.
+      // http://stackoverflow.com/questions/5709496/magento-programmatically-remove-product-images
       $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
       $items = $mediaApi->items($id);
       foreach($items as $item) {

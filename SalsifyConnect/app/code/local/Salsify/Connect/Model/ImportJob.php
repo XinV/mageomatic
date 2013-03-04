@@ -113,6 +113,9 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
           //       create a new attribute for the image gallery to keep track
           //       of whether or not we've imported the product already.
           //
+          // FIXME should see the code that's currently in the controller on how
+          //       to cycle through a product's images.
+          //
           // $gallery_data = $product->getMediaGallery();
           // $this->_log("GALLERY: " . var_export($gallery_data, true));
           // foreach ($gallery_data['images'] as $image) {
@@ -125,7 +128,18 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
 
 
           // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery
-          $product->addImageToMediaGallery($filename, null, false, false);
+          // TODO the second argument should be set specifically to thumbnail or
+          //      small_image if that data comes from Salsify.
+          $product->addImageToMediaGallery($filename, array('image'), true, false);
+
+          // this is terrible. thanks:
+          // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+          $gallery = $product->getData('media_gallery');
+          $last_image = array_pop($gallery['images']);
+          $last_image['label'] = $image_label;
+          array_push($gallery['images'], $last_image);
+          $product->setData('media_gallery', $gallery);
+
           $product->save();
         } catch (Exception $e) {
           $this->_log("ERROR: could not load digital asset. skipping: " . $e->getMessage());
