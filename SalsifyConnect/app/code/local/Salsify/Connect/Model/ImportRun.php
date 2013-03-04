@@ -12,6 +12,11 @@
  */
 class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
+  private function _log($msg) {
+    Mage::log('ImportRun: ' . $msg, null, 'salsify.log', true);
+  }
+
+
   private $_config;
   private $_salsify_api;
 
@@ -65,6 +70,10 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     } catch (Exception $e) {
       $this->set_error($e);
     }
+
+    $id = $export->id;
+    $this->_log("ID: " . $id);
+
     $this->setToken($export->id);
     $this->save();
   }
