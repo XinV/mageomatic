@@ -388,7 +388,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     if (!array_key_exists('tax_class_id', $product)) {
       // TODO should we be setting a different tax class? can we get the system
       //      default?
-      $product['tax_class_id'] = 0;
+      $product['tax_class_id'] = 2;
     }
 
     if (!array_key_exists('qty', $product)) {
