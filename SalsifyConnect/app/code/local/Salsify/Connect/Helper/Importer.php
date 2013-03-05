@@ -550,6 +550,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $this->_log("Flushing product batch of size: " . count($this->_batch));
 
     try {
+      $this->_log("FIXME: BATCH: " . var_export($this->_batch, true));
+
       Mage::getSingleton('fastsimpleimport/import')
           ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
           ->processProductImport($this->_batch);
@@ -610,7 +612,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
   private function _load_or_create_dbattribute($attribute) {
-    if (array_key_exists('__dbattribute', $attribute)) {
+    if (array_key_exists('__code', $attribute)) {
       return $attribute;
     }
 
@@ -636,11 +638,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return null;
     }
 
-    $code = $dbattribute->getAttributeCode();
-    $this->_log("FIXME: CODE: " . $code);
-
     $attribute['__code'] = $dbattribute->getAttributeCode();
-    $attribute['__dbattribute'] = $dbattribute;
     return $attribute;
   }
 
