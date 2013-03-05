@@ -63,22 +63,57 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
-    $products = Mage::getModel('catalog/product')
-                    ->getCollection();
-    $image_count = 0;
+    $product = array(
+      'sku' => '1899749',
+      'name' => 'Z980',
+      '_s_complete_label' => 'Kodak Z series Z980',
+      '_s_megapixel' => '12 MP',
+      '_s_sensor_type' => 'CMOS',
+      '_s_optical_zoom' => '24 x',
+      '_s_digital_zoom' => '5 x',
+      '_s_focus' => 'TTL',
+      '_s_iso_sensitivity' => '64, 100, 100, 200, 200, 400, 400, 800, 800, 1600, 3200, 6400, auto',
+      '_s_light_metering' => 'Centre-weighted, Spot',
+      '_s_flash_modes' => 'auto, fill-in, Flash off, Red-eye reduction',
+      '_s_maximum_video_resolution' => '1280 x 720 pixels',
+      '_s_motion_jpeg_frame_rate' => '30 fps',
+      '_s_compatible_memory_cards' => 'sd',
+      '_s_display_diagonal' => '76.2 mm (3 ")',
+      '_s_color' => 'Black',
+      '_s_white_balance' => 'auto, daylight, Fluorescent, Shade, Tungsten',
+      '_s_scene_modes' => 'Backlight, beach, Candlelight, Children, Fireworks, Landscape, Museum, Night portrait, Sunset',
+      '_s_width' => '90.5 mm',
+      '_s_depth' => '123.7 mm',
+      '_s_height' => '105 mm',
+      '_s_weight' => '0.415 kg',
+      '_s_battery_technology' => 'NickeläóñMetal Hydride (NiMH)',
+      '_s_digital_slr' => 'N',
+      '_s_manufacturer' => 'Kodak',
+      '_links_crosssell_sku' => '15825261',
+      '_type' => 'simple',
+      '_attribute_set' => 'Default',
+      '_product_websites' => 'base',
+      'price' => 0.01,
+      'short_description' => 'IMPORTED FROM SALSIFY',
+      'description' => 'IMPORTED FROM SALSIFY',
+      'weight' => 0,
+      'status' => 1,
+      'visibility' => 4,
+      'tax_class_id' => 2,
+      'qty' => 0,
+      'salsify_product_id' => '1899749',
+    );
 
-    foreach($products as $product) {
-      $id = $product->getId();
+    $batch = array();
+    array_push($batch, $product);
 
-      $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
-      $items = $mediaApi->items($product->getId());
-      foreach($items as $item) {
-        $file = $item['file'];
-        $mediaApi->remove($id, $file);
-        $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
-        unlink($file);
-        $image_count += 1;
-      }
+    try {
+      Mage::getSingleton('fastsimpleimport/import')
+          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+          ->processProductImport($batch);
+    } catch (Exception $e) {
+      $this->_log('ERROR: could not flush batch: ' . $e->getMessage());
+      $this->_log('BACKTRACE:' . $e->getTraceAsString());
     }
 
     $this->_end_render();
