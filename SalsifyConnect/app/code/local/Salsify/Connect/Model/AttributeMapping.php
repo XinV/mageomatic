@@ -386,9 +386,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     // TODO figure out how to prevent the value from being editable
     //      possibly: http://stackoverflow.com/questions/6384120/magento-read-only-and-hidden-product-attributes
 
-    self::loadOrCreateCategoryAttributeBySalsifyId(self::SALSIFY_CATEGORY_ID, self::SALSIFY_CATEGORY_ID_NAME);
+    self::loadOrCreateCategoryAttributeBySalsifyId(self::SALSIFY_CATEGORY_ID, self::SALSIFY_CATEGORY_ID_NAME, null);
 
-    self::loadOrCreateProductAttributeBySalsifyId(self::SALSIFY_PRODUCT_ID, self::SALSIFY_PRODUCT_ID_NAME);
+    self::loadOrCreateProductAttributeBySalsifyId(self::SALSIFY_PRODUCT_ID, self::SALSIFY_PRODUCT_ID_NAME, null);
   }
 
 
