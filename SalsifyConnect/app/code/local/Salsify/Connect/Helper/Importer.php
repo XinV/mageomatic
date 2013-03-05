@@ -635,8 +635,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     }
 
     $attribute['__code'] = $dbattribute->getAttributeCode();
-    $attribute['__dbattribute'] = Mage::getModel('catalog/resource_eav_attribute')
-                                      ->load($attribute_id);
+    $attribute['__dbattribute'] = $dbattribute;
     return $attribute;
   }
 
