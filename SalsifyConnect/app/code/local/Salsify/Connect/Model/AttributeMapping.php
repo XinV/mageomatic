@@ -111,6 +111,11 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // Without further intervention, the result might intersect with built-in
   // Magento properties (e.g. sku -> sku), so we add a leading _s_ just in case.
   //
+  // NOTE: do NOT start attribute codes with '_'. Magento treats _'s as special.
+  //       the devious thing is that it will allow the creation of the attribute
+  //       itself, but then FAIL on importing products that use a attribute
+  //       codes that start with _. :::sigh:::
+  //
   // TODO: once we have a more robust mapping mechanism from Salsify to Magento
   //       properties we shouldn't require the _s_ prefix.
   private static function _create_attribute_code_from_salsify_id($id) {
