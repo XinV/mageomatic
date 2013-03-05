@@ -181,17 +181,17 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  public static function deleteCategoryAttribute($id) {
-    self::_delete_attribute(self::CATEGORY, $id);
+  public static function deleteCategoryAttribute($id, $roles) {
+    self::_delete_attribute(self::CATEGORY, $id, $roles);
   }
 
-  public static function deleteProductAttribute($id) {
-    self::_delete_attribute(self::PRODUCT, $id);
+  public static function deleteProductAttribute($id, $roles) {
+    self::_delete_attribute(self::PRODUCT, $id, $roles);
   }
 
   // Deletes an attribute with the given Salsify ID from the system if present.
-  private static function _delete_attribute($attribute_type, $id) {
-    $attribute = self::_loadAttributeBySalsifyId($attribute_type, $id);
+  private static function _delete_attribute($attribute_type, $id, $roles) {
+    $attribute = self::_loadAttributeBySalsifyId($attribute_type, $id, $roles);
     if ($attribute) {
       $attribute->delete();
     }

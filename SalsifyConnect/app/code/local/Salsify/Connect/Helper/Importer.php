@@ -647,9 +647,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   private function _delete_attribute_with_salsify_id($attribute_id) {
     $this->_log("attribute " . $attribute_id . " is really a category. deleting.");
 
+    $roles = null;
+
     $mapper = $this->_get_attribute_mapper();
-    $mapper::deleteCategoryAttribute($attribute_id);
-    $mapper::deleteProductAttribute($attribute_id);
+    $mapper::deleteCategoryAttribute($attribute_id, $roles);
+    $mapper::deleteProductAttribute($attribute_id, $roles);
 
     unset($this->_attributes[$attribute_id]);
 
