@@ -13,7 +13,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  const SALSIFY_ATTRIBUTE_PREFIX = '_s_';
+  const SALSIFY_ATTRIBUTE_PREFIX = 'salsify_';
 
 
   // attribute_codes for attributes that store the Salsify IDs within Magento
