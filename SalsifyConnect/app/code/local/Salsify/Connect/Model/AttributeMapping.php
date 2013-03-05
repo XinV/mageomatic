@@ -104,8 +104,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // Magento cannot handle spaces, and the codes must be no more than 30 chars
   // long. By convention they are also lowercase.
   //
-  // This simply lowercases the Salsify ID, replaces whitespace with _'s, and
-  // cuts the result to only 30 characters in length.
+  // This simply lowercases the Salsify ID, replaces whitespace with _'s,
+  // non-ascii characters with nothing at all, and cuts the result to only 30
+  // characters in length.
   //
   // Without further intervention, the result might intersect with built-in
   // Magento properties (e.g. sku -> sku), so we add a leading _s_ just in case.
@@ -115,7 +116,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   private static function _create_attribute_code_from_salsify_id($id) {
     $code = strtolower($id);
     $code = preg_replace('/\s\s+/', '_', $code);
-    $code = urlencode($code);
+    $code = preg_replace('/[^\x00-\x7F]/', '', $code);
     return substr(self::SALSIFY_ATTRIBUTE_PREFIX . $code, 0, 30);
   }
 
