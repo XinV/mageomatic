@@ -31,6 +31,9 @@
           <import_run>
             <table>salsify_connect_import_run</table>
           </import_run>
+          <attribute_mapping>
+            <table>salsify_connect_attribute_mapping</table>
+          </attribute_mapping>
         </entities>
       </salsify_connect_resource>
     </models>
