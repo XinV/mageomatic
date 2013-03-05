@@ -436,7 +436,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
         $code = $attribute['code'];
         if ((strcasecmp(substr($code, 0, strlen(self::SALSIFY_ATTRIBUTE_PREFIX)), self::SALSIFY_ATTRIBUTE_PREFIX) === 0) ||
             (strcasecmp($code, self::SALSIFY_CATEGORY_ID) === 0) ||
-            (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0)
+            (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0))
         {
           Mage::getModel('eav/entity_attribute')
               ->load($attribute['attribute_id'])
