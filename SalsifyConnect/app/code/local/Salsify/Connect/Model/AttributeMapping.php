@@ -356,7 +356,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // the admin and site given attributes are show, what types of products they
   // are used with, etc.
   private static function _getAttributeSetId($attribute_type) {
-    if ($type === self::CATEGORY) {
+    if ($attribute_type === self::CATEGORY) {
       $model = Mage::getModel('catalog/category');
     } elseif ($attribute_type === self::PRODUCT) {
       $model = Mage::getModel('catalog/product');
