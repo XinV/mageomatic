@@ -196,11 +196,11 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  public function _createCategoryAttribute($id, $name) {
+  public static function _createCategoryAttribute($id, $name) {
     return self::_createAttribute(self::CATEGORY, $id, $name);
   }
 
-  public function _createProductAttribute($id, $name) {
+  public static function _createProductAttribute($id, $name) {
     return self::_createAttribute(self::PRODUCT, $id, $name);
   }
 
@@ -213,7 +213,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
   //
   // TODO: support multi-store (see 'is_global' below)
-  private function _createAttribute($attribute_type, $id, $name) {
+  private static function _createAttribute($attribute_type, $id, $name) {
     $code = self::getCodeForId($id);
 
     // At the moment we only get text properties from Salsify. In fact, since
