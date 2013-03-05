@@ -115,9 +115,10 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //       properties we shouldn't require the _s_ prefix.
   private static function _create_attribute_code_from_salsify_id($id) {
     $code = strtolower($id);
-    $code = preg_replace('/\s\s+/', '_', $code);
-    $code = preg_replace('/[^\x00-\x7F]/', '', $code);
-    return substr(self::SALSIFY_ATTRIBUTE_PREFIX . $code, 0, 30);
+    $code = preg_replace('/\s+/', '_', $code);
+    $code = preg_replace('/[^_a-zA-Z0-9]+/', '', $code);
+    $code = substr(self::SALSIFY_ATTRIBUTE_PREFIX . $code, 0, 30);
+    return $code;
   }
 
 
