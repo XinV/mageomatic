@@ -12,13 +12,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
   // attribute_codes for attributes that store the Salsify IDs within Magento
   // for various object types.
-  // TODO need to special case ids coming from salsify to make sure they don't
-  //      accidentally intersect with this, though that seems like a low-probability
-  //      event.
-  const SALSIFY_CATEGORY_ID = 'salsify_category_id';
-  const SALSIFY_CATEGORY_ID_NAME = 'Salsify Category ID';
-  const SALSIFY_PRODUCT_ID = 'salsify_product_id';
-  const SALSIFY_PRODUCT_ID_NAME = 'Salsify Product ID';
+  // FIXME remove. these are also in AttributeMapping.php
+  const SALSIFY_CATEGORY_ID       = 'salsify_category_id';
+  const SALSIFY_CATEGORY_ID_NAME  = 'Salsify Category ID';
+  const SALSIFY_PRODUCT_ID        = 'salsify_product_id';
+  const SALSIFY_PRODUCT_ID_NAME   = 'Salsify Product ID';
 
   // For types of attributes. In Magento's EAV struction attributes of products,
   // categories, customers, etc., are stored in different EAV tables.
@@ -442,7 +440,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         $this->_log("ERROR: nested thing for above error: " . var_export($value, true));
       } elseif ($this->_in_products) {
         if (array_key_exists($key, $this->_attributes)) {
-          $code = $this->_attribute_code($this->_attributes[$key]);
+          $code = $this->_get_attribute_code($this->_attributes[$key]);
           $this->_product[$code] = $value;
         } elseif ($key === 'accessories') {
           $this->_product[$key] = $value;
@@ -534,8 +532,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
             $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
         } elseif (array_key_exists($key, $this->_attributes)) {
-          $attribute = $this->_attributes[$key];
-          $code = $this->_attribute_code($attribute);
+          $code = $this->_get_attribute_code($this->_attributes[$key]);
           $this->_product[$code] = $value;
         } else {
           $this->_log('ERROR: skipping unrecognized attribute id on product: ' . $key);
@@ -571,32 +568,34 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     // TODO figure out how to prevent the value from being editable
     //      possibly: http://stackoverflow.com/questions/6384120/magento-read-only-and-hidden-product-attributes
 
-    $attribute = array();
-    $attribute['id'] = self::SALSIFY_PRODUCT_ID;
-    $attribute['name'] = self::SALSIFY_PRODUCT_ID_NAME;
-    $attribute['type'] = self::PRODUCT;
-    $this->_create_attribute_if_needed($attribute);
+    // FIXME create the salsify ID for attributes
 
     $attribute = array();
     $attribute['id'] = self::SALSIFY_CATEGORY_ID;
     $attribute['name'] = self::SALSIFY_CATEGORY_ID_NAME;
     $attribute['type'] = self::CATEGORY;
     $this->_create_attribute_if_needed($attribute);
+
+    $attribute = array();
+    $attribute['id'] = self::SALSIFY_PRODUCT_ID;
+    $attribute['name'] = self::SALSIFY_PRODUCT_ID_NAME;
+    $attribute['type'] = self::PRODUCT;
+    $this->_create_attribute_if_needed($attribute);
   }
 
 
   // creates the given attribute in Magento if it doesn't already exist.
   //
-  // TODO set salsify ID on attributes
+  // FIXME set salsify ID on attributes
   private function _create_attribute_if_needed($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
-      $dbattribute = $this->_get_attribute($attribute);
-      if (!$dbattribute) {
-        $dbattribute = $this->_create_attribute($attribute);
+      $attribute = $this->_get_attribute($attribute);
+      if (!$attribute) {
+        $attribute = $this->_create_attribute($attribute);
       }
 
-      if ($dbattribute) {
+      if ($attribute) {
         $this->_attributes[$id] = $attribute;
       } else {
         // failed to create attribute
@@ -625,86 +624,68 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
   private function _delete_attribute($attribute) {
-    $dbattribute = $this->_get_attribute($attribute);
-    if ($dbattribute) {
-      $dbattribute->delete();
+    $attribute = $this->_get_attribute($attribute);
+    if ($attribute && array_key_exists('__dbattribute', $attribute)) {
+      $attribute['__dbattribute']->delete();
     }
   }
 
 
-  // returns an attribute_code for the given attribute.
-  //
-  // the unique identifier used by Magento for attributes is the attribute_code.
-  // a code is limited to 30 characters, and looks like it shouldn't contain
-  // any spaces. this must be consistent across import runs for a given salsify
-  // attribute.
-  private function _attribute_code($attribute) {
-
-    // there are some special attributes that Magento treats differently from
-    // and admin and UI perspective, e.g. name, id, etc. right now there are a
-    // couple that map directly to salsify roles.
-    //
-    // TODO have a more broad mapping mapping strategy from salsify attributes
-    //      to Magento roles.
-
-    $is_id = false;
-    $is_name = false;
-
+  private function _get_attribute_roles($attribute) {
     if (array_key_exists('roles', $attribute)) {
-      $roles = $attribute['roles'];
-      if (array_key_exists('products', $roles)) {
-        $product_roles = $roles['products'];
-        if (in_array('id', $product_roles)) {
-          $is_id = true;
-        }
-        if (in_array('name', $product_roles)) {
-          $is_name = true;
-        }
-      }
+      return $attribute['roles'];
+    } else {
+      return null;
+    }
+  }
+
+  private function _get_attribute_code($attribute) {
+    if (array_key_exists('__code', $attribute)) {
+      return $attribute['__code'];
     }
 
-    if ($is_id) {
-      return 'sku';
-    } elseif ($is_name) {
-      return 'name';
-    }
+    $roles = $this->_get_attribute_roles($attribute);
+    return Mage::getModel('modulename/AttributeMapping')
+               ::getCodeForId($attribute['id'], $roles);
+  }
 
-    $id = $attribute['id'];
 
-    if ($id === self::SALSIFY_PRODUCT_ID) {
-      return self::SALSIFY_PRODUCT_ID;
-    } elseif ($id === self::SALSIFY_CATEGORY_ID) {
-      return self::SALSIFY_CATEGORY_ID;
-    }
+  // Salsify is much more permissive when it comes to codes/ids than is Magento.
+  // Magento cannot handle spaces, and the codes must be no more than 30 chars
+  // long. By convention they are also lowercase.
+  //
+  // FIXME move to AttributeMapping class
+  private function _create_attribute_code_from_salsify_id($id) {
+    $code = strtolower($id);
+    $code = preg_replace('/\s\s+/', '_', $code);
+    $code = urlencode($key);
 
-    // code can only be 30 characters at most and cannot contain spaces
-    // creating a checksum seemed to be the easiest way to accomplish that,
-    // though it has the downside of creating opaque atttribute_ids which do
-    // show up in the admin panel...
-    //
-    // TODO generate a more user-friendly attribute (certain admin features
-    //      inexplicably deal with attribute IDs instead of names, making it
-    //      pretty hard to manage the attributes without a key).
-    $code = 'salsify_'.md5($id);
-    $code = substr($code, 0, 30);
-    return $code;
+    // FIXME once we have another way to identify Salsify attributes (by attr
+    //       EAV id) then we'll have to remove this.
+    return substr('salsfy_' . $code, 0, 30);
   }
 
 
   // return database model of given attribute
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
-  //
-  // TODO possibly use the same way I get categories (byAttribute) which would
-  //      be cleaner
   private function _get_attribute($attribute) {
+    if (array_key_exists('__dbattribute', $attribute)) {
+      return $attribute;
+    }
+
     if (!array_key_exists('type', $attribute)) {
+      // default to assume we're talking about product
       $type = self::PRODUCT;
     } else {
       $type = $attribute['type'];
     }
 
     $model = Mage::getResourceModel('eav/entity_attribute');
-    $code  = $this->_attribute_code($attribute);
+
+    $code  = $this->_get_attribute_code($attribute);
+    if (!$code) {
+      $code = $this->_create_attribute_code_from_salsify_id($id);
+    }
 
     if ($type === self::CATEGORY) {
       $attribute_id = $model->getIdByCode('catalog_category', $code);
@@ -716,8 +697,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return null;
     }
 
-    $attribute = Mage::getModel('catalog/resource_eav_attribute')
-                     ->load($attribute_id);
+    $attribute['__code'] = $code;
+    $attribute['__dbattribute'] = Mage::getModel('catalog/resource_eav_attribute')
+                                      ->load($attribute_id);
     return $attribute;
   }
 
@@ -733,7 +715,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     // TODO  when Salsify has bundles we'll have to deal with this.
     $product_type = 'simple';
 
-    $code = $this->_attribute_code($attribute);
+    // we already know that no known attribute exists, so we're going to create
+    // a code.
+    $code = $this->_create_attribute_code_from_salsify_id($id);($attribute);
     $name = $attribute['name'];
 
     // At the moment we only get text properties from Salsify. In fact, since
@@ -800,10 +784,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       // # frontend_class
       // # frontend_input_renderer
 
-      // without this it will not show up in the UI
-      // TODO we we have to set this here if the group is being set below?
-      'group' => 'General',
-
       // TODO apply_to multiple types by default? right now Salsify itself only
       //      really supports the simple type. also, if we leave this out it
       //      might automatically apply to everything, which is maybe what we
@@ -812,6 +792,23 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     );
 
     $model = Mage::getModel('catalog/resource_eav_attribute');
+
+    
+    // without this it will not show up in the UI. the group is the tab group
+    // when looking at the details of an object.
+    if (array_key_exists('type', $attribute)) {
+      $type = $attribute['type'];
+    } else {
+      // default to product
+      $type = self::PRODUCT;
+    }
+    if ($type == self::CATEGORY) {
+      $group = 'General Information';
+    } else {
+      $group = 'General';
+    }
+    $attribute_data['group'] = $group;
+
 
     $default_value_field = $model->getDefaultValueByInput($frontend_type);
     if ($default_value_field) {

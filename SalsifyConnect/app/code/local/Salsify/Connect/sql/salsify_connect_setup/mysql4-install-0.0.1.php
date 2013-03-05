@@ -6,6 +6,7 @@
 $installer = $this;
 $installer->startSetup();
 
+
 // Create the initial Salsify data
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/configuration'))
@@ -23,6 +24,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'Salsify Base URL')
   ->setComment('Salsify_Connect salsify_connect/configuration entity table');
 $installer->getConnection()->createTable($table);
+
 
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/import_run'))
@@ -63,6 +65,27 @@ $table = $installer->getConnection()->newTable($installer->getTable(
           Varien_Db_Ddl_Table::ACTION_NO_ACTION,
           Varien_Db_Ddl_Table::ACTION_NO_ACTION)
   ->setComment('Salsify_Connect salsify_connect/import_run entity table');
+$installer->getConnection()->createTable($table);
+
+
+// unfortunately you can't have attributes about attributes, so we needed to
+// create this table to recall the mapping between attribute codes and salsify
+// IDs for attributes.
+$table = $installer->getConnection()->newTable($installer->getTable(
+  'salsify_connect/attribute_mapping'))
+  ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    'primary' => true,
+    'identity' => true,
+    ), 'Salsify Connect Attribute Mapping ID')
+  ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Magento attribute code')
+  ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Salsify attribute ID')
+  ->setComment('Salsify_Connect salsify_connect/attribute_mapping table');
 $installer->getConnection()->createTable($table);
 
 

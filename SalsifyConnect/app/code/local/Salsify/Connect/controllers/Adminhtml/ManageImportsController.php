@@ -319,6 +319,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $attributes = Mage::getModel('catalog/product_attribute_api')
                         ->items($attribute_set->getId());
       foreach($attributes as $attribute) {
+
+        // FIXME this is no longer going to be a valid way to identify salsify
+        //       attributes
+
         if (strcasecmp(substr($attribute['code'], 0, strlen('salsify_')), 'salsify_') === 0) {
           Mage::getModel('eav/entity_attribute')
               ->load($attribute['attribute_id'])
@@ -340,6 +344,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
       $db->query("drop table jobs;");
       $this->_render_html("<li>Jobs table dropped.</li>");
+
+      // $db->query("drop table salsify_connect_attribute_mapping;");
+      // $this->_render_html("<li>Attribute mapping table dropped.</li>");
 
       $db->query("drop table salsify_connect_import_run;");
       $this->_render_html("<li>Import run table dropped.</li>");

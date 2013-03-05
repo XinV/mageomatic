@@ -119,7 +119,8 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
 
           // http://docs.magentocommerce.com/Mage_Catalog/Mage_Catalog_Model_Product.html#addImageToMediaGallery
           // TODO the second argument should be set specifically to thumbnail or
-          //      small_image if that data comes from Salsify.
+          //      small_image if that data comes from Salsify. also we should
+          //      only set 'image' for those that have 'profile_image' set to true
           $product->addImageToMediaGallery($filename, array('image'), true, false);
 
           if (array_key_exists('name', $da)) {
