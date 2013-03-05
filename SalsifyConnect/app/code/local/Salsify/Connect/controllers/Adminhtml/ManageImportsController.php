@@ -306,37 +306,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_log("Cleaner: categories deleted.");
 
     $this->_log("Cleaner: deleting attributes...");
-    // delete salsify attributes only...we don't want to accidentally delete the
-    // attributes that come with magento
-    $product_entity_type_id = Mage::getModel('eav/entity')
-                                  ->setType('catalog_product')
-                                  ->getTypeId();
-    $attribute_set_collection = Mage::getModel('eav/entity_attribute_set')
-                                    ->getCollection()
-                                    ->setEntityTypeFilter($product_entity_type_id);
-    $attr_count = 0;
-    foreach ($attribute_set_collection as $attribute_set) {
-      $attributes = Mage::getModel('catalog/product_attribute_api')
-                        ->items($attribute_set->getId());
-      foreach($attributes as $attribute) {
-
-        // FIXME this is no longer going to be a valid way to identify salsify
-        //       attributes
-
-        if (strcasecmp(substr($attribute['code'], 0, strlen('salsify_')), 'salsify_') === 0) {
-          Mage::getModel('eav/entity_attribute')
-              ->load($attribute['attribute_id'])
-              ->delete();
-          $attr_count++;
-        }
-      }
-    }
+    $mapper = Mage::getModel('salsify_connect/attributemapping');
+    $attr_count = $mapper::deleteSalsifyAttributes();
     $this->_render_html("<li>Total attributes deleted: " . $attr_count . '</li>');
     $this->_log("Cleaner: attributes deleted.");
-
-    // In mysql the attributes can be deleted this way as well:
-    // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
-    // delete from eav_attribute where attribute_code like 'salsify%';
 
     try {
       $db = Mage::getSingleton('core/resource')
@@ -345,8 +318,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $db->query("drop table jobs;");
       $this->_render_html("<li>Jobs table dropped.</li>");
 
-      // $db->query("drop table salsify_connect_attribute_mapping;");
-      // $this->_render_html("<li>Attribute mapping table dropped.</li>");
+      $db->query("drop table salsify_connect_attribute_mapping;");
+      $this->_render_html("<li>Attribute mapping table dropped.</li>");
 
       $db->query("drop table salsify_connect_import_run;");
       $this->_render_html("<li>Import run table dropped.</li>");

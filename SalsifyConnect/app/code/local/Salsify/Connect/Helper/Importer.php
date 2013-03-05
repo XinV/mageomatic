@@ -10,13 +10,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     Mage::log('Importer: ' . $msg, null, 'salsify.log', true);
   }
 
-  // attribute_codes for attributes that store the Salsify IDs within Magento
-  // for various object types.
-  // FIXME remove. these are also in AttributeMapping.php
-  const SALSIFY_CATEGORY_ID       = 'salsify_category_id';
-  const SALSIFY_CATEGORY_ID_NAME  = 'Salsify Category ID';
-  const SALSIFY_PRODUCT_ID        = 'salsify_product_id';
-  const SALSIFY_PRODUCT_ID_NAME   = 'Salsify Product ID';
 
   // For types of attributes. In Magento's EAV struction attributes of products,
   // categories, customers, etc., are stored in different EAV tables.
@@ -32,11 +25,16 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   const ARRAY_TYPE  = 1;
   const OBJECT_TYPE = 2;
 
+
   // cached attributes
   private $_attributes;
 
   // current attribute
   private $_attribute;
+
+  // cached from AttributeMapper for convenience
+  private $_salsify_id_category_attribute_code;
+  private $_salsify_id_product_attribute_code;
 
   // list of attribute IDs for relationships. our primary reason for keeping
   // these around is to ignore them when loading products, since no product
@@ -46,12 +44,14 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // holds the target product attribute
   private $_target_product_attribute;
 
+
   // category hierarchy.
   // _categories[attribute_id][salsify_category_id] = category
   private $_categories;
 
   // current category that we're building up from parsing
   private $_category;
+
 
   // Current product batch that has been read in.
   // NOTE: currently we're not batch loading anything because we want to bulk
@@ -64,12 +64,14 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // current product that we're building up from parsing
   private $_product;
 
+
   // hash of all digital assets. we're not actually going to load the digital
   // assets during parsing (even though the bulk import API supports it), since
   // that requires that all images be downloaded locally. so instead what we're
   // going to do is save the assets and make them available in an accessor to
   // whatever is using the importer.
   private $_digital_assets;
+
 
   // keep track of nesting level during parsing. this is handy to know whether
   // the object you're leaving is nested, etc.
@@ -190,12 +192,12 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   private function _end_attribute() {
     // NOTE: if the attribute turns out to be a category, it will be deleted
     //       from Magento during category loading.
-    $success = $this->_create_attribute_if_needed($this->_attribute);
+    $success = $this->_get_or_create_attribute($this->_attribute);
     if ($success) {
       // check to see if the given attribute is the special target_product_id
       // attribute
-      if (array_key_exists('roles', $this->_attribute)) {
-        $roles = $this->_attribute['roles'];
+      $roles = $this->_get_attribute_roles($this->_attribute);
+      if ($roles) {
         if (array_key_exists('accessories', $roles)) {
           $accessory_roles = $roles['accessories'];
           if (in_array('target_product_id', $accessory_roles)) {
@@ -312,7 +314,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $product = $this->_prepare_product_add_required_values($product);
 
     // add the Salsify ID for good measure, even though it is mapped to the sku.
-    $product[self::SALSIFY_PRODUCT_ID] = $product['sku'];
+    $product[$this->_salsify_id_product_attribute_code] = $product['sku'];
 
     array_push($prepped_product, $product);
     if (!empty($extra_product_values)) {
@@ -529,13 +531,13 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
             // TODO allow multiple category assignments per product
             $this->_product['_category'] = $this->_get_category_path($category);
           } else {
-            $this->_log("ERROR: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
+            $this->_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
           }
         } elseif (array_key_exists($key, $this->_attributes)) {
           $code = $this->_get_attribute_code($this->_attributes[$key]);
           $this->_product[$code] = $value;
         } else {
-          $this->_log('ERROR: skipping unrecognized attribute id on product: ' . $key);
+          $this->_log('WARNING: skipping unrecognized attribute id on product: ' . $key);
         }
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
@@ -562,72 +564,88 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
 
-  private function _create_salsify_id_attributes_if_needed() {
-    // TODO pass in is_unique into the creation to make sure that it is, in fact,
-    //      unique
-    // TODO figure out how to prevent the value from being editable
-    //      possibly: http://stackoverflow.com/questions/6384120/magento-read-only-and-hidden-product-attributes
-
-    // FIXME create the salsify ID for attributes
-
-    $attribute = array();
-    $attribute['id'] = self::SALSIFY_CATEGORY_ID;
-    $attribute['name'] = self::SALSIFY_CATEGORY_ID_NAME;
-    $attribute['type'] = self::CATEGORY;
-    $this->_create_attribute_if_needed($attribute);
-
-    $attribute = array();
-    $attribute['id'] = self::SALSIFY_PRODUCT_ID;
-    $attribute['name'] = self::SALSIFY_PRODUCT_ID_NAME;
-    $attribute['type'] = self::PRODUCT;
-    $this->_create_attribute_if_needed($attribute);
+  // returns an instance of the attribute mapping model, which is the primary
+  // interface between this loader and the Magento attribute database structure.
+  private function _get_attribute_mapper() {
+    return Mage::getModel('salsify_connect/attributemapping');
   }
 
+  // this creates the EAV attributes in the system for storing Salsify IDs for
+  // products and categories if they don't already exist.
+  private function _create_salsify_id_attributes_if_needed() {
+    $mapper = $this->_get_attribute_mapper();
+    $mapper::createSalsifyIdAttributes();
+
+    $this->_salsify_id_category_attribute_code = $mapper::SALSIFY_CATEGORY_ID;
+    $this->_salsify_id_product_attribute_code = $mapper::SALSIFY_PRODUCT_ID;
+  }
+
+  private function _get_attribute_code($attribute) {
+    if (array_key_exists('__code', $attribute)) {
+      return $attribute['__code'];
+    }
+
+    $mapper = $this->_get_attribute_mapper();
+    $id = $attribute['id'];
+    $roles = $this->_get_attribute_roles($attribute);
+    return $mapper::getCodeForId($id, $roles);
+  }
 
   // creates the given attribute in Magento if it doesn't already exist.
-  //
-  // FIXME set salsify ID on attributes
-  private function _create_attribute_if_needed($attribute) {
+  private function _get_or_create_attribute($attribute) {
     $id = $attribute['id'];
     if (!array_key_exists($id, $this->_attributes)) {
-      $attribute = $this->_get_attribute($attribute);
-      if (!$attribute) {
-        $attribute = $this->_create_attribute($attribute);
-      }
-
+      $attribute = $this->_load_or_create_dbattribute($attribute);
       if ($attribute) {
         $this->_attributes[$id] = $attribute;
       } else {
-        // failed to create attribute
         return null;
       }
     }
     return $this->_attributes[$id];
   }
 
+  private function _load_or_create_dbattribute($attribute) {
+    if (array_key_exists('__dbattribute', $attribute)) {
+      return $attribute;
+    }
 
-  private function _delete_attribute_from_salsify_id($attribute_id) {
+    $mapper = $this->_get_attribute_mapper();
+    $id = $attribute['id'];
+
+    if (array_key_exists('name', $attribute)) {
+      $name = $attribute['name'];
+    } else {
+      $name = $id;
+    }
+
+    $type = $this->_get_attribute_type($attribute);
+    if ($type === self::CATEGORY) {
+      $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name);
+    } elseif ($type === self::PRODUCT) {
+      $dbattribute = $mapper::loadOrCreateProductAttributeBySalsifyId($id, $name);
+    }
+
+    if (!$dbattribute) {
+      return null;
+    }
+
+    $attribute['__code'] = $dbattribute->getAttributeCode();
+    $attribute['__dbattribute'] = Mage::getModel('catalog/resource_eav_attribute')
+                                      ->load($attribute_id);
+    return $attribute;
+  }
+
+  private function _delete_attribute_with_salsify_id($attribute_id) {
     $this->_log("attribute " . $attribute_id . " is really a category. deleting.");
 
-    $attribute = array();
-    $attribute['id'] = $attribute_id;
-
-    $attribute['type'] = self::CATEGORY;
-    $this->_delete_attribute($attribute);
-
-    $attribute['type'] = self::PRODUCT;
-    $this->_delete_attribute($attribute);
+    $mapper = $this->_get_attribute_mapper();
+    $mapper::deleteCategoryAttribute($attribute_id);
+    $mapper::deleteProductAttribute($attribute_id);
 
     unset($this->_attributes[$attribute_id]);
 
     $this->_log("attribute " . $attribute_id . " deleted.");
-  }
-
-  private function _delete_attribute($attribute) {
-    $attribute = $this->_get_attribute($attribute);
-    if ($attribute && array_key_exists('__dbattribute', $attribute)) {
-      $attribute['__dbattribute']->delete();
-    }
   }
 
 
@@ -639,208 +657,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     }
   }
 
-  private function _get_attribute_code($attribute) {
-    if (array_key_exists('__code', $attribute)) {
-      return $attribute['__code'];
-    }
-
-    $roles = $this->_get_attribute_roles($attribute);
-    return Mage::getModel('modulename/AttributeMapping')
-               ::getCodeForId($attribute['id'], $roles);
-  }
-
-
-  // Salsify is much more permissive when it comes to codes/ids than is Magento.
-  // Magento cannot handle spaces, and the codes must be no more than 30 chars
-  // long. By convention they are also lowercase.
-  //
-  // FIXME move to AttributeMapping class
-  private function _create_attribute_code_from_salsify_id($id) {
-    $code = strtolower($id);
-    $code = preg_replace('/\s\s+/', '_', $code);
-    $code = urlencode($key);
-
-    // FIXME once we have another way to identify Salsify attributes (by attr
-    //       EAV id) then we'll have to remove this.
-    return substr('salsfy_' . $code, 0, 30);
-  }
-
-
-  // return database model of given attribute
-  // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
-  private function _get_attribute($attribute) {
-    if (array_key_exists('__dbattribute', $attribute)) {
-      return $attribute;
-    }
-
-    if (!array_key_exists('type', $attribute)) {
-      // default to assume we're talking about product
-      $type = self::PRODUCT;
-    } else {
-      $type = $attribute['type'];
-    }
-
-    $model = Mage::getResourceModel('eav/entity_attribute');
-
-    $code  = $this->_get_attribute_code($attribute);
-    if (!$code) {
-      $code = $this->_create_attribute_code_from_salsify_id($id);
-    }
-
-    if ($type === self::CATEGORY) {
-      $attribute_id = $model->getIdByCode('catalog_category', $code);
-    } elseif ($type === self::PRODUCT) {
-      $attribute_id = $model->getIdByCode('catalog_product', $code);
-    }
-
-    if (!$attribute_id) {
-      return null;
-    }
-
-    $attribute['__code'] = $code;
-    $attribute['__dbattribute'] = Mage::getModel('catalog/resource_eav_attribute')
-                                      ->load($attribute_id);
-    return $attribute;
-  }
-
-
-  // creates the given attribute in Magento.
-  //
-  // Thanks to http://inchoo.net/ecommerce/magento/programatically-create-attribute-in-magento-useful-for-the-on-the-fly-import-system/
-  // as a starting point.
-  // More docs: http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
-  //
-  // TODO support multi-store (see 'is_global' below)
-  private function _create_attribute($attribute) {
-    // TODO  when Salsify has bundles we'll have to deal with this.
-    $product_type = 'simple';
-
-    // we already know that no known attribute exists, so we're going to create
-    // a code.
-    $code = $this->_create_attribute_code_from_salsify_id($id);($attribute);
-    $name = $attribute['name'];
-
-    // At the moment we only get text properties from Salsify. In fact, since
-    // we don't enforce datatypes in Salsify a single attribute could, in
-    // theory, have a numeric value and a text value, so for now we have to
-    // pick 'text' here to be safe.
-    $attribute_type = 'text';
-    $frontend_type  = 'text';
-
-    // Keeping this around since it was tricky to figure out the first time.
-    // if ($attribute_type === 'varchar') {
-    //   $frontend_type  = 'text';
-    // } else {
-    //   $frontend_type  = $attribute_type;
-    // }
-
-    // I *think* this is everything we COULD be setting, with some properties
-    // commented out. I got values from eav_attribute and catalog_eav_attribute
-    // For example:
-    // http://alanstorm.com/magento_attribute_migration_generator
-
-    $attribute_data = array(
-      'attribute_code' => $code,
-      'note' => 'Added automatically during Salsify import',
-      'default_value_text' => '',
-      'default_value_yesno' => 0,
-      'default_value_date' => '',
-      'default_value_textarea' => '',
-      // # default_value - set below
-
-      // These are available but shouldn't be set here.
-      // # attribute_model
-      // # backend_model
-      // # backend_table
-      // # source_model
-
-      'is_user_defined' => 1,
-      'is_global' => 1,
-      'is_unique' => 0,
-      'is_required' => 0,
-      // # is_visible
-      'is_configurable' => 0,
-      'is_searchable' => 0,
-      'is_filterable' => 0,
-      'is_filterable_in_search' => 0,
-      'is_visible_in_advanced_search' => 0,
-      'is_comparable' => 0,
-      'is_used_for_price_rules' => 0,
-      'is_wysiwyg_enabled' => 0,
-      'is_html_allowed_on_front' => 0,
-      'is_visible_on_front' => 1,
-      // # is_used_for_promo_rules
-      'used_in_product_listing' => 0,
-      'used_for_sort_by' => 0,
-      // # position?
-
-      // TODO is type even required here?
-      'type' => $attribute_type,
-      'backend_type' => $attribute_type,
-
-      'frontend_input' => $frontend_type, //'boolean','text', etc.
-      'frontend_label' => $name,
-      // # frontend_model
-      // # frontend_class
-      // # frontend_input_renderer
-
-      // TODO apply_to multiple types by default? right now Salsify itself only
-      //      really supports the simple type. also, if we leave this out it
-      //      might automatically apply to everything, which is maybe what we
-      //      want by default.
-      'apply_to' => array($product_type), //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
-    );
-
-    $model = Mage::getModel('catalog/resource_eav_attribute');
-
-    
-    // without this it will not show up in the UI. the group is the tab group
-    // when looking at the details of an object.
-    if (array_key_exists('type', $attribute)) {
-      $type = $attribute['type'];
-    } else {
-      // default to product
-      $type = self::PRODUCT;
-    }
-    if ($type == self::CATEGORY) {
-      $group = 'General Information';
-    } else {
-      $group = 'General';
-    }
-    $attribute_data['group'] = $group;
-
-
-    $default_value_field = $model->getDefaultValueByInput($frontend_type);
-    if ($default_value_field) {
-      $attribute_data['default_value'] = $attribute_data[$default_value_field];
-    }
-
-    $model->addData($attribute_data);
-
-    // Need to add the properties to a specific group of they don't show up in
-    // the admin UI at all. In the future we might want to make this an option
-    // so that we don't pollute the general attribute set. Maybe dumping all
-    // into a Salsify group?
-    $entity_type_id     = $this->_get_entity_type_id($attribute);
-    $attribute_set_id   = $this->_get_attribute_set_id($attribute);
-    $attribute_group_id = $this->_get_attribute_group_id($entity_type_id, $attribute_set_id);
-
-    $model->setEntityTypeId($entity_type_id);
-    $model->setAttributeSetId($attribute_set_id);
-    $model->setAttributeGroupId($attribute_group_id);
-
-    try {
-      $model->save();
-    } catch (Exception $e) {
-      $this->_log('ERROR: could not create attribute <' . $attribute['id'] . '>: ' . $e->getMessage());
-      return null;
-    }
-
-    // should be in the DB now
-    return $this->_get_attribute($attribute);
-  }
-
-
   // The type of the attribute. NOT boolean, etc. But rather whether it's an
   // attribute that's used for products, categories, etc.
   private function _get_attribute_type($attribute) {
@@ -848,67 +664,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return $attribute['type'];
     } else {
       $this->_log("WARNING: no type (product, category, etc.) stored in given attribute: " . var_export($attribute, true));
-      // TODO should this be an error?
       return self::PRODUCT;
     }
-  }
-
-
-  // returns the entity_type_id for the given attribute.
-  //
-  // the entity_type is used by Magento to determine the type of thing that
-  // something (e.g. attribute, etc.) deals with. a product is a type of thing,
-  // as is a customer, attribute, or category. there is a magento table that
-  // lists all the types. we are only concerned with products and categories.
-  private function _get_entity_type_id($attribute) {
-    $type = $this->_get_attribute_type($attribute);
-    $model = Mage::getModel('eav/entity');
-
-    if ($type === self::PRODUCT) {
-      $model->setType('catalog_product');
-    } elseif ($type === self::CATEGORY) {
-      $model->setType('catalog_category');
-    } else {
-      $this->_log("ERROR: unrecognized type id in attribute: " . var_export($attribute, true));
-      return null;
-    }
-
-    return $model->getTypeId();
-  }
-
-
-  // returns the default attribute_set_id for the given attribute.
-  //
-  // Magento organizes attributes into attribute sets. these determine where in
-  // the admin and site given attributes are show, what types of products they
-  // are used with, etc.
-  private function _get_attribute_set_id($attribute) {
-    $type = $this->_get_attribute_type($attribute);
-
-    if ($type === self::PRODUCT) {
-      $model = Mage::getModel('catalog/product');
-    } elseif ($type === self::CATEGORY) {
-      $model = Mage::getModel('catalog/category');
-    } else {
-      $this->_log("ERROR: unrecognized type id in attribute: " . var_export($attribute, true));
-      return null;
-    }
-
-    return $model->getResource()
-                 ->getEntityType()
-                 ->getDefaultAttributeSetId();
-  }
-
-
-  // returns the default attribute_group_id for the given entity type and
-  // attribute set.
-  //
-  // as with attribute sets, attribute groups are affect where given attributes
-  // show up in the admin, and what types of things they can be used with.
-  private function _get_attribute_group_id($entity_type_id, $attribute_set_id) {
-    # wish I knew a better way to do this without having to get the core setup...
-    $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
-    return $setup->getDefaultAttributeGroupId($entity_type_id, $attribute_set_id);
   }
 
 
@@ -992,7 +749,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         // that we don't have to keep all of the attributes in memory as we go
         // through the prior attributes section. So we just assume that they're
         // all valid and then delete here.
-        $this->_delete_attribute_from_salsify_id($attribute_id);
+        $this->_delete_attribute_with_salsify_id($attribute_id);
       }
 
       $cleaned_categories[$attribute_id] = array();
@@ -1044,7 +801,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   //         null otherwise.
   private function _get_category($category) {
     return Mage::getModel('catalog/category')
-               ->loadByAttribute(self::SALSIFY_CATEGORY_ID, $category['id']);
+               ->loadByAttribute($this->_salsify_id_category_attribute_code, $category['id']);
   }
 
 
@@ -1126,7 +883,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       'url_key' => $this->_get_url_key($category),
       // 'meta_description' => $category['name'],
 
-      self::SALSIFY_CATEGORY_ID => $category['id'],
+      $this->_salsify_id_category_attribute_code => $category['id'],
     );
   }
 
