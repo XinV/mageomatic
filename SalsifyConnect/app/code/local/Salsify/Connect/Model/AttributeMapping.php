@@ -8,7 +8,7 @@
  */
 class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
-  private function _log($msg) {
+  private static function _log($msg) {
     Mage::log('AttributeMapping: ' . $msg, null, 'salsify.log', true);
   }
 
@@ -72,7 +72,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     // couple that map directly to salsify roles. we'll have to do this until
     // we have a more broad mapping capability.
 
-    $this->_log("ROLES: " . var_export($roles,true));
+    self::_log("ROLES: " . var_export($roles,true));
 
     if ($roles) {
       if (array_key_exists('products', $roles)) {
