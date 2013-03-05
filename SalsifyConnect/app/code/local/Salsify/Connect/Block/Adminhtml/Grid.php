@@ -26,7 +26,7 @@ class Salsify_Connect_Block_Adminhtml_ManageImports_Grid extends Mage_Adminhtml_
       'index'   => 'id',
     ));
 
-    // FIXME add more details here
+    // TODO add more details here
  
     // $this->addColumn('name', array(
     //   'header'  => Mage::helper('employee')->__('Name'),

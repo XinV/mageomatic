@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
-  <!-- FIXME need to add dependencies for ApiImport -->
+  <!-- TODO need to add dependencies for ApiImport -->
 
   <modules>
     <Salsify_Connect>
@@ -47,7 +47,7 @@
       </salsify_connect_setup>
     </resources>
 
-    <!-- FIXME finish the eventing system -->
+    <!-- TODO finish the eventing system -->
     <events>
       <catalog_product_save_after>
         <observers>

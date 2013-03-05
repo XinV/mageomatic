@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
-<!-- FIXME need to update this -->
+<!-- TODO need to update this -->
 <package>
     <name>Salsify Connect</name>
     <version>0.0.1</version>
     <stability>beta</stability>
-    <license>FIXME</license>
+    <license>TODO</license>
     
     <channel>community</channel>
 
     <extends/>
 
     <summary>Magento Connector for Salsify Product Content Management System</summary>
-    <description>FIXME</description>
-    <notes>FIXME</notes>
+    <description>TODO</description>
+    <notes>TODO</notes>
 
     <authors>
       <author>

@@ -558,8 +558,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       unset($this->_batch);
       $this->_batch = array();
     } catch (Exception $e) {
-      $this->_log("FIXME: BATCH: " . var_export($this->_batch, true));
-      
       $this->_log('ERROR: could not flush batch: ' . $e->getMessage());
       $this->_log('BACKTRACE:' . $e->getTraceAsString());
     }
