@@ -413,7 +413,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
     if ($attribute_type === self::CATEGORY) {
       $type = 'catalog_category';
-    } elseif ($attriute_type === self::PRODUCT) {
+    } elseif ($attribute_type === self::PRODUCT) {
       $type = 'catalog_product';
     }
     $product_entity_type_id = Mage::getModel('eav/entity')
