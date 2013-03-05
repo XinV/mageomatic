@@ -131,7 +131,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
 
   public static function loadOrCreateCategoryAttributeBySalsifyId($id, $name, $roles) {
-    $mage_attribute = self::loadCategoryAttributeBySalsifyId($id);
+    $mage_attribute = self::loadCategoryAttributeBySalsifyId($id, $roles);
     if ($mage_attribute) {
       return $mage_attribute;
     } else {
@@ -140,7 +140,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
   public static function loadOrCreateProductAttributeBySalsifyId($id, $name, $roles) {
-    $mage_attribute = self::loadProductAttributeBySalsifyId($id);
+    $mage_attribute = self::loadProductAttributeBySalsifyId($id, $roles);
     if ($mage_attribute) {
       return $mage_attribute;
     } else {
@@ -149,12 +149,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  public static function loadCategoryAttributeBySalsifyId($id) {
-    return self::_loadAttributeBySalsifyId(self::CATEGORY, $id);
+  public static function loadCategoryAttributeBySalsifyId($id, $roles) {
+    return self::_loadAttributeBySalsifyId(self::CATEGORY, $id, $roles);
   }
 
-  public static function loadProductAttributeBySalsifyId($id) {
-    return self::_loadAttributeBySalsifyId(self::PRODUCT, $id);
+  public static function loadProductAttributeBySalsifyId($id, $roles) {
+    return self::_loadAttributeBySalsifyId(self::PRODUCT, $id, $roles);
   }
 
   // returns the attribute for the given Salsify ID, or null if the attribute
@@ -162,9 +162,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //
   // return database model of given attribute
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
-  private static function _loadAttributeBySalsifyId($attribute_type, $id) {
+  private static function _loadAttributeBySalsifyId($attribute_type, $id, $roles) {
     $eav_model = Mage::getResourceModel('eav/entity_attribute');
-    $code = self::getCodeForId($id);
+    $code = self::getCodeForId($id, $roles);
 
     if ($attribute_type === self::CATEGORY) {
       $attribute_id = $eav_model->getIdByCode('catalog_category', $code);
