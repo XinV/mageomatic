@@ -573,11 +573,15 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // this creates the EAV attributes in the system for storing Salsify IDs for
   // products and categories if they don't already exist.
   private function _create_salsify_id_attributes_if_needed() {
+    $this->_log("ensuring that Salsify ID attributes exist in Magento...");
+
     $mapper = $this->_get_attribute_mapper();
     $mapper::createSalsifyIdAttributes();
 
     $this->_salsify_id_category_attribute_code = $mapper::SALSIFY_CATEGORY_ID;
     $this->_salsify_id_product_attribute_code = $mapper::SALSIFY_PRODUCT_ID;
+
+    $this->_log("done ensuring that Salsify ID attributes exist in Magento.");
   }
 
   private function _get_attribute_code($attribute) {
