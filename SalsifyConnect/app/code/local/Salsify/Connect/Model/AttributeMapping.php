@@ -72,8 +72,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     // couple that map directly to salsify roles. we'll have to do this until
     // we have a more broad mapping capability.
 
-    self::_log("ROLES: " . var_export($roles,true));
-
     if ($roles) {
       if (array_key_exists('products', $roles)) {
         $product_roles = $roles['products'];

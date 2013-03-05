@@ -636,6 +636,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return null;
     }
 
+    $code = $dbattribute->getAttributeCode();
+    $this->_log("FIXME: CODE: " . $code);
+
     $attribute['__code'] = $dbattribute->getAttributeCode();
     $attribute['__dbattribute'] = $dbattribute;
     return $attribute;
