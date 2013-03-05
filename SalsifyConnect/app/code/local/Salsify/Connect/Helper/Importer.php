@@ -624,9 +624,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
     $roles = $this->_get_attribute_roles($attribute);
 
-    // FIXME REMOVE
-    $this->_log("FIXME: " . $name . "--" . var_export($roles,true));
-
     $mapper = $this->_get_attribute_mapper();
     $type = $this->_get_attribute_type($attribute);
     if ($type === self::CATEGORY) {
