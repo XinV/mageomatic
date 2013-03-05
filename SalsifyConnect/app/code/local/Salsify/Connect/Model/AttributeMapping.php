@@ -100,7 +100,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   private static function _create_attribute_code_from_salsify_id($id) {
     $code = strtolower($id);
     $code = preg_replace('/\s\s+/', '_', $code);
-    $code = urlencode($key);
+    $code = urlencode($code);
     return substr(self::SALSIFY_ATTRIBUTE_PREFIX . $code, 0, 30);
   }
 
