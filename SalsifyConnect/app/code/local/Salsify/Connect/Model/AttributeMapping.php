@@ -59,7 +59,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //
   // TODO have a more broad mapping mapping strategy from salsify attributes
   //      to Magento roles.
-  public static function getCodeForId($id, $roles = null) {
+  public static function getCodeForId($id, $roles) {
     // try to look up in the DB to see if the mapping already exists
     $mapping = Mage::getModel('salsify_connect/attributemapping')
                    ->loadBySalsifyId($id);

@@ -614,7 +614,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return $attribute;
     }
 
-    $mapper = $this->_get_attribute_mapper();
     $id = $attribute['id'];
 
     if (array_key_exists('name', $attribute)) {
@@ -625,6 +624,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
     $roles = $this->_get_attribute_roles($attribute);
 
+    // FIXME REMOVE
+    $this->_log("FIXME: " . $name . "--" . var_export($roles,true));
+
+    $mapper = $this->_get_attribute_mapper();
     $type = $this->_get_attribute_type($attribute);
     if ($type === self::CATEGORY) {
       $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name, $roles);
