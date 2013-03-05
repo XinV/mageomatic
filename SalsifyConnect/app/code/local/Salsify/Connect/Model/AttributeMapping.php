@@ -38,6 +38,19 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  // thanks
+  // http://stackoverflow.com/questions/3197239/magento-select-from-database
+  public function loadByMagentoCode($code) {
+    $this->setId(null)->load($code, 'code');
+    return $this;
+  }
+
+  public function loadBySalsifyId($id) {
+    $this->setId(null)->load($id, 'salsify_id');
+    return $this;
+  }
+
+
   // $id is the salsify id
   //
   // $roles is an array that follows the structure of roles from a Salsify json
@@ -115,34 +128,21 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  // thanks
-  // http://stackoverflow.com/questions/3197239/magento-select-from-database
-  public function loadByMagentoCode($code) {
-    $this->setId(null)->load($code, 'code');
-    return $this;
-  }
-
-  public function loadBySalsifyId($id) {
-    $this->setId(null)->load($id, 'salsify_id');
-    return $this;
-  }
-
-
-  public static function loadOrCreateCategoryAttributeBySalsifyId($id, $name) {
+  public static function loadOrCreateCategoryAttributeBySalsifyId($id, $name, $roles) {
     $mage_attribute = self::loadCategoryAttributeBySalsifyId($id);
     if ($mage_attribute) {
       return $mage_attribute;
     } else {
-      return self::_createCategoryAttribute($id, $name);
+      return self::_createCategoryAttribute($id, $name, $roles);
     }
   }
 
-  public static function loadOrCreateProductAttributeBySalsifyId($id, $name) {
+  public static function loadOrCreateProductAttributeBySalsifyId($id, $name, $roles) {
     $mage_attribute = self::loadProductAttributeBySalsifyId($id);
     if ($mage_attribute) {
       return $mage_attribute;
     } else {
-      return self::_createProductAttribute($id, $name);
+      return self::_createProductAttribute($id, $name, $roles);
     }
   }
 
@@ -196,12 +196,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  public static function _createCategoryAttribute($id, $name) {
-    return self::_createAttribute(self::CATEGORY, $id, $name);
+  private static function _createCategoryAttribute($id, $name, $roles) {
+    return self::_createAttribute(self::CATEGORY, $id, $name, $roles);
   }
 
-  public static function _createProductAttribute($id, $name) {
-    return self::_createAttribute(self::PRODUCT, $id, $name);
+  private static function _createProductAttribute($id, $name, $roles) {
+    return self::_createAttribute(self::PRODUCT, $id, $name, $roles);
   }
 
   // creates the given attribute in Magento.
@@ -213,8 +213,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
   //
   // TODO: support multi-store (see 'is_global' below)
-  private static function _createAttribute($attribute_type, $id, $name) {
-    $code = self::getCodeForId($id);
+  private static function _createAttribute($attribute_type, $id, $name, $roles) {
+    $code = self::getCodeForId($id, $roles);
 
     // At the moment we only get text properties from Salsify. In fact, since
     // we don't enforce datatypes in Salsify a single attribute could, in

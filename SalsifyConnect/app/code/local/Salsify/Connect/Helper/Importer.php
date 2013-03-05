@@ -623,11 +623,13 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       $name = $id;
     }
 
+    $roles = $this->_get_attribute_roles($attribute);
+
     $type = $this->_get_attribute_type($attribute);
     if ($type === self::CATEGORY) {
-      $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name);
+      $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name, $roles);
     } elseif ($type === self::PRODUCT) {
-      $dbattribute = $mapper::loadOrCreateProductAttributeBySalsifyId($id, $name);
+      $dbattribute = $mapper::loadOrCreateProductAttributeBySalsifyId($id, $name, $roles);
     }
 
     if (!$dbattribute) {
