@@ -228,7 +228,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
-      if (array_key_exists($key, $this->_attribute_codes_to_skip)) {
+      if (in_array($key, $this->_attribute_codes_to_skip)) {
         // skip quietly
         continue;
       } elseif (!$value) {
