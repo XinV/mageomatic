@@ -245,6 +245,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // 1 is the global root, which means that we're effectively at a root
     // ourselves
     if ($parent_id > 1) {
+      self::_log("LOOKING UP GOD DAMNED PARENT: " . $parent_id);
       if (!array_key_exists($parent_id, $this->_category_mapping)) {
         $parent_category = Mage::getModel('catalog/category')
                       ->load($parent_id);
