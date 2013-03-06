@@ -218,14 +218,13 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     foreach($categories as $category) {
-self::_log("A");
       $this->_write_category($category);
     }
   }
 
   private function _write_category($category) {
     $category_json = array();
-
+self::_log("A");
     $parent_id = $category->getParentId();
     if ($parent_id === 0) {
       // global root. skip.
