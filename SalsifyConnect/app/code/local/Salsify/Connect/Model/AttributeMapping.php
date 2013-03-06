@@ -118,8 +118,18 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   public static function getIdForCode($code) {
     $mapping = Mage::getModel('salsify_connect/attributemapping')
                    ->loadByMagentoCode($code);
+    if ($mapping) {
+      self::_log("MAPPING EXISTS");
+    } else {
+      self::_log("MAPPING DOES NOT EXIST");
+    }
     if ($mapping->id) {
-      return $mapping->getSalsifyId();
+      self::_log("GOT MAPPING: " $mapping->id);
+      $id = $mapping->getSalsifyId();
+      self::_log("GOT ID: " . $id);
+      return $id;
+
+      // return $mapping->getSalsifyId();
     }
 
     if ($code === self::SALSIFY_PRODUCT_ID) {

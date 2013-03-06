@@ -147,11 +147,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // with some key items.
     $attribute = $mapper::loadProductAttributeByMagentoCode($code);
 
-self::_log("1");
     $id = $mapper::getIdForCode($code);
-self::_log("2");
     if (!$id) {
-self::_log("3");
       self::_log("ERROR: could not load attribute for export. skipping: " . var_export($attribute,true));
       return null;
     }
