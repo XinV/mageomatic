@@ -222,6 +222,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
       self::_log("KEY: " . var_export($key,true));
+      if (!$value) {
+        self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
+      }
       self::_log("VALUE: " . var_export($value,true));
       if ($key === 'media_gallery') {
         // TODO digital assets
