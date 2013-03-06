@@ -119,7 +119,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     $mapping = Mage::getModel('salsify_connect/attributemapping')
                    ->loadByMagentoCode($code);
     if ($mapping) {
-      self::_log("MAPPING EXISTS");
+      self::_log("MAPPING EXISTS: " . var_export($mapping,true));
     } else {
       self::_log("MAPPING DOES NOT EXIST");
     }
