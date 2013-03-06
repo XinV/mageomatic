@@ -225,6 +225,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         // TODO digital assets
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
+
+        self::_log("MAPPING: " . var_export($key,true) . '----' . var_export($value,true));
+
         $product_json[$salsify_id] = $value;
       } else {
         self::_log("WARNING: no mapping for attribute with code. skipping: " . var_export($key,true) . '----' . var_export($value,true));
