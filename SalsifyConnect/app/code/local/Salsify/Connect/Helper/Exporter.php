@@ -234,7 +234,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 self::_log("a");
     $magento_id = $category->getId();
 self::_log("b");
-    if (!array_key_exists($this->_category_mapping, $category)) {
+    if (!array_key_exists($category, $this->_category_mapping)) {
 self::_log("c");
       $this->_load_category_mapping($magento_id);
     }
