@@ -232,7 +232,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     }
 
     $magento_id = $category->getId();
-    if (!array_key_exists($category)) {
+    if (!array_key_exists($this->_category_mapping, $category)) {
       $this->_load_category_mapping($magento_id);
     }
     $salsify_id = $this->_category_mapping[$magento_id];
