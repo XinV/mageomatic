@@ -233,6 +233,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     // TODO accessories
 
+    self::_log("PRODUCT TO WRITE: " . var_export($product,true));
+
     $this->_write_object($product_json);
   }
 }
