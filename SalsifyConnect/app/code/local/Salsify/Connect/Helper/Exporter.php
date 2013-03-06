@@ -145,7 +145,7 @@ self::_log("1");
     // need to load the full model here. to this point it's only a small array
     // with some key items.
 self::_log("2");
-    $attribute = $mapper::loadProductAttributeByCode($code);
+    $attribute = $mapper::loadProductAttributeByMagentoCode($code);
 self::_log("3");
 
     $id = $mapper::getIdForCode($code);
