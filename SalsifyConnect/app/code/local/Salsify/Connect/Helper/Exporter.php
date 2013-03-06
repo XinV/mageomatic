@@ -210,8 +210,11 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
   private function _write_attribute_values() {
-    // $categories = Mage::getModel('catalog/category')
-    //                   ->getCollection();
+    $categories = Mage::getModel('catalog/category')
+                      ->getCollection();
+    foreach($categories as $category) {
+      self::_log("CATEGORY: " .var_export($category,true));
+    }
     // FIXME 
   }
 
@@ -252,7 +255,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         continue;
       } elseif ($key === 'media_gallery') {
         // TODO digital assets
-        self::_log("DIGITAL ASSET: " . var_export($value,true));
+        //      the media items don't have URLs associated with them, so maybe
+        //      we want to use the mediaApi stuff like in the controller...
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
         $product_json[$salsify_id] = $value;
