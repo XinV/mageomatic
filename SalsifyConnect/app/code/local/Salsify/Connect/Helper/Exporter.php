@@ -203,8 +203,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     foreach ($products as $product) {
       $this->_write_product($product);
     }
-
-    self::_log("HERE");
   }
 
   private function _write_product($product) {
@@ -218,18 +216,17 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
-      self::_log("PROP: " . var_export($key,true) . "----" . var_export($value,true));
+      if ($key === 'media_gallery') {
+        // TODO digital assets
+      } elseif(array_key_exists($key, $this->_attribute_map)) {
+        $salisfy_id = $this->_attribute_map[$key];
+        $product_json[$salsify_id] = $value;
+      } else {
+        self::_log("WARNING: no mapping for attribute with code. skipping: " . var_export($key,true) . '----' . var_export($value,true));
+      }
     }
 
-
-    // $attributes = $product->getAttributes();
-    // foreach ($attributes as $attribute) {
-    //   $value = $value = $attribute->getValue();
-    // }
-
-    // FIXME digital assets
-
-    // FIXME accessories
+    // TODO accessories
 
     $this->_write_object($product_json);
   }
