@@ -225,17 +225,17 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _write_category($category) {
     $category_json = array();
 
-    $parent_id = $category->getParentId();
-    if ($parent_id && $parent_id === 0) {
-      // global root. skip.
-      continue;
-    }
-
     $magento_id = $category->getId();
     // we're missing key data here (such as name) so need to load the whole
     // category
     $category = Mage::getModel('catalog/category')
                     ->load($magento_id);
+    $level = $category->getLevel();
+    
+    if ($level === 1) {
+      // global root. skip.
+      continue;
+    }
 
     if (!array_key_exists($magento_id, $this->_category_mapping)) {
       $this->_load_category_mapping($category);
@@ -243,13 +243,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $salsify_id = $this->_category_mapping[$magento_id];
     $category_json['id'] = $salsify_id;
 
-    // FIXME this doesn't work
     $name = $category->getName();
     $category_json['name'] = $name;
 
-    // 1 is the global root, which means that we're effectively at a root
-    // ourselves
-    if ($parent_id > 1) {
+    // 2 is a relative to the root. so these are local roots.
+    if ($category->getLevel() > 2) {
+      $parent_id = $category->getParentId();
       if (!array_key_exists($parent_id, $this->_category_mapping)) {
         $parent_category = Mage::getModel('catalog/category')
                                ->load($parent_id);
