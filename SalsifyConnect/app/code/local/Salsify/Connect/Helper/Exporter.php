@@ -149,7 +149,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $attribute_json['id'] = $id;
 
     $name = $attribute->getFrontendLabel();
-    $attribute_json['name'] = $id;
+    $attribute_json['name'] = $name;
 
     // ROLES
 
