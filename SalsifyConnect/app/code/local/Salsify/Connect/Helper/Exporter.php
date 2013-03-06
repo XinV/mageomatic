@@ -236,6 +236,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       // global root. skip.
       return null;
     }
+    self::_log("LEVEL: " . var_export($level,true));
 
     if (!array_key_exists($magento_id, $this->_category_mapping)) {
       $this->_load_category_mapping($category);
