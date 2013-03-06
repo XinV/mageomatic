@@ -131,7 +131,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
   private function _write_attributes() {
     $mapper = $this->_salsify->get_attribute_mapper();
+    self::_log("1");
     $attributes = $mapper::getProductAttributes();
+    self::_log("2");
     foreach ($attributes as $attribute) {
       $this->_write_attribute($mapper, $attribute);
     }
