@@ -123,6 +123,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     } else {
       self::_log("MAPPING DOES NOT EXIST");
     }
+    $mapping_id = $mapping->getId();
+    self::_log("Mapping ID: " . $id);
     if ($mapping->id) {
       self::_log("GOT MAPPING: " . $mapping->id);
       $id = $mapping->getSalsifyId();
