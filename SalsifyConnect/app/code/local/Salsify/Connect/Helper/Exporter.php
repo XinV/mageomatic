@@ -234,7 +234,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     
     if ($level === 1) {
       // global root. skip.
-      continue;
+      return null;
     }
 
     if (!array_key_exists($magento_id, $this->_category_mapping)) {
