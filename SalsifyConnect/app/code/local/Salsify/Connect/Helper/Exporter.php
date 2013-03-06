@@ -39,7 +39,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
    *                       be written.
    */
   public function export($export_stream) {
-    $this->_salsify Mage::getModel('salsify_connect');
+    $this->_salsify = Mage::getModel('salsify_connect');
 
     $this->_output_stream = $export_stream;
 
