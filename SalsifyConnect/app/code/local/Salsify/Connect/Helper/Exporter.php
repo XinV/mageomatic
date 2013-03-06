@@ -43,39 +43,44 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
    *                       be written.
    */
   public function export($export_stream) {
-    $this->_salsify = Mage::helper('salsify_connect');
-    $this->_attribute_map = array();
+    try {
+      $this->_salsify = Mage::helper('salsify_connect');
+      $this->_attribute_map = array();
 
-    $this->_output_stream = $export_stream;
+      $this->_output_stream = $export_stream;
 
-    self::_log("starting to export Magento data into document");
-    $this->_start_document();
+      self::_log("starting to export Magento data into document");
+      $this->_start_document();
 
-    self::_log("writing header...");
-    $this->_start_header();
-    $this->_end_header();
-    self::_log("done writing header.");
+      self::_log("writing header...");
+      $this->_start_header();
+      $this->_end_header();
+      self::_log("done writing header.");
 
-    self::_log("writing attributes...");
-    $this->_start_attributes();
-    $this->_write_attributes();
-    $this->_end_attributes();
-    self::_log("done writing attributes.");
+      self::_log("writing attributes...");
+      $this->_start_attributes();
+      $this->_write_attributes();
+      $this->_end_attributes();
+      self::_log("done writing attributes.");
 
-    self::_log("writing attribute values...");
-    $this->_start_attribute_values();
-    $this->_write_attribute_values();
-    $this->_end_attribute_values();
-    self::_log("done writing attribute values.");
+      self::_log("writing attribute values...");
+      $this->_start_attribute_values();
+      $this->_write_attribute_values();
+      $this->_end_attribute_values();
+      self::_log("done writing attribute values.");
 
-    self::_log("writing products...");
-    $this->_start_products();
-    $this->_write_products();
-    $this->_end_products();
-    self::_log("done writing products.");
+      self::_log("writing products...");
+      $this->_start_products();
+      $this->_write_products();
+      $this->_end_products();
+      self::_log("done writing products.");
 
-    $this->_end_document();
-    self::_log("done exporting Magento data into document");
+      $this->_end_document();
+      self::_log("done exporting Magento data into document");
+    } catch (Exception $e) {
+      self::_log("ERROR: could not complete export: " . $e->getMessage());
+      throw $e;
+    }
   }
 
 
