@@ -56,7 +56,7 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
       $import->set_download_complete();
 
       // parse file and load data into Magento
-      $importer = $this->_load_data($filename);
+      $importer = $this->_import_data($filename);
       $import->set_loading_complete();
 
       // download and load digital assets
@@ -181,11 +181,11 @@ class Salsify_Connect_Model_ImportJob extends Mage_Core_Model_Abstract {
     return $filename;
   }
 
-  private function _load_data($filename) {
+  private function _import_data($filename) {
     $this->_log("starting data load from: " . $filename);
 
     $salsify = Mage::helper('salsify_connect');
-    $salsify->load_data($filename);
+    $salsify->import_data($filename);
 
     $this->_log("load successful. Local file: " . $filename);
 

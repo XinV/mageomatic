@@ -65,6 +65,12 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     // PUT CODE YOU WANT TO TEST IN MAGENTO HERE
 
+    $salsify = Mage::helper('salsify_connect');
+    $file = $salsify->export_data();
+
+    $this->_render_html("<h1>Export Succeeded</h1>");
+    $this->_render_html("Exported to: " . $file);
+
     $this->_end_render();
   }
 
@@ -112,7 +118,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     
     $salsify = Mage::helper('salsify_connect');
     $file = BP.DS.'var'.DS.'salsify'.DS.'simple.json';
-    $salsify->load_data($file);
+    $salsify->import_data($file);
 
     $this->_render_html("<h1>Import Succeeded</h1>");
     $this->_render_html("Imported from: " . $file);

@@ -160,37 +160,15 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   }
 
   private function async_download($import_run_id, $url) {
+    $file = Mage::helper('salsify_connect')
+                ->get_temp_file('import','json');
+
     $job = Mage::getModel('salsify_connect/importjob');
     $job->setName('Download for Import Job ' . $import_run_id)
         ->setImportRunId($import_run_id)
         ->setUrl($url)
-        ->setFilename($this->_get_temp_file('json'))
+        ->setFilename($file)
         ->enqueue();
-  }
-
-  /**
-   * Returns the name of a temp file that does not exist and so can be used for
-   * storing data.
-   */
-  private function _get_temp_file($extension) {
-    $dir = $this->_get_temp_directory();
-    $file = $dir . DS . 'data-' . date('Y-m-d') . '-' . round(microtime(true)) . '.' . $extension;
-    return $file;
-  }
-
-  /**
-   * Ensures that the Salsify temp directory exists in var/
-   */
-  private function _get_temp_directory() {
-    // thanks http://stackoverflow.com/questions/8708718/whats-the-best-place-to-put-additional-non-xml-files-within-the-module-file-str/8709462#8709462
-    $dir = Mage::getBaseDir('var') . DS . 'salsify';
-    if (!file_exists($dir)) {
-      mkdir($dir);
-      chmod($dir, 0777);
-    } elseif (!is_dir($dir)) {
-      throw new Exception($dir . " already exists and is not a directory. Cannot proceed.");
-    }
-    return $dir;
   }
 
 }
