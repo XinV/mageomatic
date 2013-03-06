@@ -28,6 +28,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private $_attribute_map;
 
 
+  // list of codes to skip when exporting a product. mostly exists to surpress
+  // overly chatting logs so that properties will only be talked about the first
+  // time.
+  private $_attribute_codes_to_skip;
+
+
   // handy helper function that writes the given content out to the exporter's
   // output stream and adds a newline.
   private function _write($content) {
@@ -46,6 +52,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     try {
       $this->_salsify = Mage::helper('salsify_connect');
       $this->_attribute_map = array();
+      $this->_attribute_codes_to_skip = array();
 
       $this->_output_stream = $export_stream;
 
@@ -221,12 +228,14 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
-      if (!$value) {
-        self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
+      if (array_key_exists($key, $this->_attribute_codes_to_skip)) {
+        // skip quietly
         continue;
-      }
-
-      if ($key === 'media_gallery') {
+      } elseif (!$value) {
+        self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
+        array_push($this->_attribute_codes_to_skip, $key);
+        continue;
+      } elseif ($key === 'media_gallery') {
         // TODO digital assets
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
@@ -235,8 +244,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         self::_log("WARNING: no mapping for attribute with code. skipping.");
       }
     }
-
-
 
     // TODO accessories
 
