@@ -220,8 +220,11 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
                    ->load($id);
     
     $attributes = $product->getData();
-    self::_log("ATTRIBUTES: " . var_export($attributes,true));
     foreach ($attributes as $key => $value) {
+      if ($key === 'stock_item') {
+        continue;
+      }
+
       self::_log("KEY: " . var_export($key,true));
       if (!$value) {
         self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
