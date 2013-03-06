@@ -219,40 +219,38 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $product = Mage::getModel('catalog/product')
                    ->load($id);
 
-    $attributeNames = array_keys($product->getData());
-    self::_log("NAMES: " . var_export($attributeNames,true));
+    // $attributeNames = array_keys($product->getData());
+    // self::_log("NAMES: " . var_export($attributeNames,true));
 
-    // $attributes = $product->getData();
-    // foreach ($attributes as $key => $value) {
-    //   if ($key === 'stock_item') {
-    //     // for some reason the system CRASHES if you even try to refer to the
-    //     // $value variable in this case.
-    //     continue;
-    //   } elseif (!$value) {
-    //     self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
-    //     continue;
-    //   } elseif (!$key) {
-    //     self::_log("WHAT THE FUCK");
-    //     continue;
-    //   }
+    $attributes = $product->getData();
+    foreach ($attributes as $key => $value) {
+      if ($key === 'stock_item') {
+        // for some reason the system CRASHES if you even try to refer to the
+        // $value variable in this case.
+        continue;
+      } elseif (!$value) {
+        self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
+        continue;
+      } elseif (!$key) {
+        self::_log("WHAT THE FUCK");
+        continue;
+      }
 
-    //   self::_log("KEY: " . var_export($key,true));
-    //   self::_log("VALUE: " . var_export($value,true));
-    //   if ($key === 'media_gallery') {
-    //     // TODO digital assets
-    //   } elseif(array_key_exists($key, $this->_attribute_map)) {
-    //     $salsify_id = $this->_attribute_map[$key];
-    //     $product_json[$salsify_id] = $value;
-    //   } else {
-    //     self::_log("WARNING: no mapping for attribute with code. skipping.");
-    //   }
-    // }
+      self::_log("KEY: " . var_export($key,true));
+      self::_log("VALUE: " . var_export($value,true));
+      if ($key === 'media_gallery') {
+        // TODO digital assets
+      } elseif(array_key_exists($key, $this->_attribute_map)) {
+        $salsify_id = $this->_attribute_map[$key];
+        $product_json[$salsify_id] = $value;
+      } else {
+        self::_log("WARNING: no mapping for attribute with code. skipping.");
+      }
+    }
 
 
 
     // TODO accessories
-
-    self::_log("PRODUCT TO WRITE: " . var_export($product,true));
 
     $this->_write_object($product_json);
   }
