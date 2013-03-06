@@ -220,7 +220,11 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
                    ->load($id);
 
 
-    self::_log("PRODUCT: " . var_export($product,true));
+    try {
+      self::_log("PRODUCT: " . var_export($product,true));
+    } catch(Exception $e) {
+      self::_log("WHAT THE FUCK: " . $e->getMessage());
+    }
     
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
