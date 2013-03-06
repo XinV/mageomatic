@@ -218,6 +218,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     foreach($categories as $category) {
+self::_log("A");
       $this->_write_category($category);
     }
   }
