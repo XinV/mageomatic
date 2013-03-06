@@ -134,6 +134,32 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  // returns an array as per Salsify json format with roles for the attribute
+  // with the given code.
+  // "roles":{"products":["id"],"accessories":["target_product_id"]}
+  public static function getRolesForMagentoCode($code) {
+    $roles = array();
+
+    if ($code === 'sku') {
+      $roles['products'] = array();
+      array_push($roles['products'], 'id');
+    }
+
+    if ($code === 'name') {
+      $roles['products'] = array();
+      array_push($roles['products'], 'name');
+    }
+
+    // FIXME accessory labels
+
+    if (empty($roles)) {
+      return null;
+    } else {
+      return $roles;
+    }
+  }
+
+
   // Salsify is much more permissive when it comes to codes/ids than is Magento.
   // Magento cannot handle spaces, and the codes must be no more than 30 chars
   // long. By convention they are also lowercase.

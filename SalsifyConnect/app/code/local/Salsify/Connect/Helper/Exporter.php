@@ -146,14 +146,22 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $attribute = $mapper::loadProductAttributeByMagentoCode($code);
 
     $id = $mapper::getIdForCode($code);
+    if (!$id) {
+      self::_log("ERROR: could not load attribute for export. skipping: " . var_export($attribute,true));
+      return null;
+    }
     $attribute_json['id'] = $id;
 
     $name = $attribute->getFrontendLabel();
+    if (!$name) {
+      $name = $id;
+    }
     $attribute_json['name'] = $name;
 
-    // ROLES
-
-    // FIXME
+    $roles = $mapper::getRolesForMagentoCode($code);
+    if ($roles) {
+      $attribute_json['roles'] = $roles;
+    }
 
     $this->_write_object($attribute_json);
   }
