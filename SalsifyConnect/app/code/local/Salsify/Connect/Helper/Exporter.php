@@ -135,6 +135,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     foreach ($attributes as $attribute) {
       $this->_write_attribute($mapper, $attribute);
     }
+
+    // FIXME need to write out a "target_product_id" kind of attribute as well
   }
 
   private function _write_attribute($mapper, $attribute) {
