@@ -203,6 +203,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     foreach ($products as $product) {
       $this->_write_product($product);
     }
+
+    self::_log("HERE");
   }
 
   private function _write_product($product) {
