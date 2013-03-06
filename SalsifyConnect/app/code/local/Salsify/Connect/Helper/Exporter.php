@@ -241,7 +241,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         $salsify_id = $this->_attribute_map[$key];
         $product_json[$salsify_id] = $value;
       } else {
-        self::_log("WARNING: no mapping for attribute with code. skipping.");
+        self::_log("WARNING: no mapping for attribute with code. skipping: " . var_export($key,true));
       }
     }
 
