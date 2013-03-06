@@ -226,11 +226,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $category_json = array();
 
     $parent_id = $category->getParentId();
-    if (!$parent_id || $parent_id === 0) {
+    if ($parent_id === 0) {
       // global root. skip.
       continue;
     }
 
+self::_log("1");
     $magento_id = $category->getId();
     if (!array_key_exists($magento_id, $this->_category_mapping)) {
       $this->_load_category_mapping($category);
@@ -238,10 +239,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $salsify_id = $this->_category_mapping[$magento_id];
     $category_json['id'] = $salsify_id;
 
+self::_log("2");
     // FIXME this doesn't work
     $name = $category->getName();
     $category_json['name'] = $name;
 
+self::_log("3");
     // 1 is the global root, which means that we're effectively at a root
     // ourselves
     if ($parent_id > 1) {
@@ -253,6 +256,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $category_json['parent_id'] = $this->_category_mapping[$parent_id];
     }
 
+self::_log("4");
     $this->_write_object($category_json);
   }
 
