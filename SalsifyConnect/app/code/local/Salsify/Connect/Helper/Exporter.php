@@ -213,9 +213,27 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     foreach($categories as $category) {
+      $parent_id = $category->getParentId();
+      if ($parent_id === 0) {
+        // global root. skip.
+        continue;
+      }
+
+      $name = $category->getName();
+
+      $salsify_id = Mage::getResourceModel('catalog/category')
+                        ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
+
+      if (!$salsify_id) {
+        // FIXME skipping for now
+        self::_log("SKIPPING CATEGORY: " .var_export($category,true));
+        continue;
+      }
+      
       self::_log("CATEGORY: " .var_export($category,true));
+      
     }
-    // FIXME 
+    // FIXME finish implementing
   }
 
 

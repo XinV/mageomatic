@@ -285,7 +285,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     foreach($categories as $category) {
       $id = Mage::getResourceModel('catalog/category')
                 ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
-      // this fucked things up for some reason...
+      // this messed things up for some reason...
       // if ($category->getId() != 1) {
       if ($id) {
         $category->delete();
