@@ -567,7 +567,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // returns an instance of the attribute mapping model, which is the primary
   // interface between this loader and the Magento attribute database structure.
   private function _get_attribute_mapper() {
-    return Mage::getModel('salsify_connect')
+    return Mage::helper('salsify_connect')
                ->get_attribute_mapper();
   }
 
