@@ -218,6 +218,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // attribute values.
     $product = Mage::getModel('catalog/product')
                    ->load($id);
+
+
+    self::_log("PRODUCT: " . var_export($product,true));
     
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
