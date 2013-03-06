@@ -226,8 +226,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $category_json = array();
 
     $parent_id = $category->getParentId();
-self::_log("A");
-    if ($parent_id === 0) {
+    if ($parent_id && $parent_id === 0) {
       // global root. skip.
       continue;
     }
