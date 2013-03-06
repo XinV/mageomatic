@@ -210,7 +210,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
   private function _write_attribute_values() {
-    // FIXME implement
+    // $categories = Mage::getModel('catalog/category')
+    //                   ->getCollection();
+    // FIXME 
   }
 
 
@@ -258,6 +260,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
     }
 
+    // TODO category assignments
     // TODO accessories
 
     $this->_write_object($product_json);

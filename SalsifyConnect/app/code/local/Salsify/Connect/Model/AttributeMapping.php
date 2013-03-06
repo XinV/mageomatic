@@ -151,7 +151,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array_push($roles['products'], 'name');
     }
 
-    if ($code === 'category_ids') {
+    if ($code === self::getCategoryAssignemntMagentoCode()) {
       $roles['global'] = array();
       array_push($roles['global'], 'accessory_label');
     }
@@ -161,6 +161,13 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     } else {
       return $roles;
     }
+  }
+
+
+  // this is the property that products use to refer to categories in magento
+  // FIXME need to create a mapping for products to this during ingest
+  public static function getCategoryAssignemntMagentoCode() {
+    return 'category_ids';
   }
 
 
