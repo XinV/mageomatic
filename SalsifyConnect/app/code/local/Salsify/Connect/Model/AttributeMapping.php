@@ -202,7 +202,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     return self::_loadAttributeByMagentoCode(self::CATEGORY, $code);
   }
 
-  public static function loadProductAttributeByMagentoCode($id, $code) {
+  public static function loadProductAttributeByMagentoCode($code) {
     return self::_loadAttributeByMagentoCode(self::PRODUCT, $code);
   }
 
