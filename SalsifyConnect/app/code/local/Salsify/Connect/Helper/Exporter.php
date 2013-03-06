@@ -191,6 +191,37 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
   private function _write_products() {
-    // FIXME implement
+    $products = Mage::getModel('catalog/product')
+                    ->getCollection();
+    foreach ($products as $product) {
+      $this->_write_product($product);
+    }
+  }
+
+  private function _write_product($product) {
+    $product_json = array();
+
+    $id = $product->getId();
+    // need to load the full product model to have access to all of its
+    // attribute values.
+    $product = Mage::getModel('catalog/product')
+                   ->load($id);
+    
+    $attributes = $product->getData();
+    foreach ($attributes as $key => $value) {
+      self::_log("PROP: " . $key . "--" . $value);
+    }
+
+
+    // $attributes = $product->getAttributes();
+    // foreach ($attributes as $attribute) {
+    //   $value = $value = $attribute->getValue();
+    // }
+
+    // FIXME digital assets
+
+    // FIXME accessories
+
+    $this->_write_object($product_json);
   }
 }
