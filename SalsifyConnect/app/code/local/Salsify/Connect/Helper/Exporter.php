@@ -249,6 +249,7 @@ self::_log("1");
                     ->load($parent_id);
 self::_log("2");
       $this->_load_category_mapping($parent);
+self::_log("3");
     }
     $category_json['parent_id'] = $this->_category_mapping[$parent_id];
 
