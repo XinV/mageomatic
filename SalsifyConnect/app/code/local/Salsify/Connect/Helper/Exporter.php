@@ -213,6 +213,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _write_product($product) {
     $product_json = array();
 
+    self::_log("WRITING PRODUCT");
+
     $id = $product->getId();
     // need to load the full product model to have access to all of its
     // attribute values.
