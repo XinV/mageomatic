@@ -243,9 +243,11 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $category_json['name'] = $name;
 
     if (!array_key_exists($parent_id, $this->_category_mapping)) {
+self::_log("1");
       $parent = Mage::getModel('catalog/category')
                     ->getCollection()
                     ->load($parent_id);
+self::_log("2");
       $this->_load_category_mapping($parent);
     }
     $category_json['parent_id'] = $this->_category_mapping[$parent_id];
