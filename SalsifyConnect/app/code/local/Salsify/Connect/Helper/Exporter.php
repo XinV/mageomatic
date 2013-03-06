@@ -140,7 +140,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _write_attribute($mapper, $attribute) {
     $attribute_json = array();
 
-self::_log("1");
+self::_log("1: " . var_export($attribute, true));
     $code = $attribute->getAttributeCode();
 self::_log("2");
     $id = $mapper::getIdForCode($code);
