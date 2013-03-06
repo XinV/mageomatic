@@ -230,9 +230,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // category
     $category = Mage::getModel('catalog/category')
                     ->load($magento_id);
-    $level = $category->getLevel();
+    $level = intval($category->getLevel());
     
-    if ($level === '0') {
+    if ($level === 0) {
       // global root. skip.
       return null;
     }
@@ -246,8 +246,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $name = $category->getName();
     $category_json['name'] = $name;
 
-    // 2 is a relative to the root. so these are local roots.
-    if ($level) {
+    // level is relative to the root. so these are local roots.
+    if ($level > 1) {
       $parent_id = $category->getParentId();
       if (!array_key_exists($parent_id, $this->_category_mapping)) {
         $parent_category = Mage::getModel('catalog/category')
