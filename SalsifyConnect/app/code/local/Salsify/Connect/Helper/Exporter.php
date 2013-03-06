@@ -24,6 +24,10 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private $_salsify;
 
 
+  // cached attribute map from magento code -> salsify id
+  private $_attribute_map;
+
+
   // handy helper function that writes the given content out to the exporter's
   // output stream and adds a newline.
   private function _write($content) {
@@ -40,6 +44,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
    */
   public function export($export_stream) {
     $this->_salsify = Mage::helper('salsify_connect');
+    $this->_attribute_map = array();
 
     $this->_output_stream = $export_stream;
 
@@ -154,6 +159,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     }
     $attribute_json['id'] = $id;
 
+    $this->_attribute_map[$code] = $id;
+
     $name = $attribute->getFrontendLabel();
     if (!$name) {
       $name = $id;
@@ -209,7 +216,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
-      self::_log("PROP: " . $key . "--" . $value);
+      self::_log("PROP: " . var_export($key,true) . "----" . var_export($value,true));
     }
 
 
