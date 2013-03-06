@@ -233,22 +233,27 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     $magento_id = $category->getId();
     if (!array_key_exists($magento_id, $this->_category_mapping)) {
-      $this->_load_category_mapping($magento_id);
+      $this->_load_category_mapping($category);
     }
     $salsify_id = $this->_category_mapping[$magento_id];
     $category_json['id'] = $salsify_id;
 
+    // FIXME this doesn't work
     $name = $category->getName();
     $category_json['name'] = $name;
 
-    // FIXME set parent mapping
+    if (!array_key_exists($parent_id, $this->_category_mapping)) {
+      $parent = Mage::getModel('catalog/category')
+                    ->getCollection()
+                    ->load($parent_id);
+      $this->_load_category_mapping($parent);
+    }
+    $category_json['parent_id'] = $this->_category_mapping[$parent_id];
 
     $this->_write_object($category_json);
   }
 
-  private function _load_category_mapping($magento_id) {
-    $category = Mage::getResourceModel('catalog/category')
-                    ->load($magento_id);
+  private function _load_category_mapping($category) {
     $magento_id = $category->getId();
     $salsify_id = Mage::getResourceModel('catalog/category')
                       ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
