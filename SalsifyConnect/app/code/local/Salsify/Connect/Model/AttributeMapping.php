@@ -4,6 +4,11 @@
  * Maintains and persists the mappings between Salsify attribute IDs and Magento
  * attributes codes.
  *
+ * There is lots of fucntionality here around creating and maintaining attributes
+ * that could be moved to a Helper or something, but we're leaving it here for
+ * convenience since most of it relies on the mapping and constants related to
+ * the mapping.
+ *
  * TODO: keep track of attributes created here in its own table instead of
  *       relying on the existing attribute_code starting with salsify_
  *       convention.
