@@ -249,7 +249,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _load_category_mapping($magento_id) {
     $category = Mage::getResourceModel('catalog/category')
                     ->load($magento_id);
-    $salsify_id = $category->getSalsifyCategoryId($magento_id, 'salsify_category_id', 0);
+    $salsify_id = Mage::getResourceModel('catalog/category')
+                      ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
     if (!$salsify_id) {
       // no salsify_id yet exists. need to create one.
       $salsify_id = 'magento_' . $category->getPath();
