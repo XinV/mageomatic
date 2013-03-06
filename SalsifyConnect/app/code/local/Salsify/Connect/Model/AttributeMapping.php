@@ -12,6 +12,9 @@
  * TODO: keep track of attributes created here in its own table instead of
  *       relying on the existing attribute_code starting with salsify_
  *       convention.
+ *
+ * TODO: if a multiple properites map to a single property (in either direction)
+ *       this does not work.
  */
 class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
@@ -83,14 +86,19 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       if (array_key_exists('products', $roles)) {
         $product_roles = $roles['products'];
         if (in_array('id', $product_roles)) {
+          self::_create_mapping($id, 'sku');
           return 'sku';
         }
         if (in_array('name', $product_roles)) {
+          self::_create_mapping($id, 'name');
           return 'name';
         }
       }
     }
 
+    // TODO: we can't save these mappings yet since we can't handle multiple
+    //       attributes mapping to a single attributes (in this case external ID
+    //       for Salsify).
     if ($id === self::SALSIFY_PRODUCT_ID) {
       return self::SALSIFY_PRODUCT_ID;
     } elseif ($id === self::SALSIFY_CATEGORY_ID) {
@@ -101,6 +109,27 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     $code = self::_create_attribute_code_from_salsify_id($id);
     $mapping = self::_create_mapping($id, $code);
 
+    return $code;
+  }
+
+
+  // given a Magento attribute code, returns the Salsify ID that should be used
+  // for that attribute.
+  public static function getIdForCode($code) {
+    $mapping = Mage::getModel('salsify_connect/attributemapping')
+                   ->loadByMagentoCode($code);
+    if ($mapping->id) {
+      return $mapping->getSalsifyId();
+    }
+
+    if ($id === self::SALSIFY_PRODUCT_ID) {
+      return getIdForCode('sku');
+    } elseif ($id === self::SALSIFY_CATEGORY_ID) {
+      return 'id';
+    }
+
+    // no existing mapping exists. create one for posterity
+    self::_create_mapping($code, $code);
     return $code;
   }
 
@@ -413,13 +442,49 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns the total number of attributes deleted.
   public static function deleteSalsifyAttributes() {
     $total_deleted = 0;
-    $total_deleted += self::_deleteSalsifyAttribute(self::CATEGORY);
-    $total_deleted += self::_deleteSalsifyAttribute(self::PRODUCT);
+    $total_deleted += self::_deleteSalsifyAttributes(self::CATEGORY);
+    $total_deleted += self::_deleteSalsifyAttributes(self::PRODUCT);
     return $total_deleted;
   }
 
-  private static function _deleteSalsifyAttribute($attribute_type) {
+  private static function _deleteSalsifyAttributes($attribute_type) {
     $deleted_attribute_count = 0;
+
+    $attributes = self::_getAttributes($attribute_type);
+    foreach($attributes as $attribute) {
+
+      // NOTE: just in case, in mysql the attributes can be deleted this way too:
+      //       (if you use _s_ instead of salsify for the selectors below)
+      // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
+      // delete from eav_attribute where attribute_code like 'salsify%';
+
+      $code = $attribute['code'];
+      if ((strcasecmp(substr($code, 0, strlen(self::SALSIFY_ATTRIBUTE_PREFIX)), self::SALSIFY_ATTRIBUTE_PREFIX) === 0) ||
+          (strcasecmp($code, self::SALSIFY_CATEGORY_ID) === 0) ||
+          (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0))
+      {
+        Mage::getModel('eav/entity_attribute')
+            ->load($attribute['attribute_id'])
+            ->delete();
+
+        $deleted_attribute_count++;
+      }
+    }
+
+    return $deleted_attribute_count;
+  }
+
+
+  // handy function that returns a collection of all product attributes in
+  // Magento.
+  public static function getProductAttributes() {
+    return self::_getAttributes(self::PRODUCT);
+  }
+
+
+  // returns ALL attributes in the system for the given attribute_type
+  private static function _getAttributes($attribute_type) {
+    $all_attributes = array();
 
     if ($attribute_type === self::CATEGORY) {
       $type = 'catalog_category';
@@ -437,28 +502,13 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       $attributes = Mage::getModel('catalog/product_attribute_api')
                         ->items($attribute_set->getId());
       foreach($attributes as $attribute) {
-
-        // NOTE: just in case, in mysql the attributes can be deleted this way too:
-        //       (if you use _s_ instead of salsify for the selectors below)
-        // delete from eav_entity_attribute where attribute_id IN (select attribute_id from eav_attribute where attribute_code like 'salsify%');
-        // delete from eav_attribute where attribute_code like 'salsify%';
-
-        $code = $attribute['code'];
-        if ((strcasecmp(substr($code, 0, strlen(self::SALSIFY_ATTRIBUTE_PREFIX)), self::SALSIFY_ATTRIBUTE_PREFIX) === 0) ||
-            (strcasecmp($code, self::SALSIFY_CATEGORY_ID) === 0) ||
-            (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0))
-        {
-          Mage::getModel('eav/entity_attribute')
-              ->load($attribute['attribute_id'])
-              ->delete();
-
-          $deleted_attribute_count++;
-        }
+        array_push($all_attributes, $attribute);
       }
     }
 
-    return $deleted_attribute_count;
+    return $all_attributes;
   }
+
 
   // currently not used.
   // public static function deleteAllSalsifyMappings() {

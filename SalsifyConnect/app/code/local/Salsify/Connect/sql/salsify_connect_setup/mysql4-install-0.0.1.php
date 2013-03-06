@@ -71,6 +71,8 @@ $installer->getConnection()->createTable($table);
 // unfortunately you can't have attributes about attributes, so we needed to
 // create this table to recall the mapping between attribute codes and salsify
 // IDs for attributes.
+//
+// TODO: add unique pairs (e.g. each code/ID pair should only show up once)
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/attribute_mapping'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(

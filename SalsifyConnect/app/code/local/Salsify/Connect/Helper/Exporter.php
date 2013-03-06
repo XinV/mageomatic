@@ -20,6 +20,10 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private $_output_stream;
 
 
+  // cached handle to the salsify helper
+  private $_salsify;
+
+
   // handy helper function that writes the given content out to the exporter's
   // output stream and adds a newline.
   private function _write($content) {
@@ -35,6 +39,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
    *                       be written.
    */
   public function export($export_stream) {
+    $this->_salsify = return Mage::getModel('salsify_connect');
+
     $this->_output_stream = $export_stream;
 
     self::_log("starting to export Magento data into document");
@@ -78,7 +84,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
 
   private function _start_header() {
-
     // makes this a little more readable
     $this->_write('{"header":{');
     $this->_write('"version":"2012-12"');
@@ -92,14 +97,27 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
 
+  // keeps track of whether we're talking about the first item in an array
+  private $_first_item;
+
   private function _start_nonheader_section($name) {
     // because the header is guaranteed to have been first, it is safe to assume
     // a comma is needed here.
     $this->_write(',{"'.$name.'":[');
+    $this->_first_item = true;
   }
 
   private function _end_nonheader_section() {
     $this->_write(']}');
+  }
+
+  private function _write_object($object) {
+    if (!$this->_first_item) {
+      $this->_write(',');
+    }
+    $json = json_encode($object);
+    $this->_write($json);
+    $this->_first_item = false;
   }
 
 
@@ -112,7 +130,28 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
   private function _write_attributes() {
-    // FIXME implement
+    $mapper = $this->_salsify->get_attribute_mapper();
+    $attributes = $mapper::getProductAttributes();
+    foreach ($attributes as $attribute) {
+      $this->_write_attribute($mapper, $attribute);
+    }
+  }
+
+  private function _write_attribute($mapper, $attribute) {
+    $attribute_json = array();
+
+    $code = $attribute->getAttributeCode();
+    $id = $mapper::getIdForCode($code);
+    $attribute_json['id'] = $id;
+
+    $name = $attribute->getFrontendLabel();
+    $attribute_json['name'] = $id;
+
+    // ROLES
+
+    // FIXME
+
+    $this->_write_object($attribute_json);
   }
 
 
