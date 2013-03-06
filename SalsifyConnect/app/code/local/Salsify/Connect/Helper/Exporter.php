@@ -221,8 +221,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
-      self::_log("KEY: " . var_export($key,true));
-      
       if ($key === 'stock_item') {
         // for some reason the system CRASHES if you even try to refer to the
         // $value variable in this case.
@@ -230,8 +228,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       } elseif (!$value) {
         self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
         continue;
+      } elseif (!$key) {
+        self::_log("WHAT THE FUCK");
+        continue;
       }
-      
+
+      self::_log("KEY: " . var_export($key,true));
       self::_log("VALUE: " . var_export($value,true));
       if ($key === 'media_gallery') {
         // TODO digital assets
