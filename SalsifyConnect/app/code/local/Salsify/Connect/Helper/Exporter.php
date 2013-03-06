@@ -131,9 +131,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
   private function _write_attributes() {
     $mapper = $this->_salsify->get_attribute_mapper();
-    self::_log("1");
     $attributes = $mapper::getProductAttributes();
-    self::_log("2");
     foreach ($attributes as $attribute) {
       $this->_write_attribute($mapper, $attribute);
     }
@@ -142,12 +140,18 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _write_attribute($mapper, $attribute) {
     $attribute_json = array();
 
+self::_log("1");
     $code = $attribute->getAttributeCode();
+self::_log("2");
     $id = $mapper::getIdForCode($code);
+self::_log("3");
     $attribute_json['id'] = $id;
+self::_log("4");
 
     $name = $attribute->getFrontendLabel();
+self::_log("5");
     $attribute_json['name'] = $id;
+self::_log("6");
 
     // ROLES
 
