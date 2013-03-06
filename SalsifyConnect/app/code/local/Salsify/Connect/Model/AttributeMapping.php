@@ -198,15 +198,27 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     return self::_loadAttributeBySalsifyId(self::PRODUCT, $id, $roles);
   }
 
+  public static function loadCategoryAttributeByMagentoCode($code) {
+    return self::_loadAttributeByMagentoCode(self::CATEGORY, $code);
+  }
+
+  public static function loadProductAttributeByMagentoCode($id, $code) {
+    return self::_loadAttributeByMagentoCode(self::PRODUCT, $code);
+  }
+
   // returns the attribute for the given Salsify ID, or null if the attribute
   // does not exist.
   //
   // return database model of given attribute
-  // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
   private static function _loadAttributeBySalsifyId($attribute_type, $id, $roles) {
     $eav_model = Mage::getResourceModel('eav/entity_attribute');
     $code = self::getCodeForId($id, $roles);
+    return self::_loadAttributeByMagentoCode($attribute_type, $code);
+  }
 
+  // return database model of given attribute
+  // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
+  private static function _loadAttributeByMagentoCode($attribute_type, $code) {
     if ($attribute_type === self::CATEGORY) {
       $attribute_id = $eav_model->getIdByCode('catalog_category', $code);
     } elseif ($attribute_type === self::PRODUCT) {
