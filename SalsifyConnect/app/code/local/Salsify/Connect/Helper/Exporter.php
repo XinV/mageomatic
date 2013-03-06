@@ -253,7 +253,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     if (!$salsify_id) {
       // no salsify_id yet exists. need to create one.
       $salsify_id = 'magento_' . $category->getPath();
-      $category->setSalsifyCategoryId($category['id']);
+      $category->setSalsifyCategoryId($salsify_id);
       $category->save();
     }
 
