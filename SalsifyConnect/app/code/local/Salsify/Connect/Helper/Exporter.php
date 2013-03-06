@@ -226,12 +226,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $category_json = array();
 
     $parent_id = $category->getParentId();
-    if (!$parent_id) {
-      continue;
-      // you would have thought i could do this via a simple || statement, but
-      // i think that PHP eagerly evaluates the expressions or something, since
-      // it would crap out.
-    } elseif ($parent_id === 0) {
+    if ($parent_id && $parent_id === 0) {
       // global root. skip.
       continue;
     }
