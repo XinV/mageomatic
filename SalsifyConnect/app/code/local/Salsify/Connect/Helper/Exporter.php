@@ -219,25 +219,13 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $product = Mage::getModel('catalog/product')
                    ->load($id);
 
-    // $attributeNames = array_keys($product->getData());
-    // self::_log("NAMES: " . var_export($attributeNames,true));
-
     $attributes = $product->getData();
     foreach ($attributes as $key => $value) {
-      if ($key === 'stock_item') {
-        // for some reason the system CRASHES if you even try to refer to the
-        // $value variable in this case.
-        continue;
-      } elseif (!$value) {
+      if (!$value) {
         self::_log("WARNING: value is null for key. skipping: " . var_export($key,true));
-        continue;
-      } elseif (!$key) {
-        self::_log("WHAT THE FUCK");
         continue;
       }
 
-      self::_log("KEY: " . var_export($key,true));
-      self::_log("VALUE: " . var_export($value,true));
       if ($key === 'media_gallery') {
         // TODO digital assets
       } elseif(array_key_exists($key, $this->_attribute_map)) {
