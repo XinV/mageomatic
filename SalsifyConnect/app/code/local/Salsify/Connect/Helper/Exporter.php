@@ -34,6 +34,10 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private $_attribute_codes_to_skip;
 
 
+  // cached mapping of magento ID to salsify ID
+  private $_category_mapping;
+
+
   private function _init_skip_list() {
     $this->_attribute_codes_to_skip = array();
 
@@ -66,6 +70,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $this->_salsify = Mage::helper('salsify_connect');
       $this->_attribute_map = array();
       $this->_init_skip_list();
+      $this->_category_mapping = array();
 
       $this->_output_stream = $export_stream;
 
@@ -213,27 +218,46 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     foreach($categories as $category) {
-      $parent_id = $category->getParentId();
-      if ($parent_id === 0) {
-        // global root. skip.
-        continue;
-      }
-
-      $name = $category->getName();
-
-      $salsify_id = Mage::getResourceModel('catalog/category')
-                        ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
-
-      if (!$salsify_id) {
-        // FIXME skipping for now
-        self::_log("SKIPPING CATEGORY: " .var_export($category,true));
-        continue;
-      }
-      
-      self::_log("CATEGORY: " .var_export($category,true));
-      
+      $this->_write_category($category);
     }
-    // FIXME finish implementing
+  }
+
+  private function _write_category($category) {
+    $category_json = array();
+
+    $parent_id = $category->getParentId();
+    if ($parent_id === 0) {
+      // global root. skip.
+      continue;
+    }
+
+    $magento_id = $category->getId();
+    if (!array_key_exists($magento_id)) {
+      $this->_load_category_mapping($magento_id);
+    }
+    $salsify_id = $this->_category_mapping[$magento_id];
+    $category_json['id'] = $salsify_id;
+
+    $name = $category->getName();
+    $category_json['name'] = $name;
+
+    // FIXME set parent mapping
+
+    $this->_write_object($category_json);
+  }
+
+  private function _load_category_mapping($magento_id) {
+    $category = Mage::getResourceModel('catalog/category')
+                    ->load($magento_id);
+    $salsify_id = $category->getSalsifyCategoryId($magento_id, 'salsify_category_id', 0);
+    if (!$salsify_id) {
+      // no salsify_id yet exists. need to create one.
+      $salsify_id = 'magento_' . $category->getPath();
+      $category->setSalsifyCategoryId($category['id']);
+      $category->save();
+    }
+
+    $this->_category_mapping[$magento_id] = $salsify_id;
   }
 
 
