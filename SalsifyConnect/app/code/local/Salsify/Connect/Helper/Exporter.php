@@ -249,6 +249,8 @@ self::_log("1");
                     ->load($parent_id);
       if (!$parent) {
         self::_log("FUCK");
+      } else {
+        self::_log("WHAT");
       }
 self::_log("2: " . var_export($parent, true));
       $this->_load_category_mapping($parent);
