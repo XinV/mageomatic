@@ -211,7 +211,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //
   // return database model of given attribute
   private static function _loadAttributeBySalsifyId($attribute_type, $id, $roles) {
-    $eav_model = Mage::getResourceModel('eav/entity_attribute');
     $code = self::getCodeForId($id, $roles);
     return self::_loadAttributeByMagentoCode($attribute_type, $code);
   }
@@ -219,13 +218,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // return database model of given attribute
   // Thanks http://www.sharpdotinc.com/mdost/2009/04/06/magento-getting-product-attributes-values-and-labels/
   private static function _loadAttributeByMagentoCode($attribute_type, $code) {
-self::_log("HERE 1");
+    $eav_model = Mage::getResourceModel('eav/entity_attribute');
     if ($attribute_type === self::CATEGORY) {
       $attribute_id = $eav_model->getIdByCode('catalog_category', $code);
     } elseif ($attribute_type === self::PRODUCT) {
       $attribute_id = $eav_model->getIdByCode('catalog_product', $code);
     }
-self::_log("HERE 2");
 
     if (!$attribute_id) {
       return null;
