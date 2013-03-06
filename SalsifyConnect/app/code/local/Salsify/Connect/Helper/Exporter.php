@@ -232,7 +232,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     }
 
     $magento_id = $category->getId();
-    if (!array_key_exists($magento_id)) {
+    if (!array_key_exists($category)) {
       $this->_load_category_mapping($magento_id);
     }
     $salsify_id = $this->_category_mapping[$magento_id];
@@ -246,9 +246,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $this->_write_object($category_json);
   }
 
-  private function _load_category_mapping($magento_id) {
-    $category = Mage::getResourceModel('catalog/category')
-                    ->load($magento_id);
+  private function _load_category_mapping($category) {
+    $magento_id = $category->getId();
     $salsify_id = Mage::getResourceModel('catalog/category')
                       ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
     if (!$salsify_id) {
