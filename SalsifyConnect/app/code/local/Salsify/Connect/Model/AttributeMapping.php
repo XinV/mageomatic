@@ -122,9 +122,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       return $mapping->getSalsifyId();
     }
 
-    if ($id === self::SALSIFY_PRODUCT_ID) {
+    if ($code === self::SALSIFY_PRODUCT_ID) {
       return getIdForCode('sku');
-    } elseif ($id === self::SALSIFY_CATEGORY_ID) {
+    } elseif ($code === self::SALSIFY_CATEGORY_ID) {
       return 'id';
     }
 

@@ -140,18 +140,13 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _write_attribute($mapper, $attribute) {
     $attribute_json = array();
 
-self::_log("1");
     $code = $attribute['code'];
     // need to load the full model here. to this point it's only a small array
     // with some key items.
-self::_log("2");
     $attribute = $mapper::loadProductAttributeByMagentoCode($code);
-self::_log("3");
 
     $id = $mapper::getIdForCode($code);
-self::_log("4");
     $attribute_json['id'] = $id;
-self::_log("5");
 
     $name = $attribute->getFrontendLabel();
     $attribute_json['name'] = $id;
