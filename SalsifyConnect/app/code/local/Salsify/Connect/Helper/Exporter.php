@@ -247,7 +247,7 @@ self::_log("1");
       $parent = Mage::getModel('catalog/category')
                     ->getCollection()
                     ->load($parent_id);
-self::_log("2");
+self::_log("2: " . var_export($parent,true));
       $this->_load_category_mapping($parent);
 self::_log("3");
     }
