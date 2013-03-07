@@ -8,6 +8,10 @@ require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
  * Salsify Connect module.
  */
 class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
+  private static function _log($msg) {
+    Mage::log('Data: ' . $msg, null, 'salsify.log', true);
+  }
+
 
   // Salsify Configuration model instance. contains all the URL and login data
   // required for communicating with the Salsify server.
@@ -112,6 +116,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     }
     fclose($stream);
 
+    self::_log("Exporting to file complete. Now need to send to Salsify: " . $file);
     $salsify = Mage::helper('salsify_connect/salsifyapi');
     return $salsify->export_to_salsify($file);
   }
