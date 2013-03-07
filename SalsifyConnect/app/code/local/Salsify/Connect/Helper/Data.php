@@ -111,7 +111,6 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
       throw $e;
     }
     fclose($stream);
-    return $file;
 
     $salsify = Mage::helper('salsify_connect/salsifyapi');
     return $salsify->export_to_salsify($file);
