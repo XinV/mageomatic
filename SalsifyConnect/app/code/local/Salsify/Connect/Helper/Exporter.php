@@ -178,7 +178,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $attribute_json = array();
 
     $code = $attribute['code'];
-    if (strcasecmp($code, $mapper::SALSIFY_PRODUCT_ID)) {
+    if (strcasecmp($code, $mapper::SALSIFY_PRODUCT_ID) === 0) {
       // TODO should we be writing this or not? seems redundant. see longer note
       //      in AttributeMapping in getIdForCode
       return null;

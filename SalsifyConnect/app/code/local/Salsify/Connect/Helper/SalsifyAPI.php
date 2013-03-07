@@ -120,22 +120,31 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
 
   // sends the given file to Salsify
   public function export_to_salsify($export_file) {
+    self::_log("Exporting " . $export_file . " to Salsify.");
+
     // first we need to get a mount point
+    self::_log("Getting mount point for export...");
     $mount_details = $this->_get_salsify_upload_mount_point();
 
     // second we have to actually upload the file to Salsify
+    self::_log("Uploading to Salsify...");
     $upload_key = $this->_upload_export_to_salsify($mount_details, $export_file);
 
     // third we need to create the actual import in Salsify
+    self::_log("Creating import in Salsify for exported data...");
     $salsify_import_id = $this->_create_salsify_import($upload_key, $export_file);
 
     // fourth we have to get Salsify to actually process the import
+    self::_log("Kicking off import run in Salsify...");
     $salsify_import_run_id = $this->_start_salsify_import_run($salsify_import_id);
 
     // finally we can check the status until it's done...
     while ($this->_still_running($salsify_import_run_id)) {
+      self::_log("Salsify import not yet done...");
       sleep(1);
     }
+
+    self::_log("Export to Salsify done!");
 
     // done!
 
