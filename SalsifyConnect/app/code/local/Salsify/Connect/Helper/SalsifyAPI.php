@@ -158,6 +158,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     $url = $this->_get_create_mount_url();
     $request = new HttpRequest($url, HTTP_METH_POST);
     $response = $request->send();
+    self::_log("URL: " . var_export($url,true));
     self::_log("RESPONSE: " . var_export($response,true));
     if (!$this->_response_valid($response)) {
       throw new Exception("ERROR: could not create Salsify mount point for exporting data: " . var_export($response,true));
