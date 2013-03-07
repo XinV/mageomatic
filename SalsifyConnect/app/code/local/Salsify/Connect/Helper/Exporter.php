@@ -178,6 +178,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $attribute_json = array();
 
     $code = $attribute['code'];
+    if (strcasecmp($code, $mapper::SALSIFY_PRODUCT_ID)) {
+      // TODO should we be writing this or not? seems redundant. see longer note
+      //      in AttributeMapping in getIdForCode
+      return null;
+    }
+
     // need to load the full model here. to this point it's only a small array
     // with some key items.
     $attribute = $mapper::loadProductAttributeByMagentoCode($code);
@@ -217,12 +223,17 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _write_attribute_values() {
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
+    
+    $category_attribute = $this->_salsify
+                               ->get_attribute_mapper()
+                               ->getCategoryAssignemntMagentoCode();
+
     foreach($categories as $category) {
-      $this->_write_category($category);
+      $this->_write_category($category, $category_attribute);
     }
   }
 
-  private function _write_category($category) {
+  private function _write_category($category, $category_attribute) {
     $category_json = array();
 
     $magento_id = $category->getId();
@@ -256,6 +267,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
       $category_json['parent_id'] = $this->_category_mapping[$parent_id];
     }
+
+    $category_json['attribute_id'] = $category_attribute;
 
     $this->_write_object($category_json);
   }

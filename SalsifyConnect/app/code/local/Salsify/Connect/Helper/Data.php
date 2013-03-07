@@ -98,6 +98,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
   // dumps all the data in Magento in a Salsify json document. returns the
   // filename of the document created.
+  //
+  // TODO move some/all of this to a background job
   public function export_data() {
     $file = $this->get_temp_file('export','json');
     $stream = fopen($file,'w');
@@ -110,6 +112,9 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     }
     fclose($stream);
     return $file;
+
+    $salsify = Mage::helper('salsify_connect/salsifyapi');
+    return $salsify->export_to_salsify($file);
   }
 
 

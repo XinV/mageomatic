@@ -29,7 +29,7 @@
         <import module="salsify_connect">
           <title>Start Export</title>
           <sort_order>51</sort_order>
-          <action>salsify/adminhtml_manageimports/import</action>
+          <action>salsify/adminhtml_manageimports/export</action>
         </import>
 
         <chimport module="salsify_connect">

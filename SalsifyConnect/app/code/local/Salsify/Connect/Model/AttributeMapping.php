@@ -123,9 +123,15 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       return $mapping->getSalsifyId();
     }
 
-    if ($code === self::SALSIFY_PRODUCT_ID) {
-      return self::getIdForCode('sku');
-    } elseif ($code === self::SALSIFY_CATEGORY_ID) {
+    // TODO: we're skipping export of this right now...but do we actually need
+    //       this property at all given that the Salsify external ID is mapping
+    //       to the SKU? or will that NOT actually be the case at some point?
+    //       if it's not then we're no longer talking about a 1-1 mapping between
+    //       products in salsify and magento...
+    // if ($code === self::SALSIFY_PRODUCT_ID) {
+    //   return self::getIdForCode('sku');
+    // } else
+    if ($code === self::SALSIFY_CATEGORY_ID) {
       return 'id';
     }
 

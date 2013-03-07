@@ -75,6 +75,18 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
+  public function exportAction() {
+    $this->_start_render('salsify_connect_menu/export');
+
+    $salsify = Mage::helper('salsify_connect');
+    $salsify->export_data();
+
+    $this->_render_html("<h1>Export to Salsify complete.</h1>");
+
+    $this->_end_render();
+  }
+
+
   public function indexAction() {
     $this->_start_render(self::INDEX_MENU_ID);
 
@@ -283,6 +295,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
                       ->getCollection();
     $cat_count = 0;
     foreach($categories as $category) {
+      if ($category->getLevel() === '1') {
+        // failsafe on the root, which i've deleted a few times...
+        continue;
+      }
+
       $id = Mage::getResourceModel('catalog/category')
                 ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
       // this messed things up for some reason...

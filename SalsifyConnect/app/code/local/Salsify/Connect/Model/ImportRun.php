@@ -34,15 +34,15 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       case self::STATUS_NOT_STARTED:
         return "Export not started";
       case self::STATUS_SALSIFY_PREPARING:
-        return "Salsify is preparing the export.";
+        return "Salsify is preparing the data.";
       case self::STATUS_DOWNLOAD_JOB_IN_QUEUE:
         return "Download job is in the queue waiting to start.";
       case self::STATUS_DOWNLOADING:
-        return "Magento is downloading the export.";
+        return "Magento is downloading the data from Salsify.";
       case self::STATUS_LOADING:
-        return "Magento is loading the exported data.";
+        return "Magento is loading the local Salsify data.";
       case self::STATUS_DONE:
-        return "Salsify export has been successfully loaded into Magento.";
+        return "Import from Salsify has been successfully loaded into Magento.";
       default:
         throw new Exception("INTERNAL ERROR: unknown status: " . $this->getStatus());
     }
@@ -67,12 +67,12 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     $this->setStartTime(date('Y-m-d h:m:s', time()));
     try {
       $salsify_api = $this->_get_salsify_api();
-      $export = $salsify_api->create_export();
+      $import = $salsify_api->create_import();
     } catch (Exception $e) {
       $this->set_error($e);
     }
 
-    $this->setToken($export->id);
+    $this->setToken($import['id']);
     $this->save();
   }
 
@@ -96,10 +96,10 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
       // we were waiting for a public URL signally that Salsify has prepared the
       // download.
 
-      $export = $this->_get_salsify_api()
-                     ->get_export($this->getToken());
-      if ($export['processing']) { return false; }
-      $url = $export['url'];
+      $import = $this->_get_salsify_api()
+                     ->get_import($this->getToken());
+      if ($import['processing']) { return false; }
+      $url = $import['url'];
       if (!$url) {
         $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
       }
