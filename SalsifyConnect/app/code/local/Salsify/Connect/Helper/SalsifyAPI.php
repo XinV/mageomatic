@@ -156,9 +156,9 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   // gets details required to upload our export to Salsify
   private function _get_salsify_upload_mount_point() {
     $url = $this->_get_create_mount_url();
-    self::_log("MOUNT URL: " . $url);
     $request = new HttpRequest($url, HTTP_METH_POST);
     $response = $request->send();
+    self::_log("RESPONSE: " var_export($response,true));
     if (!$this->_response_valid($response)) {
       throw new Exception("ERROR: could not create Salsify mount point for exporting data: " . var_export($response,true));
     }
