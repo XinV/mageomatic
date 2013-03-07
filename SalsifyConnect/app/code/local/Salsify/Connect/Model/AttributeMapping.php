@@ -33,6 +33,10 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   const SALSIFY_PRODUCT_ID       = 'salsify_product_id';
   const SALSIFY_PRODUCT_ID_NAME  = 'Salsify Product ID';
 
+  public static function getSalsifyProductIdAttributeCode() {
+    return self::SALSIFY_PRODUCT_ID;
+  }
+
 
   // For types of attributes. In Magento's EAV struction attributes of products,
   // categories, customers, etc., are stored in different EAV tables.
