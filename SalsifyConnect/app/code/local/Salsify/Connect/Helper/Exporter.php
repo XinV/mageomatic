@@ -47,6 +47,11 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     array_push($this->_attribute_codes_to_skip, 'attribute_set_id');
     array_push($this->_attribute_codes_to_skip, 'type_id');
 
+    // TODO should we be writing this or not? seems redundant. see longer note
+    //      in AttributeMapping in getIdForCode
+    $mapper = $this->_salsify->get_attribute_mapper();
+    array_push($mapper::SALSIFY_PRODUCT_ID);
+
     // TODO are there more of these?
   }
 
@@ -178,12 +183,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $attribute_json = array();
 
     $code = $attribute['code'];
-    if (strcasecmp($code, $mapper::SALSIFY_PRODUCT_ID) === 0) {
-      // TODO should we be writing this or not? seems redundant. see longer note
-      //      in AttributeMapping in getIdForCode
-      return null;
-    }
-
     // need to load the full model here. to this point it's only a small array
     // with some key items.
     $attribute = $mapper::loadProductAttributeByMagentoCode($code);
