@@ -169,6 +169,8 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   // Returns the 'key' returned from Salsify, which is required to get Salsify
   // to actually import the data.
   private function _upload_export_to_salsify($mount_response, $export_file) {
+    self::_log("MOUNT DETAILS: " . var_export($mount_response));
+
     $uploader = new \MultipartUploader\Uploader($mount_response['url']);
 
     $form_data = $mount_response['formData'];
