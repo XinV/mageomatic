@@ -105,6 +105,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   //
   // TODO move some/all of this to a background job
   public function export_data() {
+    self::_log("exporting Magento data into file for loading into Salsify.");
+
     $file = $this->get_temp_file('export','json');
     $stream = fopen($file,'w');
     try {
