@@ -50,7 +50,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // TODO should we be writing this or not? seems redundant. see longer note
     //      in AttributeMapping in getIdForCode
     $mapper = $this->_salsify->get_attribute_mapper();
-    array_push($mapper->getSalsifyProductIdAttributeCode());
+    array_push($this->_attribute_codes_to_skip, $mapper::getSalsifyProductIdAttributeCode());
+    // array_push($mapper->getSalsifyProductIdAttributeCode());
 
     // TODO are there more of these?
   }

@@ -33,7 +33,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   const SALSIFY_PRODUCT_ID       = 'salsify_product_id';
   const SALSIFY_PRODUCT_ID_NAME  = 'Salsify Product ID';
 
-  public function getSalsifyProductIdAttributeCode() {
+  public static function getSalsifyProductIdAttributeCode() {
     return self::SALSIFY_PRODUCT_ID;
   }
 
