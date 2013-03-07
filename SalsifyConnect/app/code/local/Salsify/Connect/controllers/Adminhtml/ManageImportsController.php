@@ -82,7 +82,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/export');
 
     $salsify = Mage::helper('salsify_connect');
-    $salsify->export_data('http://127.0.0.1', self::API_KEY);
+    $salsify->export_data('http://127.0.0.1:5000', self::API_KEY);
 
     $this->_render_html("<h1>Export to Salsify complete.</h1>");
 
