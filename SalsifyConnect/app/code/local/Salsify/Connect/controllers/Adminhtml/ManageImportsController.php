@@ -10,6 +10,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
+  // FIXME remove
+  const API_KEY = 'Vy5s4ohFoQYAqJ1kR5Pz';
+
   // All you need to add is the action!
   const BASE_ADMIN_URL = 'salsify/adminhtml_manageimports/';
 
@@ -79,7 +82,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_start_render('salsify_connect_menu/export');
 
     $salsify = Mage::helper('salsify_connect');
-    $salsify->export_data();
+    $salsify->export_data('http://127.0.0.1', self::API_KEY);
 
     $this->_render_html("<h1>Export to Salsify complete.</h1>");
 
@@ -155,11 +158,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // }
     // $url = urldecode($params['salsify_url']);
 
-    $api_key = 'Vy5s4ohFoQYAqJ1kR5Pz';
     $url = 'http://127.0.0.1:5000/';
 
     $config = Mage::getModel('salsify_connect/configuration');
-    $config->setApiKey($api_key);
+    $config->setApiKey(self::API_KEY);
     $config->setUrl($url);
     $config->save();
 

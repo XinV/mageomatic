@@ -104,7 +104,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   // filename of the document created.
   //
   // TODO move some/all of this to a background job
-  public function export_data() {
+  public function export_data($salsify_url, $salsify_api_key) {
     self::_log("exporting Magento data into file for loading into Salsify.");
 
     $file = $this->get_temp_file('export','json');
@@ -120,6 +120,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
     self::_log("Exporting to file complete. Now need to send to Salsify: " . $file);
     $salsify = Mage::helper('salsify_connect/salsifyapi');
+    $salsify->set_base_url($salsify_url);
+    $salsify->set_api_key($salsify_api_key);
     return $salsify->export_to_salsify($file);
   }
 
