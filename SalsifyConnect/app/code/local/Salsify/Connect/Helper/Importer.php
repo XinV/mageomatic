@@ -190,30 +190,25 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
   private function _end_attribute() {
-    // NOTE: if the attribute turns out to be a category, it will be deleted
-    //       from Magento during category loading.
-    $success = $this->_get_or_create_attribute($this->_attribute);
-    if ($success) {
-      // check to see if the given attribute is the special target_product_id
-      // attribute
-      $roles = $this->_get_attribute_roles($this->_attribute);
-      if ($roles) {
-        if (array_key_exists('accessories', $roles)) {
-          $accessory_roles = $roles['accessories'];
-          if (in_array('target_product_id', $accessory_roles)) {
-            $this->_target_product_attribute = $this->_attribute['id'];
-          }
-        }
-
-        // check to see if the given attribute is the attribute associated with
-        // a product relationship hierarchy (as opposed to a product hierarchy).
-        if (array_key_exists('global', $roles)) {
-          $global_roles = $roles['global'];
-          if (in_array('accessory_label', $global_roles)) {
-            array_push($this->_relationship_attributes, $this->_attribute['id']);
-          }
-        }
+    $roles = $this->_get_attribute_roles($this->_attribute);
+    
+    if ($roles && array_key_exists('accessories', $roles)) {
+      $accessory_roles = $roles['accessories'];
+      if (in_array('target_product_id', $accessory_roles)) {
+        $this->_target_product_attribute = $this->_attribute['id'];
       }
+    } elseif ($roles && array_key_exists('global', $roles)) {
+      // given attribute is the attribute associated with a product relationship
+      // hierarchy (as opposed to a product hierarchy).
+      $global_roles = $roles['global'];
+      if (in_array('accessory_label', $global_roles)) {
+        array_push($this->_relationship_attributes, $this->_attribute['id']);
+      }
+    } else {
+      // NOTE: if the attribute turns out to be a category--other than a product
+      //       accessory category, which we can't tell at this point in the
+      //       import--it will be deleted from Magento during category loading.
+      $this->_get_or_create_attribute($this->_attribute);
     }
 
     unset($this->_attribute);

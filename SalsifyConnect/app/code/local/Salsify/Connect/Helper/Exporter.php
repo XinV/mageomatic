@@ -171,7 +171,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $this->_write_attribute($mapper, $attribute);
     }
 
-    // FIXME need to write out a "target_product_id" kind of attribute as well
+    // TODO need to write out a "target_product_id" kind of attribute as well
   }
 
   private function _write_attribute($mapper, $attribute) {
@@ -321,7 +321,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
     }
 
-    // TODO category assignments
+    // TODO category assignments. might already be in. need to test...
+
     // TODO accessories
 
     $this->_write_object($product_json);

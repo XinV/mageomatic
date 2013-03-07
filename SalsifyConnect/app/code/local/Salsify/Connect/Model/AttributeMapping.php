@@ -165,7 +165,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
 
   // this is the property that products use to refer to categories in magento
-  // FIXME need to create a mapping for products to this during ingest
+  // TODO need to create a mapping for products to this during ingest
   public static function getCategoryAssignemntMagentoCode() {
     return 'category_ids';
   }
