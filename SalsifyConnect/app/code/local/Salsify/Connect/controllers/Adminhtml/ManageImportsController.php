@@ -66,8 +66,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
-    $block = new Salsify_Connect_Block_Adminhtml_Menu();
-    $this->_addContent($block);
+    // $block = new Salsify_Connect_Block_Adminhtml_Menu();
+    // $this->_addContent($block);
+    $block = $this->getLayout()
+                  ->createBlock('salsify_connect/adminhtml_menu');
 
     $this->_end_render();
   }
