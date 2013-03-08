@@ -77,18 +77,6 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  public function exportAction() {
-    $this->_start_render('salsify_connect_menu/export');
-
-    $salsify = Mage::helper('salsify_connect');
-    $salsify->export_data('http://127.0.0.1:5000', self::API_KEY);
-
-    $this->_render_html("<h1>Export to Salsify complete.</h1>");
-
-    $this->_end_render();
-  }
-
-
   public function indexAction() {
     $this->_start_render(self::INDEX_MENU_ID);
 
@@ -116,26 +104,23 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  public function configurationAction() {
-    $this->_start_render(self::CONFIG_MENU_ID);
+  public function exportAction() {
+    $this->_start_render('salsify_connect_menu/export');
 
-    // must render this via a block
-    $this->_render_html('<h1>COMING SOON!</h1>');
+    $salsify = Mage::helper('salsify_connect');
+    $salsify->export_data('http://127.0.0.1:5000', self::API_KEY);
+
+    $this->_render_html("<h1>Export to Salsify complete.</h1>");
 
     $this->_end_render();
   }
 
 
-  // TODO only used for development purposes. remove once no longer necessary.
-  public function testloadAction() {
-    $this->_start_render('salsify_connect_menu/testload');
-    
-    $salsify = Mage::helper('salsify_connect');
-    $file = BP.DS.'var'.DS.'salsify'.DS.'simple.json';
-    $salsify->import_data($file);
+  public function configurationAction() {
+    $this->_start_render(self::CONFIG_MENU_ID);
 
-    $this->_render_html("<h1>Import Succeeded</h1>");
-    $this->_render_html("Imported from: " . $file);
+    // must render this via a block
+    $this->_render_html('<h1>COMING SOON!</h1>');
 
     $this->_end_render();
   }
@@ -157,21 +142,32 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // }
     // $url = urldecode($params['salsify_url']);
 
-    $url = 'http://127.0.0.1:5000/';
+    
 
-    $config = Mage::getModel('salsify_connect/configuration');
-    $config->setApiKey(self::API_KEY);
-    $config->setUrl($url);
-    $config->save();
+    // $url = 'http://127.0.0.1:5000/';
 
-    $id = $config->getId();
-    $import_url = $this->_get_url('import') . '?config=' . $id;
+    // $config = Mage::getModel('salsify_connect/configuration');
+    // $config->setApiKey(self::API_KEY);
+    // $config->setUrl($url);
+    // $config->save();
 
-    $this->_render_html('<h1>Configuration created: ' . $id . '</h1>');
-    $this->_render_html('Next: <a href="'.$import_url.'">Kick off import</a>');
+    // $id = $config->getId();
+    // $import_url = $this->_get_url('import') . '?config=' . $id;
+
+    // $this->_render_html('<h1>Configuration created: ' . $id . '</h1>');
+    // $this->_render_html('Next: <a href="'.$import_url.'">Kick off import</a>');
+
+
+    // TODO we need to figure out if this is a GET or a POST/PUT
+
+    $layout = $this->getLayout();
+    $config_block = $layout->createBlock('salsify_connect/adminhtml_config');
+    $this->_addContent($config_block);
+    
 
     $this->_end_render();
   }
+
 
   // TODO remove for production
   public function importAction() {
@@ -240,16 +236,6 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       });
     </script>";
     $this->_render_js($worker_js);
-  }
-
-
-  public function workerAction() {
-    self::_log("Worker: creating a worker!");
-
-    // TODO add a one-time token or something like that to enable this to be
-    //      called safely.
-    $job = Mage::getModel('salsify_connect/importjob');
-    $job->start_worker();
   }
 
 

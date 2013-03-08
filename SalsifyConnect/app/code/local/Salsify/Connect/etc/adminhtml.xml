@@ -38,20 +38,8 @@
           <action>salsify/adminhtml_manageimports/chimport</action>
         </chimport>
 
-        <worker module="salsify_connect">
-          <title>Start Worker</title>
-          <sort_order>60</sort_order>
-          <action>salsify/adminhtml_manageimports/worker</action>
-        </worker>
-
-        <testload module="salsify_connect">
-          <title>Test Load</title>
-          <sort_order>68</sort_order>
-          <action>salsify/adminhtml_manageimports/testload</action>
-        </testload>
-
         <test module="salsify_connect">
-          <title>Test Layout</title>
+          <title>TEST ACTION</title>
           <sort_order>69</sort_order>
           <action>salsify/adminhtml_manageimports/test</action>
         </test>
