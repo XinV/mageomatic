@@ -5,7 +5,7 @@ require_once('DJJob.php');
 
 class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_Controller_action {
 
-  private function _log($msg) {
+  private static function _log($msg) {
     Mage::log('ManageImports: ' . $msg, null, 'salsify.log', true);
   }
 
@@ -27,7 +27,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
 
   private function _start_render($menu_id) {
-    $this->_log('rendering '.$menu_id);
+    self::_log('rendering '.$menu_id);
 
     $this->loadLayout();
     $this->_setActiveMenu($menu_id);
@@ -68,8 +68,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $block = $this->getLayout()
                   ->createBlock('salsify_connect/adminhtml_menu');
-    var_dump($block);
-    $block->setTemplate('nofrills_helloworld.phtml');
+    self::_log("BLOCK: " . var_export($block,true));
     $this->_addContent($block);
 
     $this->_end_render();
@@ -243,7 +242,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
 
   public function workerAction() {
-    $this->_log("Worker: creating a worker!");
+    self::_log("Worker: creating a worker!");
 
     // TODO add a one-time token or something like that to enable this to be
     //      called safely.
@@ -261,7 +260,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_render_html("<p>This will remove all products, all categories, and all Salsify attributes.</p>");
     $this->_render_html("<ul>");
 
-    $this->_log("Cleaner: deleting products...");
+    self::_log("Cleaner: deleting products...");
     $products = Mage::getModel('catalog/product')
                     ->getCollection();
                     // if you just wanted to delete salsify data...
@@ -288,9 +287,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $product->delete();
     }
     $this->_render_html("<li>Total images deleted: " . $image_count . '</li>');
-    $this->_log("Cleaner: products and images deleted.");
+    self::_log("Cleaner: products and images deleted.");
 
-    $this->_log("Cleaner: deleting Salsify categories...");
+    self::_log("Cleaner: deleting Salsify categories...");
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     $cat_count = 0;
@@ -310,13 +309,13 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       }
     }
     $this->_render_html("<li>Total categories trees (e.g. roots) deleted: " . $cat_count . '</li>');
-    $this->_log("Cleaner: categories deleted.");
+    self::_log("Cleaner: categories deleted.");
 
-    $this->_log("Cleaner: deleting attributes...");
+    self::_log("Cleaner: deleting attributes...");
     $mapper = Mage::getModel('salsify_connect/attributemapping');
     $attr_count = $mapper::deleteSalsifyAttributes();
     $this->_render_html("<li>Total attributes deleted: " . $attr_count . '</li>');
-    $this->_log("Cleaner: attributes deleted.");
+    self::_log("Cleaner: attributes deleted.");
 
     try {
       $db = Mage::getSingleton('core/resource')
@@ -337,7 +336,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       $db->query("delete from core_resource where code = 'salsify_connect_setup';");
       $this->_render_html("<li>Salsify db installation removed (hitting any Salsify admin URL will recreate the tables).</li>");
     } catch (Exception $e) {
-      $this->_log("FAIL: " . $e->getMessage());
+      self::_log("FAIL: " . $e->getMessage());
       throw $e;
     }
 
