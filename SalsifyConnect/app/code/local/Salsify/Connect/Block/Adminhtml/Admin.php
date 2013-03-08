@@ -17,6 +17,7 @@ class Salsify_Connect_Block_Adminhtml_Admin extends Mage_Core_Block_Template {
   public function _beforeToHtml() {
     $menu_block = new Salsify_Connect_Block_Adminhtml_Menu();
     $this->setChild('menu_left', $menu_block);
+    $this->_addLeft($menu_blocK);
   }
 
 }
