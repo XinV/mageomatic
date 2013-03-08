@@ -18,8 +18,8 @@ class Salsify_Connect_Block_Adminhtml_Admin extends Mage_Core_Block_Template {
 
 
   public function setContentBlock($blockname) {
-    $block = $this->_layout
-                  ->createBlock('salsify_connect/adminhtml_' . $blockname,'salsify-content');
+    // $block = $this->_layout
+    //               ->createBlock('salsify_connect/adminhtml_' . $blockname,'salsify-content');
     // $this->setChild($block, 'salsify-content');
   }
 
