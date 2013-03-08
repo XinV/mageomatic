@@ -9,6 +9,8 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
 
 
   public function _construct() {
+    self::_log("RENDERING BY GOD!");
+
     $this->setTemplate('salsify/menu.phtml');
     return parent::_construct();
   }
