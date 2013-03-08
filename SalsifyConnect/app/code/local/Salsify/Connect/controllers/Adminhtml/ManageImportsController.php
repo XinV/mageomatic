@@ -42,10 +42,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
       array('label' => 'Import from Salsify', 'action' => 'import'),
       array('label' => 'Export to Salsify', 'action' => 'export')
     ));
-
-    $sidebar = $layout->getBlock('sidebar');
-    $sidebar->insert($menu_block);
-    // $this->_addLeft($menu_block);
+    $this->_addLeft($menu_block);
   }
 
 
