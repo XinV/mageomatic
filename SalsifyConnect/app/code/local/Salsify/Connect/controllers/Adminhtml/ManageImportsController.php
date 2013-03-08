@@ -36,13 +36,13 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     // deal with the menu
     $this->_setActiveMenu($menu_id);
 
-    $block = $layout->createBlock('salsify_connect/adminhtml_menu');
+    $block = $layout->createBlock('salsify_connect/adminhtml_menu','sidebar');
     $block->setActions(array(
-      array('label' => 'Configure Salsify', 'action' => 'config'),
-      array('label' => 'Import from Salsify', 'action' => 'config'),
+      array('label' => 'Salsify Account Details', 'action' => 'config'),
+      array('label' => 'Import from Salsify', 'action' => 'import'),
       array('label' => 'Export to Salsify', 'action' => 'export')
     ));
-    $this->_addLeft($block);
+    // $this->_addLeft($block);
   }
 
 
