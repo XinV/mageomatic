@@ -1,14 +1,15 @@
 <!--
-  TODO need to move this CSS to its own file once I figure out how to do that.
- -->
-<style type='text/css'>
-  #salsify-left-menu {
+  TODO we're relying on CSS classes that I inspected from elsewhere in Magento.
+       Maybe they can be deduced programatically?
+  -->
 
-  }
-</style>
+<div class="columns">
+  <div class="side-col" id="page:left">
+    <h1>Salsify Connect</h1>
+    <?php echo $this->getChildHtml('menu_left'); ?>
+  </div>
 
-<h1>Salsify Connect</h1>
-
-<div class="side-col" id="page:left">
-  <?php echo $this->getChildHtml('menu_left'); ?>
+  <div class="main-col" id="content">
+    TODO need the actual content to go here
+  </div>
 </div>
