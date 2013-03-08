@@ -19,6 +19,12 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
 
 
+  // TODO remove
+  private function _get_url($action) {
+    return Mage::helper("adminhtml")
+               ->getUrl(self::BASE_ADMIN_URL . $action);
+  }
+
   private function _start_render($menu_id) {
     self::_log('rendering '.$menu_id);
 
