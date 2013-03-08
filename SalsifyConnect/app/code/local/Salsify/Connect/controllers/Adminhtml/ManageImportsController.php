@@ -68,6 +68,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
 
     $block = $this->getLayout()
                   ->createBlock('salsify_connect/adminhtml_menu');
+    var_export($block);
     $block->setTemplate('nofrills_helloworld.phtml');
     $this->_addContent($block);
 
