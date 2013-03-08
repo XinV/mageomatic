@@ -10,44 +10,44 @@
         <manage_imports module="salsify_connect">
           <title>Manage Imports</title>
           <sort_order>0</sort_order>
-          <action>salsify/adminhtml_manageimports/index</action>
+          <action>salsify/adminhtml_salsifyconnect/index</action>
         </manage_imports>
 
         <configuration module="salsify_connect">
           <title>Salsify Account Details</title>
           <sort_order>1</sort_order>
-          <action>salsify/adminhtml_manageimports/configuration</action>
+          <action>salsify/adminhtml_salsifyconnect/configuration</action>
         </configuration>
 
         <!-- TODO remove all these guys -->
         <config module="salsify_connect">
           <title>Create Configuration</title>
           <sort_order>50</sort_order>
-          <action>salsify/adminhtml_manageimports/config</action>
+          <action>salsify/adminhtml_salsifyconnect/config</action>
         </config>
 
         <import module="salsify_connect">
           <title>Start Export</title>
           <sort_order>51</sort_order>
-          <action>salsify/adminhtml_manageimports/export</action>
+          <action>salsify/adminhtml_salsifyconnect/export</action>
         </import>
 
         <chimport module="salsify_connect">
           <title>Chimport</title>
           <sort_order>52</sort_order>
-          <action>salsify/adminhtml_manageimports/chimport</action>
+          <action>salsify/adminhtml_salsifyconnect/chimport</action>
         </chimport>
 
         <test module="salsify_connect">
           <title>TEST ACTION</title>
           <sort_order>69</sort_order>
-          <action>salsify/adminhtml_manageimports/test</action>
+          <action>salsify/adminhtml_salsifyconnect/test</action>
         </test>
 
         <cleaner module="salsify_connect">
           <title>DELETE SALSIFY DATA</title>
           <sort_order>100</sort_order>
-          <action>salsify/adminhtml_manageimports/cleaner</action>
+          <action>salsify/adminhtml_salsifyconnect/cleaner</action>
         </cleaner>
 
       </children>
