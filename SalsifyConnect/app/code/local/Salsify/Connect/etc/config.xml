@@ -73,6 +73,12 @@
         </args>
       </salsifyadmin>
     </routers>
+
+    <blocks>
+      <salsify_connect>
+        <class>Salsify_Connect_Block</class>
+      </salsify_connect>
+    </blocks>
   </admin>
 
 </config>
