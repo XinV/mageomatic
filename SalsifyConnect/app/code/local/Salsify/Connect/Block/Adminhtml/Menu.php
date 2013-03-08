@@ -13,4 +13,12 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
     return parent::_construct();
   }
 
+
+  public function getMenuItems() {
+    return array(
+      array('title' => 'Menu Item 1', 'url' => '/'),
+      array('title' => 'Menu Item 2', 'url' => '/')
+    );
+  }
+
 }

@@ -1,12 +1,10 @@
 <!-- TODO how does magento render a left hand menu? -->
 
-<h2>Salsify Connect Admin</h2>
+<h2>Salsify Connect</h2>
 <ul>
 <?php
-# TODO get the list of menu item and links to render from the block, which
-#      probably gets them from the controller.
-#foreach ()
-?>
-  <li>MENU ITEM 1</li>
-  <li>MENU ITEM 2</li>
+$items = $this->getMenuItems();
+foreach ($items as $item) { ?>
+  <li><?php echo $item['title']; ?></li>
+<?php } ?>
 </ul>
