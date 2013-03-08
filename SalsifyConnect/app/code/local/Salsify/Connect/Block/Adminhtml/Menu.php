@@ -9,9 +9,9 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
 
   public function _construct() {
     self::_log("RENDERING ME BY GOD!");
-    
+
     // FIXME HERE
-    $this->setTemplate('nofrills_helloworld.phtml');
+    $this->setTemplate('salsify/menu.phtml');
     return parent::_construct();
   }
 
