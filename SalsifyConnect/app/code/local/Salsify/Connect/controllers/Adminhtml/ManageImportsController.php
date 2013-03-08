@@ -36,8 +36,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     //               ->createBlock('salsify_connect/adminhtml_menu');
     // $this->_addLeft($block);
 
-    $block = $this->getLayout()
-                  ->createBlock('salsify_connect/adminhtml_admin');
+    $layout = $this->getLayout();
+    $block = $layout->createBlock('salsify_connect/adminhtml_admin');
+    $block->setLayout($)
     $this->_addContent($block);
   }
 
