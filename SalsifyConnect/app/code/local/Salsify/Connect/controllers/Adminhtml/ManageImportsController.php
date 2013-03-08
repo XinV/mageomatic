@@ -10,9 +10,11 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   }
 
 
-  // FIXME remove
+  // TODO remove
   const API_KEY = 'Vy5s4ohFoQYAqJ1kR5Pz';
 
+  // TODO remove
+  const BASE_ADMIN_URL = 'salsify/adminhtml_manageimports/';
 
   // TODO these necessary here?
   const INDEX_MENU_ID  = 'salsify_connect_menu/manage_imports';
