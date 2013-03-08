@@ -76,7 +76,7 @@
         <use>admin</use>
         <args>
           <module>Salsify_Connect</module>
-          <frontName>salsify_connect</frontName>
+          <frontName>salsify</frontName>
         </args>
       </salsifyadmin>
     </routers>
