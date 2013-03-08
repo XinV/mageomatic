@@ -4,13 +4,6 @@
 class Salsify_Connect_Block_Adminhtml_Admin extends Mage_Core_Block_Abstract {
 
 
-  private $_layout;
-
-
-  public function setLayout($layout) {
-    $this->_layout = $layout;
-  }
-
   public function _beforeToHtml() {
     // $layout = Mage::getSingleton('core/layout');
     $menu_block = $this->_layout->createBlock('salsify_connect/adminhtml_menu','sidebar');
