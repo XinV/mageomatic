@@ -22,8 +22,8 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   private function _start_render($menu_id) {
     self::_log('rendering '.$menu_id);
 
-    $layout = $this->loadLayout();
-    // $layout = $this->getLayout();
+    $this->loadLayout();
+    $layout = $this->getLayout();
 
     $this->_setActiveMenu($menu_id);
 
