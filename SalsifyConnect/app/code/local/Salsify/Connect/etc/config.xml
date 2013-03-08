@@ -60,6 +60,7 @@
       </catalog_product_save_after>
     </events>
 
+    <!-- FIXME this doesn't seem to work -->
     <blocks>
       <salsify_connect>
         <class>Salsify_Connect_Block</class>
@@ -75,7 +76,7 @@
         <use>admin</use>
         <args>
           <module>Salsify_Connect</module>
-          <frontName>salsify</frontName>
+          <frontName>salsify_connect</frontName>
         </args>
       </salsifyadmin>
     </routers>
