@@ -9,7 +9,7 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
 
 
   // All you need to add is the action!
-  const BASE_ADMIN_URL = 'salsify/adminhtml_manageimports/';
+  const BASE_ADMIN_URL = 'salsify/adminhtml_index/';
 
 
   private $_menu_items;
