@@ -60,6 +60,12 @@
       </catalog_product_save_after>
     </events>
 
+    <blocks>
+      <salsify_connect>
+        <class>Salsify_Connect_Block</class>
+      </salsify_connect>
+    </blocks>
+
   </global>
 
 
@@ -73,12 +79,6 @@
         </args>
       </salsifyadmin>
     </routers>
-
-    <blocks>
-      <salsify_connect>
-        <class>Salsify_Connect_Block_Adminhtml</class>
-      </salsify_connect>
-    </blocks>
   </admin>
 
 </config>
