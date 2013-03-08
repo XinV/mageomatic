@@ -5,6 +5,6 @@
 <?php
 $items = $this->getMenuItems();
 foreach ($items as $item) { ?>
-  <li><?php echo $item['title']; ?></li>
+  <li><a href="<?php echo $item['url']; ?>"><?php echo $item['title']; ?></a></li>
 <?php } ?>
 </ul>

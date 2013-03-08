@@ -14,9 +14,9 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   const API_KEY = 'Vy5s4ohFoQYAqJ1kR5Pz';
 
 
-  private function _get_url($action) {
-    return Mage::helper("adminhtml")->getUrl(self::BASE_ADMIN_URL . $action);
-  }
+  // TODO these necessary here?
+  const INDEX_MENU_ID  = 'salsify_connect_menu/manage_imports';
+  const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
 
 
   private function _start_render($menu_id) {
@@ -25,9 +25,15 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->loadLayout();
     $layout = $this->getLayout();
 
+    // deal with the menu
     $this->_setActiveMenu($menu_id);
 
     $block = $layout->createBlock('salsify_connect/adminhtml_menu');
+    $block->setActions(array(
+      array('label' => 'Configure Salsify', 'action' => 'config'),
+      array('label' => 'Import from Salsify', 'action' => 'config'),
+      array('label' => 'Export to Salsify', 'action' => 'export')
+    ));
     $this->_addLeft($block);
   }
 
