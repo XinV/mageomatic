@@ -41,7 +41,7 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
     $this->_addContent($block);
 
     // TODO this should be done by the individual actions
-    $block->setContentBlock('config');
+    // $block->setContentBlock('config');
   }
 
 
