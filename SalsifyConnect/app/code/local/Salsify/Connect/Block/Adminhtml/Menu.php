@@ -6,12 +6,8 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Abstract {
 
   public function _construct() {
     // $this->setTemplate('nofrills_helloworld.phtml');
+    $this->setText("HERE");
     return parent::_construct();
-  }
-
-  public function toHtml() {
-    // FIXME
-    return "HERE";
   }
 
 }
