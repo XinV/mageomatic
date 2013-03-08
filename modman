@@ -2,3 +2,4 @@ SalsifyConnect/app/etc/modules/*           app/etc/modules/
 SalsifyConnect/app/code/local/Salsify/*    app/code/local/Salsify/
 SalsifyConnect/lib/*                       lib/
 SalsifyConnect/app/design/adminhtml/default/default/layout/* /app/design/adminhtml/default/default/layout/
+SalsifyConnect/app/design/adminhtml/default/default/template/salsify /app/design/adminhtml/default/default/template/
