@@ -4,9 +4,9 @@
 // class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
 class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Abstract {
 
-  public function _construct() {
+  public function __construct() {
     // $this->setTemplate('nofrills_helloworld.phtml');
-    return parent::_construct();
+    return parent::__construct();
   }
 
 }
