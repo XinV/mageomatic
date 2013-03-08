@@ -10,11 +10,11 @@ class Salsify_Connect_Block_Adminhtml_Admin extends Mage_Core_Block_Template {
   }
 
 
-  // public function _beforeToHtml() {
-  //   $menu_block = $this->_layout
-  //                      ->createBlock('salsify_connect/adminhtml_menu','salsify-menu');
-  //   $this->setChild($menu_block, 'salsify-menu');
-  // }
+  public function _beforeToHtml() {
+    $menu_block = $this->_layout
+                       ->createBlock('salsify_connect/adminhtml_menu','salsify-menu');
+    $this->setChild($menu_block, 'salsify-menu');
+  }
 
 
   public function setContentBlock($blockname) {
