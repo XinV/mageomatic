@@ -76,7 +76,7 @@
 
     <blocks>
       <salsify_connect>
-        <class>Salsify_Connect_Block</class>
+        <class>Salsify_Connect_Block_Adminhtml</class>
       </salsify_connect>
     </blocks>
   </admin>
