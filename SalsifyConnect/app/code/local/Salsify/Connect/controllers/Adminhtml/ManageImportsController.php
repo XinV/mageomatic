@@ -66,13 +66,10 @@ class Salsify_Connect_Adminhtml_ManageImportsController extends Mage_Adminhtml_C
   public function testAction() {
     $this->_start_render('salsify_connect_menu/test');
 
-    // PUT CODE YOU WANT TO TEST IN MAGENTO HERE
-
-    $salsify = Mage::helper('salsify_connect');
-    $file = $salsify->export_data();
-
-    $this->_render_html("<h1>Export Succeeded</h1>");
-    $this->_render_html("Exported to: " . $file);
+    $block = new Salsify_Connect_Block_Adminhtml_Menu();
+    $block->setTemplate('nofrills_helloworld.phtml');
+    $this->getLayout()
+         ->setChild('salsify_menu', $block);
 
     $this->_end_render();
   }

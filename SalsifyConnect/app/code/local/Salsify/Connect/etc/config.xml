@@ -63,29 +63,15 @@
   </global>
 
 
-  <!-- TODO remove once admin panel is in place
-  <frontend>
-    <routers>
-      <salsify_connect>
-        <use>standard</use>
-        <args>
-          <module>Salsify_Connect</module>
-          <frontName>salsify</frontName>
-        </args>
-      </salsify_connect>
-    </routers>
-  </frontend>
-  -->
-
   <admin>
     <routers>
-      <salsify_route_unique_id>
+      <salsifyadmin>
         <use>admin</use>
         <args>
           <module>Salsify_Connect</module>
           <frontName>salsify</frontName>
         </args>
-      </salsify_route_unique_id>
+      </salsifyadmin>
     </routers>
   </admin>
 

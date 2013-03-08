@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <layout version="0.0.1">
-  <salsify_connect_adminhtml_manageimports_index>
+  <salsify_connect_salsifyadmin_manageimports_index>
     <reference name="content">
-      <!-- <block type="salsify_connect/adminhtml_manageimports" name="manageimports" /> -->
+      <!-- <block type="salsify_connect/salsifyadmin_manageimports" name="manageimports" /> -->
       
       <!--
       We know this works, so we know that this configuration file is being
@@ -15,5 +15,5 @@
       </block>
       
     </reference>
-  </salsify_connect_adminhtml_manageimports_index>
+  </salsify_connect_salsifyadmin_manageimports_index>
 </layout>
