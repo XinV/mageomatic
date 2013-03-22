@@ -127,24 +127,28 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $this->_start_render('salsify_connect_menu/config');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      self::_log(var_export($_POST,true));
+      if (array_key_exists('configuration', $_POST)) {
+        $config_data = $_POST['configuration'];
 
-      // TODO any validation at all :)
-      $config = Mage::getModel('salsify_connect/configuration')->getInstance();
+        // TODO any validation at all :)
+        $config = Mage::getModel('salsify_connect/configuration')->getInstance();
 
-      if (array_key_exists('api_key', $_POST)) {
-        $config->setApiKey($_POST['api_key']);
+        if (array_key_exists('api_key', $config_data)) {
+          $config->setApiKey($config_data['api_key']);
+        } else {
+          $config->setApiKey('');
+        }
+
+        if (array_key_exists('url', $config_data)) {
+          $config->setUrl($config_data['url']);
+        } else {
+          $config->setUrl('');
+        }
+
+        $config->save();
       } else {
-        $config->setApiKey('');
+        self::_log("WARNING: POST to config without a configuration element.");
       }
-
-      if (array_key_exists('url', $_POST)) {
-        $config->setUrl($_POST['url']);
-      } else {
-        $config->setUrl('');
-      }
-
-      $config->save();
     }
 
     // TODO we need to figure out if this is a GET or a POST/PUT
