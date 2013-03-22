@@ -126,38 +126,24 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function configAction() {
     $this->_start_render('salsify_connect_menu/config');
 
-    self::_log("REQUEST METHOD: " . $_SERVER['REQUEST_METHOD']);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      // TODO any validation at all :)
+      $config = Mage::getModel('salsify_connect/configuration')->getInstance();
 
-    $params = $this->getRequest()->getParams();
-    foreach ($params as $param) {
-      if (is_array($param)) {
-        self::_log("  ARRAY: " . var_export($param,true));
+      if (array_key_exists('api_key', $POST)) {
+        $config->setApiKey($_POST['api_key'])
+      } else {
+        $config->setApiKey('');
       }
+
+      if (array_key_exists('url', $POST)) {
+        $config->setUrl($_POST['url'])
+      } else {
+        $config->setUrl('');
+      }
+
+      $config->save();
     }
-
-
-    // if (!array_key_exists('api_key', $params)) {
-    //   throw new Exception("Must specify api_key to use for import.");
-    // }
-    // $api_key = $params['api_key'];
-
-    // if (!array_key_exists('salsify_url', $params)) {
-    //   throw new Exception("Must specify salsify_url to use for import.");
-    // }
-    // $url = urldecode($params['salsify_url']);
-
-    // $url = 'http://127.0.0.1:5000/';
-
-    // $config->setApiKey(self::API_KEY);
-    // $config->setUrl($url);
-    // $config->save();
-
-    // $id = $config->getId();
-    // $import_url = $this->_get_url('import') . '?config=' . $id;
-
-    // $this->_render_html('<h1>Configuration created: ' . $id . '</h1>');
-    // $this->_render_html('Next: <a href="'.$import_url.'">Kick off import</a>');
-
 
     // TODO we need to figure out if this is a GET or a POST/PUT
     // TODO move this to a layout somewhere?
