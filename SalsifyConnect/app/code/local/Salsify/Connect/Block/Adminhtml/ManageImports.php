@@ -1,13 +1,17 @@
 <?php
 class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
-  public function __construct() {
-    Mage::log("block", null, 'salsify.log', true);
+  private static function _log($msg) {
+    Mage::log('Block_Adminhtml_ManageImports: ' . $msg, null, 'salsify.log', true);
+  }
 
+  public function __construct() {
+    // The blockGroup must match the first half of how we call the block, and
+    // controller matches the second half.
+    $this->_blockGroup = 'salsify_connect';
     $this->_controller = 'adminhtml_manageimports';
-    $this->_blockGroup = 'manageimports';
-    $this->_headerText = Mage::helper('manageimports')->__('Salsify Connect Manager');
-    $this->_addButtonLabel = Mage::helper('manageimports')->__('Add Import');
+    $this->_headerText = $this->__('Manage Salsify Imports');
+     
     parent::__construct();
   }
 

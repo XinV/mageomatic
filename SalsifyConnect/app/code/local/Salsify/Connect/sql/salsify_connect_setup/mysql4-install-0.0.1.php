@@ -7,7 +7,11 @@ $installer = $this;
 $installer->startSetup();
 
 
-// Create the initial Salsify data
+// Create the initial Salsify data. Some notes on the table name here.
+// The following call to getTable('salsify_connect/configuration') will lookup
+// the resource for salsify_connect in confix.xml and look for a corresponding
+// entity called configuration. The table name in the XML is
+// salsify_connect_configuration, so this is what is created.
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/configuration'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
