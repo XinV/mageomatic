@@ -24,6 +24,7 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
       self::_log("NO CONFIGURATIONS");
     } else {
       self::_log("CONFIGURATIONS");
+      self::_log(var_export($configurations,true));
       foreach ($configurations as $config) {
         self::_log(var_export($config,true));
         var_dump($config);
