@@ -161,9 +161,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     $layout = $this->getLayout();
     $config_block = $layout->createBlock('salsify_connect/adminhtml_config');
-
-    // FIXME need to get the Salsify configuration
-    // $config_block->setEntity($object);
+    $config_block->setEntity($config);
 
     $this->_addContent($config_block);
     

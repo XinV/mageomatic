@@ -19,16 +19,17 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
    * @return the singleton instance of the configuration, creating if necessary.
    */
   public function getInstance() {
-    $configurations = $this->getCollection();
-    $config = $configurations->getFirstItem();
+    $config = $this->getCollection()
+                   ->getFirstItem();
     if ($config->getId()) {
       return $config;
-    } else {
-      $salsify = Mage::helper('salsify_connect/salsifyapi');
-      $config->setUrl($salsify::DEFAULT_SALSIFY_URL);
-      $config->save();
-      return $this;
     }
+
+    // need to create the singleton
+    $salsify = Mage::helper('salsify_connect/salsifyapi');
+    $config->setUrl($salsify::DEFAULT_SALSIFY_URL);
+    $config->save();
+    return $this;
   }
 
 }
