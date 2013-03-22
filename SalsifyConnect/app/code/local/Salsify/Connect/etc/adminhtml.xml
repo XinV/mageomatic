@@ -54,5 +54,13 @@
     </salsify_connect_menu>
   </menu>
 
+  <layout>
+    <updates>
+      <salsify_connect>
+        <file>salsifyconnect.xml</file>
+      </salsify_connect>
+    </updates>
+  </layout>
+
 
 </config>

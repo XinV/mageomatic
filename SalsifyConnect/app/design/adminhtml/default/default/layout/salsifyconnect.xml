@@ -8,7 +8,7 @@
         <params/>
       </action>
     </reference>
-  </default
+  </default>
 
   <!-- FIXME this is clearly not being loaded -->
   <salsify_connect_adminhtml_index>
