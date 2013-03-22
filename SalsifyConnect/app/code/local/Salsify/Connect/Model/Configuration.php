@@ -16,19 +16,16 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
   }
 
   /**
-   * return the singleton instance of the configuration. creates it if necessary.
+   * @return the singleton instance of the configuration, creating if necessary.
    */
   public function getInstance() {
     $configurations = $this->getCollection();
-    if (empty($configurations)) {
-      self::_log("NO CONFIGURATIONS");
+    $config = $configurations->getFirstItem();
+    if ($config->getId()) {
+      return $config;
     } else {
-      self::_log("CONFIGURATIONS");
-      self::_log(var_export($configurations,true));
-      foreach ($configurations as $config) {
-        self::_log(var_export($config,true));
-        var_dump($config);
-      }
+      $this->save();
+      return $this;
     }
   }
 
