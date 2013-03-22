@@ -127,6 +127,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $this->_start_render('salsify_connect_menu/config');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      self::_log(var_export($_POST,true));
+
       // TODO any validation at all :)
       $config = Mage::getModel('salsify_connect/configuration')->getInstance();
 
