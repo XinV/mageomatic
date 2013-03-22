@@ -81,4 +81,15 @@
     </routers>
   </admin>
 
+
+  <adminhtml>
+    <layout>
+      <updates>
+        <salsify_connect>
+          <file>salsifyconnect.xml</file>
+        </salsify_connect>
+      </updates>
+    </layout>
+  </adminhtml>
+
 </config>
