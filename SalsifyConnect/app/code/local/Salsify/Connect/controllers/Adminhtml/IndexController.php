@@ -11,7 +11,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
 
   // TODO remove
-  const API_KEY = 'Vy5s4ohFoQYAqJ1kR5Pz';
+  const API_KEY = 'P9kH55zimg4viXWBdvB5';
 
   // TODO remove
   const BASE_ADMIN_URL = 'salsify/adminhtml_index/';
