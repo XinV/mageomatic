@@ -1,5 +1,5 @@
 <?php
-class Mage_Salsify_Connect_Adminhtml_MyformController extends Mage_Adminhtml_Controller_Action
+class Salsify_Connect_Adminhtml_MyformController extends Mage_Adminhtml_Controller_Action
 {
     public function indexAction() {
         $this->loadLayout()->renderLayout();
