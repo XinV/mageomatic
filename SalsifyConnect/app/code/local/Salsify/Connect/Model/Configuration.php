@@ -21,11 +21,11 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
   public function getInstance() {
     $configurations = $this->getCollection();
     if (empty($configurations)) {
-      self::log("NO CONFIGURATIONS");
+      self::_log("NO CONFIGURATIONS");
     } else {
-      self::log("CONFIGURATIONS");
+      self::_log("CONFIGURATIONS");
       foreach ($configurations as $config) {
-
+        self::_log(var_export($config,true));
         var_dump($config);
       }
     }
