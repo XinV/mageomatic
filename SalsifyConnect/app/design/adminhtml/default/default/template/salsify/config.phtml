@@ -1,7 +1,7 @@
 <div class="content-header">
   <table cellspacing="0" class="grid-header">
   <tr>
-    <td><h3>Salsify Account Configuration</h3></td>
+    <td><h3>Manage Salsify Connect</h3></td>
     <td class="a-right">
       <button onclick="editForm.submit()" class="scalable save" type="button"><span>Save</span></button>
     </td>
@@ -12,7 +12,7 @@
 <div class="entry-edit">
   <form id="edit_form" name="edit_form" method="post" action="<?=$this->getUrl('*/*/post')?>">
     <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
-    <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__('This fieldset name')?></h4>
+    <h4 class="icon-head head-edit-form fieldset-legend">Salsify Account Information</h4>
     <fieldset id="my-fieldset">
       <table cellspacing="0" class="form-list">
         <tr>
