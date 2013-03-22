@@ -60,12 +60,7 @@
       </catalog_product_save_after>
     </events>
 
-    <!-- FIXME this doesn't seem to work -->
-    <blocks>
-      <salsify_connect>
-        <class>Salsify_Connect_Block</class>
-      </salsify_connect>
-    </blocks>
+
 
   </global>
 
