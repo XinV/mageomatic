@@ -10,18 +10,18 @@
 </div>
 
 <div class="entry-edit">
-  <form id="edit_form" name="edit_form" method="post" action="<?=$this->getUrl('*/*/post')?>">
+  <form id="edit_form" name="edit_form" method="post" action="<?= $this->getUrl('*/*/post') ?>">
     <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
     <h4 class="icon-head head-edit-form fieldset-legend">Salsify Account Information</h4>
     <fieldset id="my-fieldset">
       <table cellspacing="0" class="form-list">
         <tr>
           <td class="label">API Key <span class="required">*</span></td>
-          <td class="input-ele"><input class="input-text required-entry" name="configuration[api_key]" value="<?=$this->getApiKey();?>" /></td>
+          <td class="input-ele"><input class="input-text required-entry" name="configuration[api_key]" value="<?= $this->getApiKey() ?>" /></td>
         </tr>
         <tr>
           <td class="label">Salsify Application URL <span class="required">*</span></td>
-          <td class="input-ele"><input class="input-text required-entry" name="configuration[url]" value="<?=$this->getSalsifyUrl();?>" /></td>
+          <td class="input-ele"><input class="input-text required-entry" name="configuration[url]" value="<?= $this->getSalsifyUrl() ?>" /></td>
         </tr>
       </table>
     </fieldset>
