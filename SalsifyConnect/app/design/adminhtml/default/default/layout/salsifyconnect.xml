@@ -11,12 +11,12 @@
   </default>
 
   <!-- FIXME just trying to get this working -->
-  <adminhtml_myform_index>
+  <adminhtml_salsify_connect_myform_index>
     <update handle="salsify_connect_myform_index"/>
     <reference name="content">
       <block type="adminhtml/template" name="myform" template="salsify_connect/myform.phtml"/>
     </reference>
-  </adminhtml_myform_index>
+  </adminhtml_salsify_connectmyform_index>
 
   <!-- FIXME this is clearly not being loaded -->
   <salsify_connect_adminhtml_index>

@@ -62,7 +62,7 @@
   <layout>
     <updates>
       <salsify_connect>
-        <file>salsify_connect.xml</file>
+        <file>salsifyconnect.xml</file>
       </salsify_connect>
     </updates>
   </layout>
