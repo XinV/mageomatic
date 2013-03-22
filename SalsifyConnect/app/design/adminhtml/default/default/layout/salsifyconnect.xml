@@ -1,5 +1,15 @@
 <?xml version="1.0"?>
 <layout version="0.0.1">
+  <default>
+    <reference name="head">
+      <action method="addItem">
+        <type>skin_css</type>
+        <name>salsify_connect/css/style.css</name>
+        <params/>
+      </action>
+    </reference>
+  </default>
+
   <salsify_connect_salsifyadmin_manageimports_index>
     <reference name="content">
       <!-- <block type="salsify_connect/salsifyadmin_manageimports" name="manageimports" /> -->
