@@ -48,8 +48,9 @@ class Salsify_Connect_Block_Adminhtml_Manageimports_Grid extends Mage_Adminhtml_
     return parent::_prepareColumns();
   }
 
-  public function getRowUrl($row) {
-    // This is where our row data will link to
-    return $this->getUrl('*/*/edit', array('id' => $row->getId()));
-  }
+  // I don't think this is required if we're not showing the 'add' button
+  // public function getRowUrl($row) {
+  //   // This is where our row data will link to
+  //   return $this->getUrl('*/*/edit', array('id' => $row->getId()));
+  // }
 }
