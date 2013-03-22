@@ -156,6 +156,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     $config = Mage::getModel('salsify_connect/configuration')
                   ->getInstance();
+    echo var_export($config,true);
 
     // TODO we need to figure out if this is a GET or a POST/PUT
 
