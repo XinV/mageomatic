@@ -35,10 +35,11 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     // deal with the menu and breadcrumbs.
     $this->_setActiveMenu($menu_id)
-         ->_title('Salsify Connect')
-         // ->_title($this->__('Baz')) // menu title
-         ->_addBreadcrumb('Salsify Connect', 'Salsify Connect');
-         // ->_addBreadcrumb($this->__('Baz'), $this->__('Baz')); // not yet
+         ->_title('Salsify Connect');
+         // currently we're not really showing any of this stuff
+         // ->_title($this->__('My Menu Item'))
+         // ->_addBreadcrumb('Salsify Connect', 'Salsify Connect')
+         // ->_addBreadcrumb($this->__('My Menu Item'), $this->__('My Menu Item'));
 
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
@@ -70,6 +71,16 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $this->renderLayout();
   }
 
+
+   /**
+   * Check currently called action by permissions for current user
+   *
+   * @return bool
+   */
+  protected function _isAllowed() {
+      return Mage::getSingleton('admin/session')
+                 ->isAllowed('salsify_connect/adminhtml_index');
+  }
  
   // TODO remove when we're going live. this is just for testing.
   public function testAction() {
