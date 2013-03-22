@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
-  <layout>
-    <updates>
-      <salsify_connect>
-        <file>salsifyconnect.xml</file>
-      </salsify_connect>
-    </updates>
-  </layout>
-
   <menu>
     <salsify_connect_menu module="salsify_connect">
       <title>Salsify Connect</title>
