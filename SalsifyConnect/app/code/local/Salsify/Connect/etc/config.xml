@@ -100,6 +100,18 @@
   </admin>
 
 
-
+  <adminhtml>
+    <!-- This cannot be moved to adminhtml.xml. hard lesson. -->
+    <layout>
+      <updates>
+        <salsify_connect>
+          <!-- could be named anything. we're trying to be good citizens.
+               note that if the file doesn't exist, this fails silently. the
+               only way you can tell is that the layout doesn't show up. -->
+          <file>salsify/connect.xml</file>
+        </salsify_connect>
+      </updates>
+    </layout>
+  </adminhtml>
 
 </config>

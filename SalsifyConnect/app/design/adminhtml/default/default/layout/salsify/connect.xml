@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
-<!--
-  All layout information for the Salsify Connect plugin.
--->
 <layout>
+  <!--
+  All layout information for the Salsify Connect plugin.
+  -->
+  
   <<!-- default>
     <reference name="head">
       <action method="addItem">
