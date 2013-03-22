@@ -107,7 +107,7 @@
       <updates>
         <salsify_connect>
           <!-- could be named anything. we're trying to be good citizens -->
-          <file>salsify_connect/connect.xml</file>
+          <file>salsify/connect.xml</file>
         </salsify_connect>
       </updates>
     </layout>
