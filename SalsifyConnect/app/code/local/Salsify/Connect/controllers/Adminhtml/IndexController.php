@@ -126,7 +126,10 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function configAction() {
     $this->_start_render('salsify_connect_menu/config');
 
-    // $params = $this->getRequest()->getParams();
+    $params = $this->getRequest()->getParams();
+    foreach ($params as $param) {
+      self::_log("PARAM: " . $param);
+    }
 
     // if (!array_key_exists('api_key', $params)) {
     //   throw new Exception("Must specify api_key to use for import.");
