@@ -23,7 +23,9 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
     if (empty($configurations)) {
       self::log("NO CONFIGURATIONS");
     } else {
+      self::log("CONFIGURATIONS");
       foreach ($configurations as $config) {
+
         var_dump($config);
       }
     }
