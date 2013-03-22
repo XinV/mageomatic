@@ -22,7 +22,7 @@
   </salsify_connect_adminhtml_myform_index>
 
   <!-- full name of route -->
-  <salsify_connect_adminhtml_index_manageimports>
+  <salsify_connect_adminhtml_index_index>
     <reference name="content">
       <!-- <block type="salsify_connect/adminhtml_manageimports" name="salsify_connect_manageimports" /> -->
 
@@ -37,5 +37,5 @@
       </block>
       
     </reference>
-  </salsify_connect_adminhtml_index_manageimports>
+  </salsify_connect_adminhtml_index_index>
 </layout>
