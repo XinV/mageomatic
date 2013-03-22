@@ -10,7 +10,7 @@
     </reference>
   </default>
 
-  <salsify_connect_salsifyadmin_manageimports_index>
+  <salsify_connect_salsifyadmin_index>
     <reference name="content">
       <!-- <block type="salsify_connect/salsifyadmin_manageimports" name="manageimports" /> -->
       
@@ -18,12 +18,12 @@
       We know this works, so we know that this configuration file is being
       loaded correctly.
       -->
-      <block type="core/text" name="manageimports">
+      <block type="core/text" name="index">
         <action method="setText">
           <val>TESTING</val>
         </action>
       </block>
       
     </reference>
-  </salsify_connect_salsifyadmin_manageimports_index>
+  </salsify_connect_salsifyadmin_index>
 </layout>
