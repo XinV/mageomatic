@@ -2,10 +2,10 @@
 /*
  * Simply holds the grid that will display all the import runs.
  */
-class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Adminhtml_Block_Widget_Grid_Container {
+class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
   // private static function _log($msg) {
-  //   Mage::log('Block_Adminhtml_ManageImports: ' . $msg, null, 'salsify.log', true);
+  //   Mage::log('Block_Adminhtml_Manageimports: ' . $msg, null, 'salsify.log', true);
   // }
 
   public function __construct() {

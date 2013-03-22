@@ -6,7 +6,7 @@ require_once('DJJob.php');
 class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controller_action {
 
   private static function _log($msg) {
-    Mage::log('ManageImports: ' . $msg, null, 'salsify.log', true);
+    Mage::log('Adminhtml_Index: ' . $msg, null, 'salsify.log', true);
   }
 
 
@@ -81,7 +81,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $this->_start_render(self::INDEX_MENU_ID);
 
     // TODO load the block that we want to load programatically
-    //      try to load the Salsify_Connect_Block_Adminhtml_ManageImports
+    //      try to load the Salsify_Connect_Block_Adminhtml_Manageimports
     //      block as it SHOULD be able to do the trick...
     $configurl = $this->_get_url('config');
     $usage = '<h1>Import Process</h1>'
