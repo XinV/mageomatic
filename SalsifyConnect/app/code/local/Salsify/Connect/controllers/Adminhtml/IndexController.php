@@ -79,27 +79,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
   public function indexAction() {
     $this->_start_render(self::INDEX_MENU_ID);
-
-    // TODO load the block that we want to load programatically
-    //      try to load the Salsify_Connect_Block_Adminhtml_Manageimports
-    //      block as it SHOULD be able to do the trick...
-    $configurl = $this->_get_url('config');
-    $usage = '<h1>Import Process</h1>'
-           . '<ul>'
-           . '  <li><a href="'.$configurl.'">Create a configuration</a></li>'
-           . '</ul>';
-    $this->_render_html($usage);
-
-
-    // TODO how do we get the block to show here?
-
-    // saw this:
-    // $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
-
-    // tried this:
-    // $imports_block = Mage::getBlock('salsify_connect/adminhtml_manageimports');
-    // $this->_addContent($imports_block);
-
+    // everything for managing imports already taken care of by standard layout
+    // stuff.
     $this->_end_render();
   }
 

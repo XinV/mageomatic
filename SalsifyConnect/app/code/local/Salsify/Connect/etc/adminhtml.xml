@@ -47,11 +47,6 @@
           <action>salsify/adminhtml_index/test</action>
         </test>
 
-        <form_test module="salsify_connect">
-          <title>My Form</title>
-          <action>salsify/adminhtml_myform</action>
-        </form_test>
-
         <cleaner module="salsify_connect">
           <title>DELETE SALSIFY DATA</title>
           <sort_order>100</sort_order>
@@ -75,10 +70,10 @@
           <catalog>
             <children>
               <!-- FIXME add the rest of the ACLs here -->
-              <form_text>
+              <manage_imports>
                 <!-- Note the title is not redundant, enve though it looks the same as in the menu listings above. This is how the ACL text will be displayed on System > Permissions > Roles > Role > Role Resources -->
-                <title>My Form</title>
-              </form_text>
+                <title>Manage Salsify Imports</title>
+              </manage_imports>
             </children>
           </catalog>
         </children>

@@ -14,29 +14,10 @@
     </reference>
   </default> -->
 
-  <!-- FIXME remove just trying to get this working -->
-  <salsify_connect_adminhtml_myform_index>
-    <update handle="salsify_connect_myform_index"/>
-    <reference name="content">
-      <block type="adminhtml/template" name="myform" template="salsify/myform.phtml"/>
-    </reference>
-  </salsify_connect_adminhtml_myform_index>
-
   <!-- full name of route -->
   <salsify_connect_adminhtml_index_index>
     <reference name="content">
       <block type="salsify_connect/adminhtml_manageimports" name="salsify_connect_manageimports" />
-
-      <!--
-      We know this works, so we know that this configuration file is being
-      loaded correctly.
-      -->
-      <block type="core/text" name="index">
-        <action method="setText">
-          <val>TESTING</val>
-        </action>
-      </block>
-      
     </reference>
   </salsify_connect_adminhtml_index_index>
 </layout>
