@@ -2,7 +2,7 @@
 /*
  * Grid for displaying all the import runs that have happened.
  */
-class Foo_Bar_Block_Adminhtml_Manageimports_Grid extends Mage_Adminhtml_Block_Widget_Grid {
+class Salsify_Connect_Block_Adminhtml_Manageimports_Grid extends Mage_Adminhtml_Block_Widget_Grid {
 
   public function __construct() {
     parent::__construct();
