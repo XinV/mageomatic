@@ -1,4 +1,7 @@
 <?php
+/*
+ * Grid for displaying all the import runs that have happened.
+ */
 class Foo_Bar_Block_Adminhtml_ManageImports_Grid extends Mage_Adminhtml_Block_Widget_Grid {
 
   public function __construct() {
@@ -6,7 +9,7 @@ class Foo_Bar_Block_Adminhtml_ManageImports_Grid extends Mage_Adminhtml_Block_Wi
      
     // Set some defaults for our grid
     $this->setDefaultSort('id');
-    $this->setId('salsify_connect_manageimports_grid');
+    // $this->setId('salsify_connect_manageimports_grid');
     $this->setDefaultDir('desc');
     $this->setSaveParametersInSession(true);
   }

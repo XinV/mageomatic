@@ -1,6 +1,6 @@
 <?php
 /*
- * UI for managing Salsify imports.
+ * Simply holds the grid that will display all the import runs.
  */
 class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
