@@ -3,13 +3,13 @@
     <tr>
     <td><h3>Salsify Account Configuration</h3></td>
       <td class="a-right">
-        <button onclick="editForm.submit()" class="scalable save" type="button"><span>Submit my form</span></button>
+        <button onclick="editForm.submit()" class="scalable save" type="button"><span>Save</span></button>
       </td>
     </tr>
   </table>
 </div>
 
-<form id="salsify_connect_configuration" action="<?php $this->getUrl(); ?>" method="POST">
+<form id="editForm" action="<?php $this->getUrl(); ?>" method="POST">
   <table>
     <input type="text" name="api-key" placeholder="Salsify API Key"/>
   </table>
