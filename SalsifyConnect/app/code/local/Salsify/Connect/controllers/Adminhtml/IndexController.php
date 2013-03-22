@@ -150,16 +150,12 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     // $this->_render_html('<h1>Configuration created: ' . $id . '</h1>');
     // $this->_render_html('Next: <a href="'.$import_url.'">Kick off import</a>');
 
-    $config = Mage::getModel('salsify_connect/configuration')
-                  ->getInstance();
-    $url = $this->_get_url('config');
 
     // TODO we need to figure out if this is a GET or a POST/PUT
+    // TODO move this to a layout somewhere?
 
     $layout = $this->getLayout();
     $config_block = $layout->createBlock('salsify_connect/adminhtml_config');
-    $config_block->setData('config', $config);
-    $config_block->setData('url', $url);
     $this->_addContent($config_block);
 
     $this->_end_render();
