@@ -130,13 +130,13 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       // TODO any validation at all :)
       $config = Mage::getModel('salsify_connect/configuration')->getInstance();
 
-      if (array_key_exists('api_key', $POST)) {
+      if (array_key_exists('api_key', $_POST)) {
         $config->setApiKey($_POST['api_key']);
       } else {
         $config->setApiKey('');
       }
 
-      if (array_key_exists('url', $POST)) {
+      if (array_key_exists('url', $_POST)) {
         $config->setUrl($_POST['url']);
       } else {
         $config->setUrl('');
