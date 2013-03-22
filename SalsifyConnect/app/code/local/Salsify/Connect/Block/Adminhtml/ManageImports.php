@@ -12,7 +12,7 @@ class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Adminhtml_Block
     // $this->_controller = 'adminhtml_index';
     // $this->_headerText = $this->__('Manage Salsify Imports');
      
-    parent::__construct();
+    // parent::__construct();
   }
 
 }
