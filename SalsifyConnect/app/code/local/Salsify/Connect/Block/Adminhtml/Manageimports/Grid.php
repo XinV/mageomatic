@@ -45,6 +45,13 @@ class Salsify_Connect_Block_Adminhtml_Manageimports_Grid extends Mage_Adminhtml_
       )
     );
 
+    $this->addColumn('start_time',
+      array(
+        'header'=> $this->__('Start Time'),
+        'index' => 'start_time'
+      )
+    );
+
     return parent::_prepareColumns();
   }
 

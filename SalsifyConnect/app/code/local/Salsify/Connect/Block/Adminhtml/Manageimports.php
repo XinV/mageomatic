@@ -4,10 +4,6 @@
  */
 class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
-  // private static function _log($msg) {
-  //   Mage::log('Block_Adminhtml_Manageimports: ' . $msg, null, 'salsify.log', true);
-  // }
-
   public function __construct() {
     // module name
     $this->_blockGroup = 'salsify_connect';
