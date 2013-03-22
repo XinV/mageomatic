@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <layout version="0.0.1">
-  <default>
+  <!-- <default>
     <reference name="head">
       <action method="addItem">
         <type>skin_css</type>
@@ -8,15 +8,15 @@
         <params/>
       </action>
     </reference>
-  </default>
+  </default> -->
 
   <!-- FIXME just trying to get this working -->
-  <adminhtml_salsify_connect_myform_index>
+  <salsify_connect_adminhtml_myform_index>
     <update handle="salsify_connect_myform_index"/>
     <reference name="content">
       <block type="adminhtml/template" name="myform" template="salsify_connect/myform.phtml"/>
     </reference>
-  </adminhtml_salsify_connectmyform_index>
+  </salsify_connect_adminhtml_myform_index>
 
   <!-- FIXME this is clearly not being loaded -->
   <salsify_connect_adminhtml_index>
