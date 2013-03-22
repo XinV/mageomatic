@@ -71,13 +71,13 @@
 
   <admin>
     <routers>
-      <salsifyadmin>
+      <salsify_connect>
         <use>admin</use>
         <args>
           <module>Salsify_Connect</module>
           <frontName>salsify</frontName>
         </args>
-      </salsifyadmin>
+      </salsify_connect>
     </routers>
   </admin>
 
