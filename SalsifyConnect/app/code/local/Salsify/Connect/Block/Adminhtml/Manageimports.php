@@ -20,7 +20,7 @@ class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block
     parent::__construct();
 
     // remove the Add New button
-    $this->removeButton(’add’);
+    $this->removeButton('add');
   }
 
 }
