@@ -129,6 +129,9 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $params = $this->getRequest()->getParams();
     foreach ($params as $param) {
       self::_log("PARAM: " . $param);
+      if (is_array($param)) {
+        self::_log("  ARRAY: " . var_export($param,true));
+      }
     }
 
     // if (!array_key_exists('api_key', $params)) {
