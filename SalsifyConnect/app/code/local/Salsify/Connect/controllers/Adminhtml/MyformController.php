@@ -2,7 +2,7 @@
 class Salsify_Connect_Adminhtml_MyformController extends Mage_Adminhtml_Controller_Action
 {
     public function indexAction() {
-        $this->loadLayout()->renderLayout();
+      $this->loadLayout()->renderLayout();
     }
     
     public function postAction() {
