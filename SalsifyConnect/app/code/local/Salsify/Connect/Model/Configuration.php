@@ -7,6 +7,10 @@
  */
 class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
 
+  private static function _log($msg) {
+    Mage::log('Configuration: ' . $msg, null, 'salsify.log', true);
+  }
+
   protected function _construct() {
     $this->_init('salsify_connect/configuration');
   }
@@ -17,7 +21,7 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
   public function getInstance() {
     $configurations = $this->getCollection();
     if (empty($configurations)) {
-      echo "NO CONFIGURATIONS";
+      self::log("NO CONFIGURATIONS");
     } else {
       foreach ($configurations as $config) {
         var_dump($config);
