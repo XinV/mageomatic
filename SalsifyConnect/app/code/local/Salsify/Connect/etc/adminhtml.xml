@@ -67,4 +67,21 @@
     </salsify_connect_menu>
   </menu>
 
+  <acl>
+    <resources>
+      <admin>
+        <children>
+          <catalog>
+            <children>
+              <!-- FIXME add the rest of the ACLs here -->
+              <form_text>
+                <title>My Form</title>
+              </form_text>
+            </children>
+          </catalog>
+        </children>
+      </admin>
+    </resources>
+  </acl>
+
 </config>
