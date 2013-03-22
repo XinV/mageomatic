@@ -21,8 +21,7 @@
     <helpers>
       <salsify_connect>
         <!-- interestingly, this is translated to a directory, as in:
-             Salsify/Connect/Helper
-        -->
+             Salsify/Connect/Helper -->
         <class>Salsify_Connect_Helper</class>
       </salsify_connect>
     </helpers>
@@ -106,7 +105,9 @@
     <layout>
       <updates>
         <salsify_connect>
-          <!-- could be named anything. we're trying to be good citizens -->
+          <!-- could be named anything. we're trying to be good citizens.
+               note that if the file doesn't exist, this fails silently. the
+               only way you can tell is that the layout doesn't show up. -->
           <file>salsify/connect.xml</file>
         </salsify_connect>
       </updates>

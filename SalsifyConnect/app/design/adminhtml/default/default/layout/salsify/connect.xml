@@ -3,7 +3,7 @@
   All layout information for the Salsify Connect plugin.
 -->
 <layout>
-  <default>
+  <<!-- default>
     <reference name="head">
       <action method="addItem">
         <type>skin_css</type>
@@ -11,9 +11,9 @@
         <params/>
       </action>
     </reference>
-  </default>
+  </default> -->
 
-  <!-- FIXME just trying to get this working -->
+  <!-- FIXME remove just trying to get this working -->
   <salsify_connect_adminhtml_myform_index>
     <update handle="salsify_connect_myform_index"/>
     <reference name="content">
@@ -21,20 +21,20 @@
     </reference>
   </salsify_connect_adminhtml_myform_index>
 
-  <!-- FIXME this is clearly not being loaded -->
+  <!-- full name of route -->
   <salsify_connect_adminhtml_index_index>
     <reference name="content">
-      <!-- <block type="salsify_connect/salsifyadmin_manageimports" name="manageimports" /> -->
+      <block type="salsify_connect/adminhtml_manageimports" name="manageimports" />
       
       <!--
       We know this works, so we know that this configuration file is being
       loaded correctly.
       -->
-      <block type="core/text" name="index">
+      <!-- <block type="core/text" name="index">
         <action method="setText">
           <val>TESTING</val>
         </action>
-      </block>
+      </block> -->
       
     </reference>
   </salsify_connect_adminhtml_index_index>
