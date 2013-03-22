@@ -30,11 +30,11 @@
       We know this works, so we know that this configuration file is being
       loaded correctly.
       -->
-      <!-- <block type="core/text" name="index">
+      <block type="core/text" name="index">
         <action method="setText">
           <val>TESTING</val>
         </action>
-      </block> -->
+      </block>
       
     </reference>
   </salsify_connect_adminhtml_index_index>
