@@ -57,10 +57,9 @@
   <layout>
     <updates>
       <salsify_connect>
-        <file>salsifyconnect.xml</file>
+        <file>salsifyconnect.xmlfoobar</file>
       </salsify_connect>
     </updates>
   </layout>
-
 
 </config>
