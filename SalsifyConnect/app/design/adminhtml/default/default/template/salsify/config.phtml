@@ -8,7 +8,7 @@
   </tr>
   </table>
 </div>
-<?= $this->getSalsifyUrl() ?>
+
 <div class="entry-edit">
   <form id="edit_form" name="edit_form" method="post" action="<?= $this->getUrl('*/*/post') ?>">
     <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
@@ -21,7 +21,7 @@
         </tr>
         <tr>
           <td class="label">Salsify Application URL <span class="required">*</span></td>
-          <td class="input-ele"><input class="input-text required-entry" name="configuration[url]" value="<?= $this->getSalsifyUrl() ?>" /></td>
+          <td class="input-ele"><input class="input-text required-entry" name="configuration[url]" value="<?php echo $this->getSalsifyUrl(); ?>" /></td>
         </tr>
       </table>
     </fieldset>
