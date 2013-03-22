@@ -2,7 +2,7 @@
 /*
  * UI for managing Salsify imports.
  */
-class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Adminhtml_Block_Widget_Grid_Container {
+class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Core_Block_Template {
 
   // private static function _log($msg) {
   //   Mage::log('Block_Adminhtml_ManageImports: ' . $msg, null, 'salsify.log', true);
