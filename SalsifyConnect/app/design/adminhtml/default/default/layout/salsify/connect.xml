@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+<!--
+  All layout information for the Salsify Connect plugin.
+-->
 <layout>
   <default>
     <reference name="head">

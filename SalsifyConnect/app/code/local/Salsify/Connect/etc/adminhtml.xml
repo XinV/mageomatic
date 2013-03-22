@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
+  <!--
+  Define the Salsify Connect menu in the admin HTML.
+  -->
   <menu>
     <salsify_connect_menu module="salsify_connect">
       <title>Salsify Connect</title>
@@ -59,6 +62,12 @@
     </salsify_connect_menu>
   </menu>
 
+  <!--
+  To be a well-behaved module you want to let the Magento administrator make
+  certain actions in this module off limits to most users of the system. Since
+  Salsify imports and exports affect an entire system this seemed important to
+  enable admins to lock down.
+  -->
   <acl>
     <resources>
       <admin>

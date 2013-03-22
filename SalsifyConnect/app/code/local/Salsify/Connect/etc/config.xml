@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
+  <!--
+  note: in some places here salsify_connect MUST refer to the module, which is
+  company_module. in others it's simply used as a unique identifier. frankly i
+  don't know with any certainty which is which, but sticking with it everywhere
+  a block of XML needs an identifier tends to be pretty safe.
+  -->
+
 
   <!-- TODO need to add dependencies for ApiImport -->
 
@@ -13,19 +20,28 @@
   <global>
     <helpers>
       <salsify_connect>
-          <class>Salsify_Connect_Helper</class>
+        <!-- interestingly, this is translated to a directory, as in:
+             Salsify/Connect/Helper
+        -->
+        <class>Salsify_Connect_Helper</class>
       </salsify_connect>
     </helpers>
 
     <models>
       <salsify_connect>
+        <!-- also specifies a directory -->
         <class>Salsify_Connect_Model</class>
+        <!-- reference to XML element below. just needs to be unique -->
         <resourceModel>salsify_connect_resource</resourceModel>
       </salsify_connect>
       <salsify_connect_resource>
+        <!-- also specifies a directory -->
         <class>Salsify_Connect_Model_Resource</class>
         <entities>
           <configuration>
+            <!-- table == DB table. basically we call the node 'configuration'
+                 but really it's salsify_connect/configuration for reference in
+                 magento, and 'salsify_connect_configuration' in the DB -->
             <table>salsify_connect_configuration</table>
           </configuration>
           <import_run>
@@ -42,6 +58,7 @@
       <salsify_connect_setup>
         <setup>
           <module>Salsify_Connect</module>
+          <!-- full path to setup file, Setup.php -->
           <class>Salsify_Connect_Model_Resource_Setup</class>
         </setup>
       </salsify_connect_setup>
@@ -62,6 +79,7 @@
 
     <blocks>
       <salsify_connect>
+        <!-- also specifies a directory -->
         <class>Salsify_Connect_Block</class>
       </salsify_connect>
     </blocks>
@@ -75,6 +93,7 @@
         <use>admin</use>
         <args>
           <module>Salsify_Connect</module>
+          <!-- name of the adminhtml path, so index.php/salsify/* -->
           <frontName>salsify</frontName>
         </args>
       </salsify_connect>
@@ -83,11 +102,12 @@
 
 
   <adminhtml>
-    <!-- This cannot be moved to adminhtml.xml -->
+    <!-- This cannot be moved to adminhtml.xml. hard lesson. -->
     <layout>
       <updates>
         <salsify_connect>
-          <file>salsifyconnect.xml</file>
+          <!-- could be named anything. we're trying to be good citizens -->
+          <file>salsify_connect/connect.xml</file>
         </salsify_connect>
       </updates>
     </layout>
