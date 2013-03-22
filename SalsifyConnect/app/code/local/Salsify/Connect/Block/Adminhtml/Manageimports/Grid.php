@@ -6,29 +6,23 @@ class Salsify_Connect_Block_Adminhtml_Manageimports_Grid extends Mage_Adminhtml_
 
   public function __construct() {
     parent::__construct();
-     
-    // Set some defaults for our grid
-    $this->setDefaultSort('id');
+    $this->setDefaultSort('start_time');
     $this->setId('salsify_connect_manageimports_grid');
     $this->setDefaultDir('desc');
     $this->setSaveParametersInSession(true);
   }
 
   protected function _getCollectionClass() {
-    // This is the model we are using for the grid
     return 'salsify_connect/importrun_collection';
   }
 
   protected function _prepareCollection() {
-    // Get and set our collection for the grid
     $collection = Mage::getResourceModel($this->_getCollectionClass());
     $this->setCollection($collection);
-
     return parent::_prepareCollection();
   }
 
   protected function _prepareColumns() {
-    // Add the columns that should appear in the grid
     $this->addColumn('id',
       array(
         'header'=> $this->__('ID'),

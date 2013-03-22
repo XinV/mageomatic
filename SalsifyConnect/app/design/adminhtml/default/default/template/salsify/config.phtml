@@ -1,4 +1,13 @@
-<h1>Salsify Account Details<h1>
+<div class="content-header">
+  <table cellspacing="0" class="grid-header">
+    <tr>
+    <td><h3><?=$this->__('Salsify Account Configuration')?></h3></td>
+      <td class="a-right">
+        <button onclick="editForm.submit()" class="scalable save" type="button"><span>Submit my form</span></button>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <form id="salsify_connect_configuration" action="<?php $this->getUrl(); ?>" method="POST">
   <table>
