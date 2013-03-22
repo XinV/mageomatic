@@ -18,6 +18,9 @@ class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block
     $this->_headerText = $this->__('Manage Salsify Imports');
      
     parent::__construct();
+
+    // remove the Add New button
+    $this->removeButton(’add’);
   }
 
 }
