@@ -24,6 +24,7 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
     if ($config->getId()) {
       return $config;
     } else {
+      $config->setUrl('https://app.salsify.com/');
       $config->save();
       self::_log("CONFIG: " . $config->getId());
       return $this;
