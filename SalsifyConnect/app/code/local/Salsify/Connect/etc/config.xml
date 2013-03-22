@@ -83,6 +83,7 @@
 
 
   <adminhtml>
+    <!-- This cannot be moved to adminhtml.xml -->
     <layout>
       <updates>
         <salsify_connect>

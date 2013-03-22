@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <layout>
-  <!-- <default>
+  <default>
     <reference name="head">
       <action method="addItem">
         <type>skin_css</type>
@@ -8,7 +8,7 @@
         <params/>
       </action>
     </reference>
-  </default> -->
+  </default>
 
   <!-- FIXME just trying to get this working -->
   <salsify_connect_adminhtml_myform_index>
