@@ -3,8 +3,8 @@
   <!--
   All layout information for the Salsify Connect plugin.
   -->
-  
-  <<!-- default>
+
+  <!-- default>
     <reference name="head">
       <action method="addItem">
         <type>skin_css</type>
@@ -25,7 +25,7 @@
   <!-- full name of route -->
   <salsify_connect_adminhtml_index_index>
     <reference name="content">
-      <!-- <block type="salsify_connect/adminhtml_manageimports" name="salsify_connect_manageimports" /> -->
+      <block type="salsify_connect/adminhtml_manageimports" name="salsify_connect_manageimports" />
 
       <!--
       We know this works, so we know that this configuration file is being
