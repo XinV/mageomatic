@@ -18,7 +18,7 @@ class Salsify_Connect_Block_Adminhtml_Config extends Mage_Core_Block_Template {
   }
 
   public function getSalsifyUrl() {
-    return $this->_salsify_config->getSalsifyUrl();
+    return $this->_salsify_config->getUrl();
   }
 
 }
