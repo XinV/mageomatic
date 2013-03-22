@@ -10,7 +10,7 @@
     </reference>
   </default>
 
-  <salsify_connect_salsifyadmin_index>
+  <salsify_connect_adminhtml_index>
     <reference name="content">
       <!-- <block type="salsify_connect/salsifyadmin_manageimports" name="manageimports" /> -->
       
@@ -25,5 +25,5 @@
       </block>
       
     </reference>
-  </salsify_connect_salsifyadmin_index>
+  </salsify_connect_adminhtml_index>
 </layout>
