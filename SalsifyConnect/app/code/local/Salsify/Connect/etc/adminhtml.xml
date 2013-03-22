@@ -44,6 +44,11 @@
           <action>salsify/adminhtml_index/test</action>
         </test>
 
+        <form_test module="salsify_connect">
+          <title>My Form</title>
+          <action>salsify/adminhtml_myform</action>
+        </form_test>
+
         <cleaner module="salsify_connect">
           <title>DELETE SALSIFY DATA</title>
           <sort_order>100</sort_order>
@@ -57,7 +62,7 @@
   <layout>
     <updates>
       <salsify_connect>
-        <file>salsifyconnect.xmlfoobar</file>
+        <file>salsifyconnect.xml</file>
       </salsify_connect>
     </updates>
   </layout>

@@ -1,0 +1,27 @@
+<div class="content-header">
+    <table cellspacing="0" class="grid-header">
+        <tr>
+            <td><h3><?=$this->__('My form title')?></h3></td>
+            <td class="a-right">
+                <button onclick="editForm.submit()" class="scalable save" type="button"><span>Submit my form</span></button>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="entry-edit">
+    <form id="edit_form" name="edit_form" method="post" action="<?=$this->getUrl('*/*/post')?>">
+        <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
+        <h4 class="icon-head head-edit-form fieldset-legend"><?=$this->__('This fieldset name')?></h4>
+        <fieldset id="my-fieldset">
+            <table cellspacing="0" class="form-list">
+                <tr>
+                    <td class="label"><?=$this->__('Field label')?> <span class="required">*</span></td>
+                    <td class="input-ele"><input class="input-text required-entry" name="myform[myfield]" /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+</div>
+<script type="text/javascript">
+    var editForm = new varienForm('edit_form');
+</script>
