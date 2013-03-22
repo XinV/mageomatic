@@ -11,9 +11,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
 
   // TODO remove
-  const API_KEY = 'P9kH55zimg4viXWBdvB5';
-
-  // TODO remove
   const BASE_ADMIN_URL = 'salsify/adminhtml_index/';
 
   // TODO these necessary here?
@@ -44,6 +41,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
       array('label' => 'Salsify Account Details', 'action' => 'config'),
+      array('label' => 'Import History', 'action' => 'manageimports'),
       array('label' => 'Import from Salsify', 'action' => 'import'),
       array('label' => 'Export to Salsify', 'action' => 'export')
     ));
@@ -103,8 +101,10 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function exportAction() {
     $this->_start_render('salsify_connect_menu/export');
 
+    $config = Mage::getModel('salsify_connect/configuration')->getInstance();
+
     $salsify = Mage::helper('salsify_connect');
-    $salsify->export_data('http://127.0.0.1:5000', self::API_KEY);
+    $salsify->export_data('http://127.0.0.1:5000', $config->getApiKey());
 
     $this->_render_html("<h1>Export to Salsify complete.</h1>");
 
@@ -122,15 +122,14 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // TODO make this into a form that the user can use to enter a configuration
+  // TODO any validation at all on posted data :)
   public function configAction() {
     $this->_start_render('salsify_connect_menu/config');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (array_key_exists('configuration', $_POST)) {
         $config_data = $_POST['configuration'];
-
-        // TODO any validation at all :)
+        
         $config = Mage::getModel('salsify_connect/configuration')->getInstance();
 
         if (array_key_exists('api_key', $config_data)) {
@@ -151,7 +150,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       }
     }
 
-    // TODO we need to figure out if this is a GET or a POST/PUT
     // TODO move this to a layout somewhere?
 
     $layout = $this->getLayout();
