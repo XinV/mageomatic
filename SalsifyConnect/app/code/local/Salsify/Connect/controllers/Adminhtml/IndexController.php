@@ -41,7 +41,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
       array('label' => 'Salsify Account Details', 'action' => 'config'),
-      array('label' => 'Import History', 'action' => 'manageimports'),
+      array('label' => 'Import History', 'action' => 'index'),
       array('label' => 'Import from Salsify', 'action' => 'import'),
       array('label' => 'Export to Salsify', 'action' => 'export')
     ));
