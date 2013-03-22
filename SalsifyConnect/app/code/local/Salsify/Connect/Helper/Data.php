@@ -26,9 +26,10 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   /**
    * @param $configuration Salsify Connect Configuration model instance.
    */
-  public function set_configuration($configuration) {
-    $this->_config = $configuration;
-  }
+  // FIXME I'm not sure this is actually called from anywhere
+  // public function set_configuration($configuration) {
+  //   $this->_config = $configuration;
+  // }
 
 
   // It is so silly that Magento doesn't create this itself when it's core

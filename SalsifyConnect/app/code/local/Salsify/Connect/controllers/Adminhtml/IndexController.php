@@ -142,11 +142,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     // }
     // $url = urldecode($params['salsify_url']);
 
-    
-
     // $url = 'http://127.0.0.1:5000/';
 
-    // $config = Mage::getModel('salsify_connect/configuration');
     // $config->setApiKey(self::API_KEY);
     // $config->setUrl($url);
     // $config->save();
@@ -157,11 +154,17 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     // $this->_render_html('<h1>Configuration created: ' . $id . '</h1>');
     // $this->_render_html('Next: <a href="'.$import_url.'">Kick off import</a>');
 
+    $config = Mage::getModel('salsify_connect/configuration')
+                  ->getInstance();
 
     // TODO we need to figure out if this is a GET or a POST/PUT
 
     $layout = $this->getLayout();
     $config_block = $layout->createBlock('salsify_connect/adminhtml_config');
+
+    // FIXME need to get the Salsify configuration
+    // $config_block->setEntity($object);
+
     $this->_addContent($config_block);
     
 
