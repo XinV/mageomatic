@@ -9,10 +9,12 @@ class Salsify_Connect_Block_Adminhtml_ManageImports extends Mage_Adminhtml_Block
   // }
 
   public function __construct() {
-    // The blockGroup must match the first half of how we call the block, and
-    // controller matches the second half.
+    // module name
     $this->_blockGroup = 'salsify_connect';
-    $this->_controller = 'adminhtml_index';
+
+    // is actually the path to your block class (NOT YOUR CONTROLLER)
+    $this->_controller = 'adminhtml_manageimports';
+
     $this->_headerText = $this->__('Manage Salsify Imports');
      
     parent::__construct();
