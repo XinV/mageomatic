@@ -156,15 +156,15 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     $config = Mage::getModel('salsify_connect/configuration')
                   ->getInstance();
+    $url = $this->_get_url('config');
 
     // TODO we need to figure out if this is a GET or a POST/PUT
 
     $layout = $this->getLayout();
     $config_block = $layout->createBlock('salsify_connect/adminhtml_config');
-    $config_block->setEntity($config);
-
+    $config_block->setData('config', $config);
+    $config_block->setData('url', $url);
     $this->_addContent($config_block);
-    
 
     $this->_end_render();
   }
