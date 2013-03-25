@@ -113,7 +113,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     // next enqueue it as a background job
     $job = Mage::getModel('salsify_connect/exportjob');
     $job->setName('Export to Salsify #' . $export_run_id)
-        ->setImportRunId($export_run_id)
+        ->setExportRunId($export_run_id)
         ->enqueue();
 
     $response = $this->getResponse();
