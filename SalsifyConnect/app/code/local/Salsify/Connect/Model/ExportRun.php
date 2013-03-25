@@ -80,7 +80,6 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     $this->_get_salsify_api();
     if (!$this->getStatus()) {
       $this->_set_status(self::STATUS_NOT_STARTED);
-      $this->save();
     }
   }
 

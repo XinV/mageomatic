@@ -67,7 +67,6 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
     if (!$this->getStatus()) {
       $this->setStatus(self::STATUS_NOT_STARTED);
-      $this->save();
     }
   }
 
