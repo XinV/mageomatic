@@ -13,7 +13,7 @@ var salsify = (function (parent) {
 
   // creates a background worker
   function createWorker(workerUrl) {
-    new Ajax.Request('" . $workerUrl ."', {
+    new Ajax.Request(workerUrl, {
       onSuccess: function(response) {
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
@@ -39,7 +39,7 @@ var salsify = (function (parent) {
     // return).
 
     // first create the export run...
-    new Ajax.Request('" . createUrl ."', {
+    new Ajax.Request(createUrl, {
       method: 'get',
       onSuccess: function(response) {
         console.log(response);
