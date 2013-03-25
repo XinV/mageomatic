@@ -40,7 +40,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
-      array('label' => 'Salsify Account Details', 'action' => 'config'),
+      array('label' => 'Salsify Account Details', 'action' => 'configuration'),
       array('label' => 'Import History', 'action' => 'index'),
       array('label' => 'Import from Salsify', 'action' => 'import'),
       array('label' => 'Export to Salsify', 'action' => 'export')
@@ -112,20 +112,11 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
+  /**
+   * Action for displaying and editing Salsify account details.
+   */
   public function configurationAction() {
     $this->_start_render(self::CONFIG_MENU_ID);
-
-    // must render this via a block
-    $this->_render_html('<h1>COMING SOON!</h1>');
-
-    $this->_end_render();
-  }
-
-
-  // TODO any validation at all on posted data :)
-  public function configAction() {
-    $this->_start_render('salsify_connect_menu/config');
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (array_key_exists('configuration', $_POST)) {
         $config_data = $_POST['configuration'];

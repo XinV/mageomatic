@@ -12,7 +12,7 @@
 
         <configuration module="salsify_connect">
           <title>Salsify Account Details</title>
-          <sort_order>2</sort_order>
+          <sort_order>0</sort_order>
           <action>salsify/adminhtml_index/configuration</action>
         </configuration>
         
