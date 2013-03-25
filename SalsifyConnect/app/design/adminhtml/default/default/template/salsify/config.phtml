@@ -10,10 +10,11 @@
 </div>
 
 <div class="entry-edit">
-  <form id="edit_form" name="edit_form" method="post" action="<?php echo $this->getUrl('*/*/config'); ?>">
+  <form id="salsify_configuration_edit_form" name="salsify_configuration_edit_form" method="post" action="<?php echo $this->getUrl('*/*/config'); ?>">
     <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
     <h4 class="icon-head head-edit-form fieldset-legend">Salsify Account Information</h4>
     <fieldset id="my-fieldset">
+      <!-- FIXME widths here -->
       <table cellspacing="0" class="form-list">
         <tr>
           <td class="label">API Key <span class="required">*</span></td>
@@ -29,5 +30,5 @@
 </div>
 
 <script type="text/javascript">
-  var editForm = new varienForm('edit_form');
+  var editForm = new varienForm('salsify_configuration_edit_form');
 </script>
