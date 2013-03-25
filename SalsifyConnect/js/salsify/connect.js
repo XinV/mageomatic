@@ -40,6 +40,7 @@ var salsify = (function (parent) {
 
     // first create the export run...
     new Ajax.Request('" . createUrl ."', {
+      method: 'get',
       onSuccess: function(response) {
         console.log(response);
 
