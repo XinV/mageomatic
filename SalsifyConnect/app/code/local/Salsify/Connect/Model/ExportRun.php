@@ -9,7 +9,7 @@
  */
 class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
 
-  private function _log($msg) {
+  private static function _log($msg) {
     Mage::log('ExportRun: ' . $msg, null, 'salsify.log', true);
   }
 
@@ -54,7 +54,10 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   }
 
   public function set_error($e) {
-    $this->_log("Setting export run status to error: " . $e->getMessage());
+    if (is_string($e)) {
+      $e = new Exception($e);
+    }
+    self::_log("Setting export run status to error: " . $e->getMessage());
     $this->setStatus(self::STATUS_ERROR);
     $this->save();
     throw $e;
