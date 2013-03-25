@@ -67,6 +67,14 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
+  // helper method to return json from a function
+  private function _respond_with_json($obj) {
+    $response = $this->getResponse();
+    $response->setHeader('Content-type', 'application/json');
+    $response->setBody(Mage::helper('core')->jsonEncode($obj);
+  }
+
+
    /**
    * Check currently called action by permissions for current user
    *
@@ -103,7 +111,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   // creates a new export
   // FIXME need to give better error messages and show them in the client
   public function createexportAction() {
-    self::_log("creating export run.");
+    self::_log("creating export run...");
 
     // first create the model instance
     $model = Mage::getModel('salsify_connect/exportrun');
@@ -117,9 +125,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
         ->setExportRunId($export_run_id)
         ->enqueue();
 
-    $response = $this->getResponse();
-    $response->setHeader('Content-type', 'application/json');
-    $response->setBody(Mage::helper('core')->jsonEncode(array('success' => true)));
+    $this->_respond_with_json(array('success' => true)));
   }
 
 
@@ -234,8 +240,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function createworkerAction() {
     $salsify = Mage::helper('salsify_connect');
     $salsify->start_worker();
-
-    // FIXME does this respond with OK?
+    $this->_respond_with_json(array('success' => true));
   }
 
 
