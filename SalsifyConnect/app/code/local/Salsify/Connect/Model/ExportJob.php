@@ -29,7 +29,7 @@ class Salsify_Connect_Model_ExportJob extends Mage_Core_Model_Abstract {
     $export->load($export_run_id);
     if (!$export->getId()) {
       $error = "Export run id given does not refer to a valid export run: " . $export_run_id;
-      self::_log($error)
+      self::_log($error);
       throw new Exception($error);
     }
 
