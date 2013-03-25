@@ -8,7 +8,7 @@
     <reference name="head">
       <action method="addItem">
         <type>skin_css</type>
-        <name>salsify_connect/css/style.css</name>
+        <name>css/style.css</name>
         <params/>
       </action>
     </reference>
