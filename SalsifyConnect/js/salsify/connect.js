@@ -48,11 +48,15 @@ var salsify = (function (parent) {
     new Ajax.Request(createUrl, {
       method: 'get',
       onSuccess: function(response) {
+        // FIXME delete
+        console.log(response);
+
         // next kickoff the background worker and, if successful, reload page
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        reloadPage();
+        // FIXME uncomment
+        // reloadPage();
       }
     });
   };
