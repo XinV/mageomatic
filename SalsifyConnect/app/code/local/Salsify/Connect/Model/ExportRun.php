@@ -18,35 +18,40 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   private $_config;
   private $_salsify_api;
 
-  // FIXME need to update the status for export
-  //
+
+  private $_export_file;
+
+
   const STATUS_ERROR                 = -1;
   const STATUS_NOT_STARTED           = 0;
-  // const STATUS_SALSIFY_PREPARING     = 1;
-  // const STATUS_DOWNLOAD_JOB_IN_QUEUE = 2;
-  // const STATUS_DOWNLOADING           = 3;
-  // const STATUS_LOADING               = 4;
-  // const STATUS_DONE                  = 5;
-  // public function get_status_string() {
-  //   switch ($this->getStatus()) {
-  //     case self::STATUS_ERROR:
-  //       return "Error: Failed";
-  //     case self::STATUS_NOT_STARTED:
-  //       return "Export not started";
-  //     case self::STATUS_SALSIFY_PREPARING:
-  //       return "Salsify is preparing the data.";
-  //     case self::STATUS_DOWNLOAD_JOB_IN_QUEUE:
-  //       return "Download job is in the queue waiting to start.";
-  //     case self::STATUS_DOWNLOADING:
-  //       return "Magento is downloading the data from Salsify.";
-  //     case self::STATUS_LOADING:
-  //       return "Magento is loading the local Salsify data.";
-  //     case self::STATUS_DONE:
-  //       return "Import from Salsify has been successfully loaded into Magento.";
-  //     default:
-  //       throw new Exception("INTERNAL ERROR: unknown status: " . $this->getStatus());
-  //   }
-  // }
+  const STATUS_EXPORTING             = 1;
+  const STATUS_EXPORTING_DONE        = 2;
+  const STATUS_UPLOADING_TO_SALSIFY  = 3;
+  const STATUS_UPLOAD_DONE           = 4;
+  const STATUS_SALSIFY_LOADING       = 5;
+  const STATUS_DONE                  = 6;
+  public function get_status_string() {
+    switch ($this->getStatus()) {
+      case self::STATUS_ERROR:
+        return "Error: Failed";
+      case self::STATUS_NOT_STARTED:
+        return "Export not started";
+      case self::STATUS_EXPORTING:
+        return "Magento is preparing the data for Salsify.";
+      case self::STATUS_EXPORTING_DONE:
+        return "Export file for Salsify generated. Preparing to upload.";
+      case self::STATUS_UPLOADING_TO_SALSIFY:
+        return "Uploading data to Salsify.";
+      case self::STATUS_UPLOAD_DONE:
+        return "Upload to Salsify has been completed";
+      case self::STATUS_SALSIFY_LOADING:
+        return "Waiting for Salsify to finish processing the export.";
+      case self::STATUS_DONE:
+        return "Export to Salsify has been completed successfully.";
+      default:
+        throw new Exception("INTERNAL ERROR: unknown status: " . $this->getStatus());
+    }
+  }
 
   public function set_error($e) {
     $this->_log("Setting export run status to error: " . $e->getMessage());
@@ -55,8 +60,10 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     throw $e;
   }
 
+
   protected function _construct() {
-    $this->_get_config();
+    // done implicitly by _get_salsify_api()
+    // $this->_get_config();
     $this->_get_salsify_api();
 
     if (!$this->getStatus()) {
@@ -64,6 +71,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     }
     $this->_init('salsify_connect/exportrun');
   }
+
 
   // ensures that the Salsify account confguration is complete.
   private function _get_config() {
@@ -77,7 +85,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     return $this->_config;
   }
 
-  // ensures that the Salsify account 
+
   private function _get_salsify_api() {
     if (!$this->_salsify_api) {
       $config = $this->_get_config();
@@ -85,16 +93,64 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
       $this->_salsify_api->set_base_url($config->getUrl());
       $this->_salsify_api->set_api_key($config->getApiKey());
-      // $token = $this->getToken();
     }
     return $this->_salsify_api;
   }
 
-  // kicks off the export!
-  public function start_export() {
-    // FIXME move to a background job or something like that...
-    $salsify = Mage::helper('salsify_connect');
-    // $salsify->export_data();
+
+  // creates the export document for Salsify.
+  public function create_export_file() {
+    if ($this->getStatus() !== self::STATUS_NOT_STARTED) {
+      $this->set_error("cannot create an export file when the ExportRun is not new.");
+    }
+
+    $this->setStatus(self::STATUS_EXPORTING);
+    $this->setStartTime(date('Y-m-d h:m:s', time()));
+    $this->save();
+
+    try {
+      $salsify = Mage::helper('salsify_connect');
+      $this->_export_file = $salsify->export_data();
+    } catch (Exception $e) {
+      $this->set_error($e);
+    }
+
+    $this->setStatus(self::STATUS_EXPORTING_DONE);
+    $this->save();
   }
 
+
+  // uploads the prepared export document to Salsify.
+  public function upload_to_salsify() {
+    if ($this->getStatus() !== self::STATUS_EXPORTING_DONE) {
+      $this->set_error("cannot start uploading to Salsify until the file has been exported");
+    }
+
+    $this->setStatus(self::STATUS_UPLOADING_TO_SALSIFY);
+    $this->save();
+
+    $success = $_salsify_api->export_to_salsify($this->_export_file);
+    if (!$success) {
+      $this->set_error("export of file to Salsify failed: " . $file);
+    }
+
+    $this->setStatus(self::STATUS_UPLOAD_DONE);
+    $this->save();
+  }
+
+
+  // polls Salsify to see whether it has finished processing the given export.
+  public function wait_for_salsify_to_complete() {
+    if ($this->getStatus() !== self::STATUS_UPLOAD_DONE) {
+      $this->set_error("file not yet uploaded to Salsify. cannot wait for it to complete.");
+    }
+
+    $this->setStatus(self::STATUS_SALSIFY_LOADING);
+    $this->save();
+
+    // FIXME implement the wait polling
+
+    $this->setStatus(self::STATUS_DONE);
+    $this->save();
+  }
 }

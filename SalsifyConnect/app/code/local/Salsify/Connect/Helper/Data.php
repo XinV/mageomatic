@@ -1,6 +1,9 @@
 <?php
 require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
 
+set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
+require_once('DJJob.php');
+
 /**
  * Helper class for Salsify Connect that does the heavy lifting, including
  * orchestrating downloading of Salsify Data, parsing the downloaded documents,
@@ -70,6 +73,30 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   }
 
 
+  private function _setup_delayed_jobs() {
+    $config  = Mage::getConfig()->getResourceConnectionConfig("default_setup");
+    DJJob::configure("mysql:host=" . $config->host . ";dbname=" . $config->dbname . ";port=" . $config->port,
+                     array('mysql_user' => $config->username, 'mysql_pass' => $config->password));
+  }
+
+
+  public function start_worker() {
+    $this->_setup_delayed_jobs();
+
+    $options = array();
+    $options['queue'] = 'salsify';
+    $options['count'] = 1; // this worker will quit after doing one job
+    $worker = new DJWorker($options);
+    $worker->start();
+  }
+
+
+  public function enqueue_job($job) {
+    $this->_setup_delayed_jobs();
+    DJJob::enqueue($job, 'salsify');
+  }
+
+
   // loads the data from the given file, which should be a valid Salsify json
   // document.
   public function import_data($file) {
@@ -123,11 +150,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     }
     fclose($stream);
 
-    self::_log("Exporting to file complete. Now need to send to Salsify: " . $file);
-    $salsify = Mage::helper('salsify_connect/salsifyapi');
-    $salsify->set_base_url($salsify_url);
-    $salsify->set_api_key($salsify_api_key);
-    return $salsify->export_to_salsify($file);
+    self::_log("Exporting to file complete: " . $file);
+    return $file;
   }
 
 

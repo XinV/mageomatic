@@ -1,8 +1,8 @@
 <?php
 
-set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
-require_once('DJJob.php');
-
+/**
+ * Main controller for all Salsify admin actions.
+ */
 class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controller_action {
 
   private static function _log($msg) {
@@ -10,13 +10,11 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // TODO remove
-  const BASE_ADMIN_URL = 'salsify/adminhtml_index/';
-
   // TODO these necessary here?
-  const INDEX_MENU_ID  = 'salsify_connect_menu/index';
   const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
-
+  const IMPORTS_MENU_ID  = 'salsify_connect_menu/index';
+  const EXPORTS_MENU_ID  = 'salsify_connect_menu/exports';
+  
 
   // returns whether this is a POST request or not
   private function _is_post() {
@@ -84,7 +82,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
    * Action for managing imports from Salsify to Magento.
    */
   public function indexAction() {
-    $this->_start_render(self::INDEX_MENU_ID);
+    $this->_start_render(self::IMPORTS_MENU_ID);
     // everything for managing imports already taken care of by standard layout
     // stuff.
     $this->_end_render();
@@ -95,21 +93,27 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
    * Action for managing exports from Magento to Salsify.
    */
   public function exportsAction() {
-    $this->_start_render('salsify_connect_menu/export');
+    $this->_start_render(self::EXPORTS_MENU_ID);
     // everything for managing exports already taken care of by standard layout
     // stuff.
     $this->_end_render();
   }
 
 
+  // creates a new export 
   public function createexportAction() {
+    // first create the model instance
     $model = Mage::getModel('salsify_connect/export_run');
-
     $model->save();
+    $export_run_id = $model->getId();
 
-    // FIXME should create the job to run in the background
+    // next enqueue it as a background job
+    $job = Mage::getModel('salsify_connect/exportjob');
+    $job->setName('Export to Salsify #' . $export_run_id)
+        ->setImportRunId($export_run_id)
+        ->enqueue();
 
-    $this->_redirectUrl($this->getUrl('*/*/exports'));
+    // don't need to return anything
   }
 
 
@@ -201,8 +205,10 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $this->_end_render();
   }
 
+
+  // FIXME remove once no longer necessary when full admin window is setup
   private function sneaky_worker_thread_start() {
-    $worker_url = $this->getUrl('*/*/worker');
+    $worker_url = $this->getUrl('*/*/createworker');
 
     // send in AJAX request to kick off the server worker process
     $worker_js = "
@@ -214,6 +220,16 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       });
     </script>";
     $this->_render_js($worker_js);
+  }
+
+
+  // kicks off a worker. this is meant only to start a new worker thread, and as
+  // such is only called via a javascript ajax call.
+  public function createworkerAction() {
+    $salsify = Mage::getModel('salsify_connect');
+    $salsify->start_worker();
+
+    // FIXME does this respond with OK?
   }
 
 

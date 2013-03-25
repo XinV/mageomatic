@@ -17,8 +17,10 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   }
 
 
+  // cached copies
   private $_config;
   private $_salsify_api;
+
 
   const STATUS_ERROR                 = -1;
   const STATUS_NOT_STARTED           = 0;
@@ -48,6 +50,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     }
   }
 
+
   public function set_error($e) {
     $this->_log("Setting import run status to error: " . $e->getMessage());
     $this->setStatus(self::STATUS_ERROR);
@@ -55,12 +58,14 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     throw $e;
   }
 
+
   protected function _construct() {
     if (!$this->getStatus()) {
       $this->setStatus(self::STATUS_NOT_STARTED);
     }
     $this->_init('salsify_connect/importrun');
   }
+
 
   public function start_import() {
     $this->setStatus(self::STATUS_SALSIFY_PREPARING);
@@ -76,17 +81,21 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     $this->save();
   }
 
+
   public function is_done() {
     return ((int)$this->getStatus() === self::STATUS_DONE);
   }
+
 
   public function is_waiting_on_salsify() {
     return ((int)$this->getStatus() === self::STATUS_SALSIFY_PREPARING);
   }
 
+
   public function is_waiting_on_worker() {
     return ((int)$this->getStatus() === self::STATUS_DOWNLOAD_JOB_IN_QUEUE);
   }
+
 
   // Return whether the status was advanced to downloading state.
   public function start_download_if_ready() {
@@ -114,10 +123,12 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     }
   }
 
+
   public function set_download_started() {
     $this->setStatus(self::STATUS_DOWNLOADING);
     $this->save();
   }
+
 
   public function set_download_complete() {
     if ($this->getStatus() !== self::STATUS_DOWNLOADING) {
@@ -128,14 +139,16 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     $this->save();
   }
 
+
   public function set_loading_complete() {
-        if ($this->getStatus() !== self::STATUS_LOADING) {
+    if ($this->getStatus() !== self::STATUS_LOADING) {
       throw new Exception("Cannot set_loading_complete unless you are downloading.");
     }
 
     $this->setStatus(self::STATUS_DONE);
     $this->save();
   }
+
 
   private function _get_config() {
     if (!$this->_config) {
@@ -148,6 +161,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     return $this->_config;
   }
 
+
   private function _get_salsify_api() {
     if (!$this->_salsify_api) {
       $config = $this->_get_config();
@@ -159,6 +173,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
     }
     return $this->_salsify_api;
   }
+
 
   private function async_download($import_run_id, $url) {
     $file = Mage::helper('salsify_connect')
