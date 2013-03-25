@@ -15,7 +15,8 @@ var salsify = (function (parent) {
   function createWorker(workerUrl) {
     new Ajax.Request('" . $workerUrl ."', {
       onSuccess: function(response) {
-        // woo hoo!
+        // note that this is unlikely to ever be called since the page will
+        // almost always be reloaded before this callback is given a chance.
       }
     });
   }
@@ -42,6 +43,9 @@ var salsify = (function (parent) {
       onSuccess: function(response) {
         // next kickoff the background worker
         createWorker(workerUrl);
+
+        // reload the page to show the newly created object
+        document.location.reload(true);
       }
     });
   };
