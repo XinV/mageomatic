@@ -21,8 +21,8 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.label {
 
 form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele {
   /* eyeball that this is reasonable-looking */
-  min-width: 50em;
+  min-width: 30em;
 }
 form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input {
-  min-width: 50em;
+  min-width: 30em;
 }
