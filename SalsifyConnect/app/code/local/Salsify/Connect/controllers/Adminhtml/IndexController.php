@@ -109,7 +109,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     // FIXME should create the job to run in the background
 
-    $this->_redirectUrl($this->getUrl('*/*/exports');
+    $this->_redirectUrl($this->getUrl('*/*/exports'));
   }
 
 
