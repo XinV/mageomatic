@@ -37,8 +37,8 @@ class Salsify_Connect_Block_Adminhtml_Manageexports_Grid extends Mage_Adminhtml_
 
     $this->addColumn('status',
       array(
-        'header'=> $this->__('Status'),
-        'index' => 'status'
+        'header'=> $this->__('Current Status'),
+        'index' => 'status_message'
       )
     );
 
