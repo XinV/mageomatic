@@ -2,8 +2,19 @@
  * Salsify Connect administration styling.
  */
 
-form#salsify_configuration_edit_form {
-  display: block;
-  /* FIXME change this */
-  background-color: red;
+form#salsify_configuration_edit_form,
+form#salsify_configuration_edit_form fieldset,
+form#salsify_configuration_edit_form fieldset table,
+form#salsify_configuration_edit_form fieldset table tbody,
+form#salsify_configuration_edit_form fieldset table tbody tr, {
+  width: 100%;
+}
+
+form#salsify_configuration_edit_form fieldset table tbody tr td.label {
+  text-align: right;
+  width:20%;
+}
+form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele {
+  /* eyeball that this is reasonable-looking */
+  width: 50%;
 }
