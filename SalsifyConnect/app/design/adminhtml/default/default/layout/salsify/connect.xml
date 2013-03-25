@@ -16,6 +16,14 @@
 
   <!-- full name of route -->
   <salsify_connect_adminhtml_index_index>
+    <reference name="head">
+      <action method="addItem">
+        <type>skin_css</type>
+        <name>css/style.css</name>
+        <params/>
+      </action>
+    </reference>
+
     <reference name="content">
       <block type="salsify_connect/adminhtml_manageimports" name="salsify_connect_manageimports" />
     </reference>
