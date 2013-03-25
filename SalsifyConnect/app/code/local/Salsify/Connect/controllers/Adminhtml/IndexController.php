@@ -105,7 +105,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     self::_log("creating export run.");
 
     // first create the model instance
-    $model = Mage::getModel('salsify_connect/export_run');
+    $model = Mage::getModel('salsify_connect/exportrun');
     $model->save();
     $export_run_id = $model->getId();
 
