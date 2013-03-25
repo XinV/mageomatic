@@ -116,7 +116,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
         ->enqueue();
 
     $response = $this->getResponse();
-    $response->setHeader('Content-type', 'application/json')
+    $response->setHeader('Content-type', 'application/json');
     $response->setBody(Mage::helper('core')->jsonEncode(array('success' => true)));
   }
 
