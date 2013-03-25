@@ -8,13 +8,21 @@ form#salsify_configuration_edit_form fieldset table,
 form#salsify_configuration_edit_form fieldset table tbody,
 form#salsify_configuration_edit_form fieldset table tbody tr, {
   width: 100%;
+  padding-left: 0;
+  padding-right:0;
 }
 
 form#salsify_configuration_edit_form fieldset table tbody tr td.label {
   text-align: right;
   width:20%;
+  padding-left: 0;
+  padding-right: 1em;
 }
+
 form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele {
   /* eyeball that this is reasonable-looking */
-  width: 50%;
+  min-width: 50%;
+}
+form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input {
+  min-width: 50%;
 }
