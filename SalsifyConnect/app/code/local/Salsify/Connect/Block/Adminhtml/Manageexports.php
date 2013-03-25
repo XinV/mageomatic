@@ -12,8 +12,8 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
 
     // rename the Add New button
     $this->removeButton('add');
-    $this->_addButtonLabel = Mage::helper('salsify_connect')
-                                 ->__('Create new Export');
+    // $this->_addButtonLabel = Mage::helper('salsify_connect')
+    //                              ->__('Create new Export');
     $this->_addButton('new_button', array(
       'label'   => Mage::helper('salsify_connect')->__('Create New Export'),
       'onclick' => "setLocation('".$this->getUrl('*/*/index')."')"
