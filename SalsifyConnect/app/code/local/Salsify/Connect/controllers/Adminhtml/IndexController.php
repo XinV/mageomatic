@@ -238,6 +238,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   // kicks off a worker. this is meant only to start a new worker thread, and as
   // such is only called via a javascript ajax call.
   public function createworkerAction() {
+    self::_log("creating background worker thread...");
+
     $salsify = Mage::helper('salsify_connect');
     $salsify->start_worker();
     $this->_respond_with_json(array('success' => true));
