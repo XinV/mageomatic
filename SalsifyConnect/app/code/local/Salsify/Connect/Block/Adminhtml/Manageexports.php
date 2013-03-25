@@ -10,8 +10,7 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
     $this->_controller = 'adminhtml_manageexports';
     $this->_headerText = $this->__('Manage Exports to Salsify');
 
-    $this->_addButtonLabel = Mage::helper('salsify_connect')
-                                 ->__('Create New Import');
+    $this->_addButtonLabel = 'Create New Import';
     
     parent::__construct();
 
