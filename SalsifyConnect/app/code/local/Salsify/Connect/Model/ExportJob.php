@@ -25,7 +25,6 @@ class Salsify_Connect_Model_ExportJob extends Mage_Core_Model_Abstract {
     self::_log("background export job started.");
 
     $export_run_id = $this->getExportRunId();
-    self::_log("FIXME: " . $export_run_id);
     $export = Mage::getModel('salsify_connect/exportrun')
                   ->load($export_run_id);
     if (!$export->getId()) {
@@ -35,6 +34,7 @@ class Salsify_Connect_Model_ExportJob extends Mage_Core_Model_Abstract {
     }
 
     // FIXME remove
+    self::_log("HERE");
     self::_log("STATUS: " . $error->getStatus());
 
     // first let's export the data to a file
