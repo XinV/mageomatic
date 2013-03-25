@@ -77,7 +77,6 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   protected function _construct() {
     $this->_init('salsify_connect/exportrun');
 
-    self::_log("HERE");
     if (!$this->getId()) {
       $this->_set_status(self::STATUS_NOT_STARTED);
       // start time is updated with actual start time if there are not failures
