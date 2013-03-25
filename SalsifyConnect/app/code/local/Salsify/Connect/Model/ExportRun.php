@@ -118,7 +118,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
 
   // creates the export document for Salsify.
   public function create_export_file() {
-    if ($this->getStatus() != self::STATUS_NOT_STARTED) {
+    if ($this->getStatus() !== self::STATUS_NOT_STARTED) {
       // FIXME remove
       self::_log("BAD STATUS: " . $this->getStatus());
       $this->set_error("cannot create an export file when the ExportRun is not new.");
