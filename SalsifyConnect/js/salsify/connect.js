@@ -42,16 +42,11 @@ var salsify = (function (parent) {
     new Ajax.Request(createUrl, {
       method: 'get',
       onSuccess: function(response) {
-        console.log(response);
-
         // next kickoff the background worker
         createWorker(workerUrl);
 
         // reload the page to show the newly created object
-        // document.location.reload(true);
-      },
-      onFailure: function(response) {
-        console.log(response);
+        document.location.reload(true);
       }
     });
   };
