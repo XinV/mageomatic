@@ -10,8 +10,7 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
     $this->_controller = 'adminhtml_manageexports';
     $this->_headerText = $this->__('Manage Exports to Salsify');
 
-    // rename the Add New button
-    $this->removeButton('add');
+    
     // $this->_addButtonLabel = Mage::helper('salsify_connect')
     //                              ->__('Create new Export');
     $this->_addButton('new_button', array(
@@ -20,6 +19,9 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
     ));
 
     parent::__construct();
+
+    // remove the original
+    $this->removeButton('add');
   }
 
 }
