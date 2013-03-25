@@ -33,8 +33,7 @@ class Salsify_Connect_Model_ExportJob extends Mage_Core_Model_Abstract {
       throw new Exception($error);
     }
 
-    // FIXME remove
-    self::_log("HERE");
+    // FIXME this is a fucking problem
     self::_log("STATUS: " . $error->getStatus());
 
     // first let's export the data to a file

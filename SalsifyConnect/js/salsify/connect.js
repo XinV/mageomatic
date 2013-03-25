@@ -14,6 +14,7 @@ var salsify = (function (parent) {
   // creates a background worker
   function createWorker(workerUrl) {
     new Ajax.Request(workerUrl, {
+      method: 'post',
       onSuccess: function(response) {
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
@@ -49,13 +50,17 @@ var salsify = (function (parent) {
 
     // first create the export run...
     new Ajax.Request(createUrl, {
-      method: 'get',
+      method: 'post',
       onSuccess: function(response) {
         // next kickoff the background worker and, if successful, reload page
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        reloadPage();
+        // FIXME uncomment
+        // reloadPage();
+      },
+      onFailure: function(response) {
+        // console.log(response);
       }
     });
   };
