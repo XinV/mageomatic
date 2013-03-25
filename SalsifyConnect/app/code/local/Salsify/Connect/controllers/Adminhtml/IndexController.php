@@ -117,8 +117,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
    * Action for displaying and editing Salsify account details.
    */
   public function configurationAction() {
-    $this->_start_render(self::CONFIG_MENU_ID);
-
     if ($this->_is_post()) {
       if (array_key_exists('configuration', $_POST)) {
         $config_data = $_POST['configuration'];
@@ -143,6 +141,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       }
     }
 
+    $this->_start_render(self::CONFIG_MENU_ID);
     $this->_end_render();
   }
 

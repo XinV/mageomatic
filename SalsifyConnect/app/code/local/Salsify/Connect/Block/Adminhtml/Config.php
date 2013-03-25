@@ -8,7 +8,7 @@ class Salsify_Connect_Block_Adminhtml_Config extends Mage_Core_Block_Template {
   public function _construct() {
     $this->_salsify_config = Mage::getModel('salsify_connect/configuration')
                                  ->getInstance();
-    
+
     $this->setTemplate('salsify/config.phtml');
     return parent::_construct();
   }
