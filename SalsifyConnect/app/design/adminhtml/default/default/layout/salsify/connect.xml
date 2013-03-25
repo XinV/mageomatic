@@ -6,11 +6,6 @@
 
   <default>
     <reference name="head">
-      <!-- <action method="addItem">
-        <type>skin_css</type>
-        <name>salsify/style.css</name>
-        <params/>
-      </action> -->
       <action method="addCss">
         <stylesheet>salsify/style.css</stylesheet>
       </action>

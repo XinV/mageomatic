@@ -41,9 +41,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
       array('label' => 'Salsify Account Details', 'action' => 'configuration'),
-      array('label' => 'Import History', 'action' => 'index'),
-      array('label' => 'Import from Salsify', 'action' => 'import'),
-      array('label' => 'Export to Salsify', 'action' => 'export')
+      array('label' => 'Manage Imports from Salsify', 'action' => 'index'),
+      array('label' => 'Manage Exports to Salsify', 'action' => 'export')
     ));
     $this->_addLeft($menu_block);
   }
@@ -209,6 +208,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   private function sneaky_worker_thread_start() {
     $worker_url = $this->_get_url('worker');
 
+    // send in AJAX request to kick off the server worker process
     $worker_js = "
     <script type=\"text/javascript\">
       new Ajax.Request('" . $worker_url ."', {

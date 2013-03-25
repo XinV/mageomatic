@@ -8,10 +8,6 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
   }
 
 
-  // All you need to add is the action!
-  const BASE_ADMIN_URL = 'salsify/adminhtml_index/';
-
-
   private $_menu_items;
 
 
@@ -25,14 +21,14 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
 
   private function _get_action_url($action) {
     return Mage::helper("adminhtml")
-               ->getUrl(self::BASE_ADMIN_URL . $action);
+               ->getUrl('*/*/' . $action);
   }
 
 
   public function setActions($actions) {
-    // TODO: get the full list programatically instead of having it in both the
+    // TODO get the full list programatically instead of having it in both the
     //      XML *and* here
-    // TODO: set the active one
+    // TODO set the active one
     foreach ($actions as $action) {
       array_push($this->_menu_items,
                  array('title' => $action['label'],
