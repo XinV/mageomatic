@@ -84,8 +84,6 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->_config = Mage::getModel('salsify_connect/configuration')
                            ->getInstance();
       if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
-        self::_log("API KEY: " . $this->_config->getApiKey());
-        self::_log("URL: " . $this->_config->getUrl());
         $this->set_error("you must first configure your Salsify account information.");
       }
     }
@@ -96,6 +94,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   private function _get_salsify_api() {
     if (!$this->_salsify_api) {
       $config = $this->_get_config();
+
       // FIXME remove this since we're working as a singleton now
       $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
       $this->_salsify_api->set_base_url($config->getUrl());
@@ -136,7 +135,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     $this->setStatus(self::STATUS_UPLOADING_TO_SALSIFY);
     $this->save();
 
-    $success = $_salsify_api->export_to_salsify($this->_export_file);
+    $success = $this->_salsify_api->export_to_salsify($this->_export_file);
     if (!$success) {
       $this->set_error("export of file to Salsify failed: " . $file);
     }
