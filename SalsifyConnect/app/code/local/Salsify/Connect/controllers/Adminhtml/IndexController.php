@@ -125,7 +125,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
         ->setExportRunId($export_run_id)
         ->enqueue();
 
-    $this->_respond_with_json(array('success' => true)));
+    $this->_respond_with_json(array('success' => true));
   }
 
 
