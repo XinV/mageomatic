@@ -17,6 +17,10 @@ var salsify = (function (parent) {
       onSuccess: function(response) {
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
+        console.log(response);
+      },
+      onFailure: function(response) {
+        console.log(response);
       }
     });
   }
@@ -52,7 +56,6 @@ var salsify = (function (parent) {
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        console.log(response);
         // reloadPage();
       }
     });
