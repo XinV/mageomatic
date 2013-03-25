@@ -18,11 +18,11 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
 
 
-  // TODO remove
-  private function _get_url($action) {
-    return Mage::helper("adminhtml")
-               ->getUrl(self::BASE_ADMIN_URL . $action);
+  // returns whether this is a POST request or not
+  private function _is_post() {
+    return $_SERVER['REQUEST_METHOD'] === 'POST';
   }
+
 
   private function _start_render($menu_id) {
     self::_log('rendering '.$menu_id);
@@ -102,12 +102,24 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
+  public function createexportAction() {
+    $model = Mage::getModel('salsify_connect/export_run');
+
+    $model->save();
+
+    // FIXME should create the job to run in the background
+
+    $this->_redirectUrl($this->getUrl('*/*/exports');
+  }
+
+
   /**
    * Action for displaying and editing Salsify account details.
    */
   public function configurationAction() {
     $this->_start_render(self::CONFIG_MENU_ID);
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if ($this->_is_post()) {
       if (array_key_exists('configuration', $_POST)) {
         $config_data = $_POST['configuration'];
         
@@ -131,12 +143,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       }
     }
 
-    // TODO move this to a layout somewhere?
-
-    $layout = $this->getLayout();
-    $config_block = $layout->createBlock('salsify_connect/adminhtml_config');
-    $this->_addContent($config_block);
-
     $this->_end_render();
   }
 
@@ -154,7 +160,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $model->save();
     $model->start_import();
 
-    $url = $this->_get_url('chimport') . '?id=' . $model->getId();
+    $url = $this->getUrl('*/*/chimport') . '?id=' . $model->getId();
     $this->_redirectUrl($url);
   }
 
@@ -190,14 +196,14 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       }
     }
 
-    $url = $this->_get_url('chimport') . '?id=' . $import_id;
+    $url = $this->getUrl('*/*/chimport') . '?id=' . $import_id;
     $this->_render_html('<br><a href="'.$url.'">Re-chimport</a>');
 
     $this->_end_render();
   }
 
   private function sneaky_worker_thread_start() {
-    $worker_url = $this->_get_url('worker');
+    $worker_url = $this->getUrl('*/*/worker');
 
     // send in AJAX request to kick off the server worker process
     $worker_js = "

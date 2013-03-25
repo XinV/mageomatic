@@ -4,3 +4,4 @@ SalsifyConnect/lib/*                       lib/
 SalsifyConnect/app/design/adminhtml/default/default/template/salsify app/design/adminhtml/default/default/template/salsify
 SalsifyConnect/app/design/adminhtml/default/default/layout/salsify app/design/adminhtml/default/default/layout/salsify
 SalsifyConnect/skin/adminhtml/default/default/salsify skin/adminhtml/default/default/salsify
+SalsifyConnect/salsify js/salsify

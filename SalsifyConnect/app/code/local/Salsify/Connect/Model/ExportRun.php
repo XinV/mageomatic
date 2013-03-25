@@ -56,23 +56,28 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   }
 
   protected function _construct() {
+    $this->_get_config();
+    $this->_get_salsify_api();
+
     if (!$this->getStatus()) {
       $this->setStatus(self::STATUS_NOT_STARTED);
     }
     $this->_init('salsify_connect/exportrun');
   }
 
+  // ensures that the Salsify account confguration is complete.
   private function _get_config() {
     if (!$this->_config) {
       $this->_config = Mage::getModel('salsify_connect/configuration')
                            ->load($this->getInstance());
-      if (!$this->_config->getApiKey()) {
-        throw new Exception("you must first configure your Salsify account information.");
+      if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
+        $this->set_error("you must first configure your Salsify account information.");
       }
     }
     return $this->_config;
   }
 
+  // ensures that the Salsify account 
   private function _get_salsify_api() {
     if (!$this->_salsify_api) {
       $config = $this->_get_config();
@@ -80,11 +85,12 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
       $this->_salsify_api->set_base_url($config->getUrl());
       $this->_salsify_api->set_api_key($config->getApiKey());
-      $token = $this->getToken();
+      // $token = $this->getToken();
     }
     return $this->_salsify_api;
   }
 
+  // kicks off the export!
   public function start_export() {
     // FIXME move to a background job or something like that...
     $salsify = Mage::helper('salsify_connect');

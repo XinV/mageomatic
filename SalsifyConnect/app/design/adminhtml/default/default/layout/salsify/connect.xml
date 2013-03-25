@@ -8,10 +8,19 @@
     <reference name="head">
       <!-- ensures that the CSS is added in the header of the html -->
       <action method="addCss">
-        <stylesheet>salsify/style.css</stylesheet>
+        <stylesheet>salsify/connect.css</stylesheet>
+      </action>
+      <action method="addJs">
+        <stylesheet>salsify/connect.js</stylesheet>
       </action>
     </reference>
   </default>
+
+  <salsify_connect_adminhtml_index_configuration>
+    <reference name="content">
+      <block type="salsify_connect/adminhtml_config" name="salsify_connect_config" />
+    </reference>
+  </salsify_connect_adminhtml_index_configuration>
 
   <!-- full name of route -->
   <salsify_connect_adminhtml_index_index>
