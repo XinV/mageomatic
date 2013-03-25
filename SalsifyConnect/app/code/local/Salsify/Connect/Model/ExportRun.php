@@ -49,7 +49,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       case self::STATUS_DONE:
         return "Export to Salsify has been completed successfully.";
       default:
-        throw new Exception("INTERNAL ERROR: unknown status: " . $this->getStatus());
+        $this->set_error("INTERNAL ERROR: unknown status: " . $this->getStatus());
     }
   }
 
@@ -80,6 +80,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     $this->_get_salsify_api();
     if (!$this->getStatus()) {
       $this->_set_status(self::STATUS_NOT_STARTED);
+      $this->setStartTime(date('Y-m-d h:m:s', time()));
     }
   }
 

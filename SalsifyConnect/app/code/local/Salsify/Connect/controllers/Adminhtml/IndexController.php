@@ -100,7 +100,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // creates a new export 
+  // creates a new export
+  // FIXME need to give better error messages and show them in the client
   public function createexportAction() {
     self::_log("creating export run.");
 
