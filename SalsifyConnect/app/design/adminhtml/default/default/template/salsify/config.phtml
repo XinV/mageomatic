@@ -1,5 +1,5 @@
 <div class="content-header">
-  <table cellspacing="0" class="grid-header">
+  <table class="grid-header">
   <tr>
     <td><h3>Manage Salsify Connect</h3></td>
     <td class="a-right">
@@ -11,7 +11,10 @@
 
 <div class="entry-edit">
   <form id="salsify_configuration_edit_form" name="salsify_configuration_edit_form" method="post" action="<?php echo $this->getPostActionUrl(); ?>">
+
+    <?php // security requirement by Magento ?>
     <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
+    
     <h4 class="icon-head head-edit-form fieldset-legend">Salsify Account Information</h4>
     <fieldset>
       <table class="form-list">
