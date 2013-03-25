@@ -42,7 +42,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $menu_block->setActions(array(
       array('label' => 'Salsify Account Details', 'action' => 'configuration'),
       array('label' => 'Manage Imports from Salsify', 'action' => 'index'),
-      array('label' => 'Manage Exports to Salsify', 'action' => 'export')
+      array('label' => 'Manage Exports to Salsify', 'action' => 'exports')
     ));
     $this->_addLeft($menu_block);
   }
