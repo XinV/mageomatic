@@ -84,8 +84,8 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->_config = Mage::getModel('salsify_connect/configuration')
                            ->getInstance();
       if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
-        self::_log("API KEY: " $this->_config->getApiKey());
-        self::_log("URL: " $this->_config->getUrl());
+        self::_log("API KEY: " . $this->_config->getApiKey());
+        self::_log("URL: " . $this->_config->getUrl());
         $this->set_error("you must first configure your Salsify account information.");
       }
     }
