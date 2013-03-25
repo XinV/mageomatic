@@ -46,6 +46,9 @@
           <import_run>
             <table>salsify_connect_import_run</table>
           </import_run>
+          <export_run>
+            <table>salsify_connect_export_run</table>
+          </export_run>
           <attribute_mapping>
             <table>salsify_connect_attribute_mapping</table>
           </attribute_mapping>
