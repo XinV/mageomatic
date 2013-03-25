@@ -6,6 +6,8 @@
  *
  * A bunch of information is kept in the database, while temporary data is
  * kept on the filesystem in var/salsify/.
+ *
+ * TODO not DRY. Shares some key things with ImportRun.
  */
 class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
 
@@ -78,8 +80,9 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     // done implicitly by _get_salsify_api()
     // $this->_get_config();
     $this->_get_salsify_api();
-    if (!$this->getStatus()) {
+    if (!$this->getId()) {
       $this->_set_status(self::STATUS_NOT_STARTED);
+      // start time is updated with actual start time if there are not failures
       $this->setStartTime(date('Y-m-d h:m:s', time()));
     }
   }
@@ -115,6 +118,8 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   // creates the export document for Salsify.
   public function create_export_file() {
     if ($this->getStatus() !== self::STATUS_NOT_STARTED) {
+      // FIXME remove
+      self::_log("BAD STATUS: " . $this->getStatus());
       $this->set_error("cannot create an export file when the ExportRun is not new.");
     }
 
