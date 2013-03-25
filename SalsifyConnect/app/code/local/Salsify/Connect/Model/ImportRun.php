@@ -52,6 +52,9 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
 
   public function set_error($e) {
+    if (is_string($e)) {
+      $e = new Exception($e);
+    }
     $this->_log("Setting import run status to error: " . $e->getMessage());
     $this->setStatus(self::STATUS_ERROR);
     $this->save();

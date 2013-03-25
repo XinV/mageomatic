@@ -53,12 +53,20 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     }
   }
 
+  private function _set_status($code {
+    $this->setStatus($code);
+    $this->setStatusMessage($this->get_status_string());
+  }
+
+
   public function set_error($e) {
     if (is_string($e)) {
       $e = new Exception($e);
     }
     self::_log("Setting export run status to error: " . $e->getMessage());
+    $this->setEndTime(date('Y-m-d h:m:s', time()));
     $this->setStatus(self::STATUS_ERROR);
+    $this->setStatusMessage('An error occurred export Magento to Salsify: ' . $e->getMessage());
     $this->save();
     throw $e;
   }
@@ -71,7 +79,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     // $this->_get_config();
     $this->_get_salsify_api();
     if (!$this->getStatus()) {
-      $this->setStatus(self::STATUS_NOT_STARTED);
+      $this->_set_status(self::STATUS_NOT_STARTED);
       $this->save();
     }
   }
@@ -110,7 +118,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->set_error("cannot create an export file when the ExportRun is not new.");
     }
 
-    $this->setStatus(self::STATUS_EXPORTING);
+    $this->_set_status(self::STATUS_EXPORTING);
     $this->setStartTime(date('Y-m-d h:m:s', time()));
     $this->save();
 
@@ -121,7 +129,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->set_error($e);
     }
 
-    $this->setStatus(self::STATUS_EXPORTING_DONE);
+    $this->_set_status(self::STATUS_EXPORTING_DONE);
     $this->save();
   }
 
@@ -132,7 +140,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->set_error("cannot start uploading to Salsify until the file has been exported");
     }
 
-    $this->setStatus(self::STATUS_UPLOADING_TO_SALSIFY);
+    $this->_set_status(self::STATUS_UPLOADING_TO_SALSIFY);
     $this->save();
 
     $success = $this->_salsify_api->export_to_salsify($this->_export_file);
@@ -140,7 +148,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->set_error("export of file to Salsify failed: " . $file);
     }
 
-    $this->setStatus(self::STATUS_UPLOAD_DONE);
+    $this->_set_status(self::STATUS_UPLOAD_DONE);
     $this->save();
   }
 
@@ -151,12 +159,13 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
       $this->set_error("file not yet uploaded to Salsify. cannot wait for it to complete.");
     }
 
-    $this->setStatus(self::STATUS_SALSIFY_LOADING);
+    $this->_set_status(self::STATUS_SALSIFY_LOADING);
     $this->save();
 
     // FIXME implement the wait polling
 
-    $this->setStatus(self::STATUS_DONE);
+    $this->setEndTime(date('Y-m-d h:m:s', time()));
+    $this->_set_status(self::STATUS_DONE);
     $this->save();
   }
 }

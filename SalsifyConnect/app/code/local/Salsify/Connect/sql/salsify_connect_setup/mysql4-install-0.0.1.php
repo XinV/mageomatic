@@ -68,10 +68,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'default'  => NULL,
     ), 'Salsify Connect Import Token (provided by Salsify Server)')
   ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'unsigned' => false,
     'nullable' => false,
-    'primary'  => false,
-    'identity' => false,
   ), 'Salsify Connect Import Run Status')
   ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
     'nullable' => false,
@@ -107,15 +104,20 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'primary' => true,
     'identity' => true,
     ), 'Salsify Connect Export ID')
+
   // FIXME is this even used?
   ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => true,
     'default'  => NULL,
     ), 'Salsify Connect Export Token (provided by Salsify Server)')
+
   ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'unsigned' => false,
     'nullable' => false,
   ), 'Salsify Connect Export Run Status')
+  ->addColumn('status_message', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => true,
+    'default'  => NULL,
+    ), 'Salsify Status Message')
   ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
     'nullable' => true,
     ), 'Salsify Connect Export Run Start Time')
