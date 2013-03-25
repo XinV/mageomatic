@@ -52,7 +52,8 @@ var salsify = (function (parent) {
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        reloadPage();
+        console.log(response);
+        // reloadPage();
       }
     });
   };
