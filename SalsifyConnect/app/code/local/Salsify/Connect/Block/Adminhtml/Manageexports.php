@@ -15,7 +15,7 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
     $this->_addButton('new_button', array(
       'label'   => Mage::helper('salsify_connect')->__('Create New Export'),
       'onclick' => "salsify.connect.createExport('" .
-                            $createExportUrl ."','" . $createWorkerUrl . "'');",
+                            $createExportUrl ."','" . $createWorkerUrl . "');",
       'class'   => 'add new_export_button',
     ));
 
