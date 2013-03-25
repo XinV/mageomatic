@@ -53,7 +53,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
     }
   }
 
-  private function _set_status($code {
+  private function _set_status($code) {
     $this->setStatus($code);
     $this->setStatusMessage($this->get_status_string());
   }
