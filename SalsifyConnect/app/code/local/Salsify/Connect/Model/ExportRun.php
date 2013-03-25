@@ -65,18 +65,19 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
 
 
   protected function _construct() {
+    $this->_init('salsify_connect/exportrun');
+
     // done implicitly by _get_salsify_api()
     // $this->_get_config();
     $this->_get_salsify_api();
-
     if (!$this->getStatus()) {
       $this->setStatus(self::STATUS_NOT_STARTED);
     }
-    $this->_init('salsify_connect/exportrun');
   }
 
 
   // ensures that the Salsify account confguration is complete.
+  // FIXME move somewhere else
   private function _get_config() {
     if (!$this->_config) {
       $this->_config = Mage::getModel('salsify_connect/configuration')
