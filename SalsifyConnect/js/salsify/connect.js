@@ -1,9 +1,11 @@
-var SalsifyConnect = (function (parent) {
-  var sc = parent || {};
+salsify = salsify || {};
+
+var salsify = (function (parent) {
+  var sc = parent.connect || parent.connect {};
 
   sc.createExport = function () {
     alert("IT WORKS");
   };
 
-  return sc;
-}(SalsifyConnect || {}));
+  return parent;
+}(salsify || {}));
