@@ -22,11 +22,11 @@
           <action>salsify/adminhtml_index/index</action>
         </manage_imports>
 
-        <manage_imports module="salsify_connect">
+        <manage_exports module="salsify_connect">
           <title>Manage Exports</title>
           <sort_order>2</sort_order>
           <action>salsify/adminhtml_index/exports</action>
-        </manage_imports>
+        </manage_exports>
 
         <!-- FIXME remove this -->
         <chimport module="salsify_connect">
@@ -58,11 +58,18 @@
         <children>
           <catalog>
             <children>
-              <!-- FIXME add the rest of the ACLs here -->
+              <configuration>
+                <title>Manage Salsify Account Configuration</title>
+              </configuration>
+
               <manage_imports>
                 <!-- Note the title is not redundant, enve though it looks the same as in the menu listings above. This is how the ACL text will be displayed on System > Permissions > Roles > Role > Role Resources -->
-                <title>Manage Salsify Imports</title>
+                <title>Manage Imports from Salsify</title>
               </manage_imports>
+
+              <manage_exports>
+                <title>Manage Exports to Salsify</title>
+              </manage_exports>
             </children>
           </catalog>
         </children>

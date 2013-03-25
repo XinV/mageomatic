@@ -6,6 +6,7 @@
 
   <default>
     <reference name="head">
+      <!-- ensures that the CSS is added in the header of the html -->
       <action method="addCss">
         <stylesheet>salsify/style.css</stylesheet>
       </action>

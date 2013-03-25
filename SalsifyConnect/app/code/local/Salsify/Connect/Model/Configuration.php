@@ -29,7 +29,7 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
     $salsify = Mage::helper('salsify_connect/salsifyapi');
     $config->setUrl($salsify::DEFAULT_SALSIFY_URL);
     $config->save();
-    return $this;
+    return $config;
   }
 
 }

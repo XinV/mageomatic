@@ -12,7 +12,7 @@ class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block
     // is actually the path to your block class (NOT YOUR CONTROLLER)
     $this->_controller = 'adminhtml_manageimports';
 
-    $this->_headerText = $this->__('Manage Salsify Imports');
+    $this->_headerText = $this->__('Manage Imports from Salsify');
 
     parent::__construct();
 

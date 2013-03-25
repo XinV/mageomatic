@@ -6,13 +6,9 @@
 class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
   public function __construct() {
-    // module name
     $this->_blockGroup = 'salsify_connect';
-
-    // is actually the path to your block class (NOT YOUR CONTROLLER)
     $this->_controller = 'adminhtml_manageexports';
-
-    $this->_headerText = $this->__('Manage Salsify Exports');
+    $this->_headerText = $this->__('Manage Exports to Salsify');
 
     parent::__construct();
 
