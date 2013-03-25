@@ -13,6 +13,10 @@ class Salsify_Connect_Block_Adminhtml_Config extends Mage_Core_Block_Template {
     return parent::_construct();
   }
 
+  public function getPostActionUrl() {
+    return $this->getUrl('*/*/configuration');
+  }
+
   public function getApiKey() {
     return $this->_salsify_config->getApiKey();
   }
