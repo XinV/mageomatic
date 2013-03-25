@@ -115,7 +115,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
         ->setImportRunId($export_run_id)
         ->enqueue();
 
-    // don't need to return anything
+    $this->getResponse()
+         ->setBody(Mage::helper('core')->jsonEncode(array('success' => true));
   }
 
 
