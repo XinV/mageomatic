@@ -46,6 +46,9 @@ var salsify = (function (parent) {
 
         // reload the page to show the newly created object
         document.location.reload(true);
+      },
+      onFailure: function(response) {
+        console.log(response);
       }
     });
   };
