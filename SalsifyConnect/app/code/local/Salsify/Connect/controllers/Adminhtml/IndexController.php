@@ -297,6 +297,9 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       $db->query("drop table salsify_connect_import_run;");
       $this->_render_html("<li>Import run table dropped.</li>");
 
+      $db->query("drop table salsify_connect_export_run;");
+      $this->_render_html("<li>Export run table dropped.</li>");
+
       $db->query("drop table salsify_connect_configuration;");
       $this->_render_html("<li>Import configuration table dropped.</li>");
 
