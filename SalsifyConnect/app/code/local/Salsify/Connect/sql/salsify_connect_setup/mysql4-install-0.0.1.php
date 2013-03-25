@@ -30,6 +30,31 @@ $table = $installer->getConnection()->newTable($installer->getTable(
 $installer->getConnection()->createTable($table);
 
 
+// unfortunately you can't have attributes about attributes, so we needed to
+// create this table to recall the mapping between attribute codes and salsify
+// IDs for attributes for both imports and exports.
+//
+// TODO: add unique pairs (e.g. each code/ID pair should only show up once)
+$table = $installer->getConnection()->newTable($installer->getTable(
+  'salsify_connect/attribute_mapping'))
+  ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    'primary' => true,
+    'identity' => true,
+    ), 'Salsify Connect Attribute Mapping ID')
+  ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Magento attribute code')
+  ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Salsify attribute ID')
+  ->setComment('Salsify_Connect salsify_connect/attribute_mapping table');
+$installer->getConnection()->createTable($table);
+
+
+// Create table for Salsify imports. Keeps a record of every import pulled into
+// Magento from Salsify.
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/import_run'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
@@ -72,26 +97,47 @@ $table = $installer->getConnection()->newTable($installer->getTable(
 $installer->getConnection()->createTable($table);
 
 
-// unfortunately you can't have attributes about attributes, so we needed to
-// create this table to recall the mapping between attribute codes and salsify
-// IDs for attributes.
-//
-// TODO: add unique pairs (e.g. each code/ID pair should only show up once)
+// Create export table for Salsify imports. Keeps a record of every export that
+// pushes data from Magento Salsify.
 $table = $installer->getConnection()->newTable($installer->getTable(
-  'salsify_connect/attribute_mapping'))
+  'salsify_connect/export_run'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     'unsigned' => true,
     'nullable' => false,
     'primary' => true,
     'identity' => true,
-    ), 'Salsify Connect Attribute Mapping ID')
-  ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    ), 'Salsify Connect Export ID')
+  ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => true,
+    'default'  => NULL,
+    ), 'Salsify Connect Export Token (provided by Salsify Server)')
+  ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => false,
     'nullable' => false,
-    ), 'Magento attribute code')
-  ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'primary'  => false,
+    'identity' => false,
+  ), 'Salsify Connect Export Run Status')
+  ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
     'nullable' => false,
-    ), 'Salsify attribute ID')
-  ->setComment('Salsify_Connect salsify_connect/attribute_mapping table');
+    ), 'Salsify Connect Export Run Start Time')
+  // ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
+  //   'nullable' => true,
+  //   ), 'Salsify Connect Export Run End Time')
+  ->addColumn('configuration_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    'primary'  => false,
+    'identity' => false,
+    ), 'Config Used for this Export Run')
+  ->addForeignKey(
+          $installer->getFkName('salsify_connect/export_run', 'configuration_id',
+                                'salsify_connect/configuration', 'id'),
+          'configuration_id',
+          $installer->getTable('salsify_connect/configuration'),
+          'id',
+          Varien_Db_Ddl_Table::ACTION_NO_ACTION,
+          Varien_Db_Ddl_Table::ACTION_NO_ACTION)
+  ->setComment('Salsify_Connect salsify_connect/export_run entity table');
 $installer->getConnection()->createTable($table);
 
 

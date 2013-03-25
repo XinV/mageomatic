@@ -78,17 +78,11 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       return Mage::getSingleton('admin/session')
                  ->isAllowed('salsify_connect/adminhtml_index');
   }
- 
-  // TODO remove when we're going live. this is just for testing.
-  public function testAction() {
-    $this->_start_render('salsify_connect_menu/test');
-
-    $this->_render_html('<h1>Trying to render custom block</h1>');
-
-    $this->_end_render();
-  }
 
 
+  /**
+   * Action for managing imports from Salsify to Magento.
+   */
   public function indexAction() {
     $this->_start_render(self::INDEX_MENU_ID);
     // everything for managing imports already taken care of by standard layout
@@ -97,16 +91,13 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  public function exportAction() {
+  /**
+   * Action for managing exports from Magento to Salsify.
+   */
+  public function exportsAction() {
     $this->_start_render('salsify_connect_menu/export');
-
-    $config = Mage::getModel('salsify_connect/configuration')->getInstance();
-
-    $salsify = Mage::helper('salsify_connect');
-    $salsify->export_data('http://127.0.0.1:5000', $config->getApiKey());
-
-    $this->_render_html("<h1>Export to Salsify complete.</h1>");
-
+    // everything for managing exports already taken care of by standard layout
+    // stuff.
     $this->_end_render();
   }
 

@@ -15,7 +15,14 @@
   <!-- full name of route -->
   <salsify_connect_adminhtml_index_index>
     <reference name="content">
+      <!-- path to block -->
       <block type="salsify_connect/adminhtml_manageimports" name="salsify_connect_manageimports" />
     </reference>
   </salsify_connect_adminhtml_index_index>
+
+  <salsify_connect_adminhtml_index_exports>
+    <reference name="content">
+      <block type="salsify_connect/adminhtml_manageexports" name="salsify_connect_manageexports" />
+    </reference>
+  </salsify_connect_adminhtml_index_exports>
 </layout>

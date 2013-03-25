@@ -22,25 +22,20 @@
           <action>salsify/adminhtml_index/index</action>
         </manage_imports>
 
+        <manage_imports module="salsify_connect">
+          <title>Manage Exports</title>
+          <sort_order>2</sort_order>
+          <action>salsify/adminhtml_index/exports</action>
+        </manage_imports>
 
-        <import module="salsify_connect">
-          <title>Start Export</title>
-          <sort_order>51</sort_order>
-          <action>salsify/adminhtml_index/export</action>
-        </import>
-
+        <!-- FIXME remove this -->
         <chimport module="salsify_connect">
-          <title>Chimport</title>
+          <title>CHIMPORT</title>
           <sort_order>52</sort_order>
           <action>salsify/adminhtml_index/chimport</action>
         </chimport>
 
-        <test module="salsify_connect">
-          <title>TEST ACTION</title>
-          <sort_order>69</sort_order>
-          <action>salsify/adminhtml_index/test</action>
-        </test>
-
+        <!-- FIXME link to this ONLY from the manage salsify page -->
         <cleaner module="salsify_connect">
           <title>DELETE SALSIFY DATA</title>
           <sort_order>100</sort_order>
