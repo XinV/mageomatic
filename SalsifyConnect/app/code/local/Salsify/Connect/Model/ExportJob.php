@@ -34,7 +34,7 @@ class Salsify_Connect_Model_ExportJob extends Mage_Core_Model_Abstract {
     }
 
     // FIXME this is a fucking problem
-    self::_log("STATUS: " . $error->getStatus());
+    self::_log("STATUS: " . $export->getStatus());
 
     // first let's export the data to a file
     self::_log("1) creating export document");
