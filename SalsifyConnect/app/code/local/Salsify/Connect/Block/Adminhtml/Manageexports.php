@@ -12,7 +12,9 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
 
     parent::__construct();
 
-    // FIXME need to have an action for this
+    $this->_addButtonLabel = Mage::helper('salsify_connect')
+                                 ->__('Create New Import');
+
     // remove the Add New button
     $this->removeButton('add');
   }
