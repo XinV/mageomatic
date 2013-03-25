@@ -12,12 +12,21 @@ class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block
     // is actually the path to your block class (NOT YOUR CONTROLLER)
     $this->_controller = 'adminhtml_manageimports';
 
-    $this->_headerText = $this->__('Manage Imports from Salsify');
+    // for internationalization
+    $this->_headerText = Mage::helper('salsify_connect')
+                             ->__('Manage Imports from Salsify');
+
+    // create the new button. evidently 'new_button' could be anything. doesn't
+    // show up or anything
+    $this->_addButton('new_button', array(
+      'label'   => Mage::helper('salsify_connect')->__('Create New Import'),
+      'onclick' => "salsify.connect.createImport();",
+      'class'   => 'add new_import_button',
+    ));
 
     parent::__construct();
 
-    // FIXME need to have an action for this
-    // remove the Add New button
+    // remove the original Add New button
     $this->removeButton('add');
   }
 

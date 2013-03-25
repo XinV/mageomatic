@@ -38,6 +38,7 @@ class Salsify_Connect_Block_Adminhtml_Manageexports_Grid extends Mage_Adminhtml_
     $this->addColumn('status',
       array(
         'header'=> $this->__('Status'),
+        'width' => '200px',
         'index' => 'status'
       )
     );
@@ -45,8 +46,16 @@ class Salsify_Connect_Block_Adminhtml_Manageexports_Grid extends Mage_Adminhtml_
     $this->addColumn('start_time',
       array(
         'header'=> $this->__('Start Time'),
-        'width' => '100px',
+        'width' => '200px',
         'index' => 'start_time'
+      )
+    );
+
+    $this->addColumn('start_time',
+      array(
+        'header'=> $this->__('Start Time'),
+        'width' => '200px',
+        'index' => 'end_time'
       )
     );
 
