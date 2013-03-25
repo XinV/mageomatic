@@ -22,6 +22,12 @@ var salsify = (function (parent) {
   }
 
 
+  // just reloads the page. no big deal.
+  function reloadPage() {
+    document.location.reload(true);
+  }
+
+
   // creates and kicks off a new import job from Salsify.
   //
   // the createUrl and workerUrl parameters are necessary since they contain
@@ -42,11 +48,11 @@ var salsify = (function (parent) {
     new Ajax.Request(createUrl, {
       method: 'get',
       onSuccess: function(response) {
-        // next kickoff the background worker
+        // next kickoff the background worker and, if successful, reload page
         createWorker(workerUrl);
 
-        // reload the page to show the newly created object
-        document.location.reload(true);
+        // reload the page now so that we can see the new export
+        reloadPage();
       }
     });
   };
