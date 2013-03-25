@@ -41,11 +41,13 @@ var salsify = (function (parent) {
     // first create the export run...
     new Ajax.Request('" . createUrl ."', {
       onSuccess: function(response) {
+        console.log(response);
+
         // next kickoff the background worker
         createWorker(workerUrl);
 
         // reload the page to show the newly created object
-        document.location.reload(true);
+        // document.location.reload(true);
       },
       onFailure: function(response) {
         console.log(response);
