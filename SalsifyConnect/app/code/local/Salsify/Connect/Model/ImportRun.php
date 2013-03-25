@@ -153,7 +153,7 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   private function _get_config() {
     if (!$this->_config) {
       $this->_config = Mage::getModel('salsify_connect/configuration')
-                           ->load($this->getInstance());
+                           ->getInstance();
       if (!$this->_config->getId()) {
         throw new Exception("you must first configure your Salsify account information.");
       }

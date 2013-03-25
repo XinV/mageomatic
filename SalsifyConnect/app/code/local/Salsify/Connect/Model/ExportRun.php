@@ -80,7 +80,7 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   private function _get_config() {
     if (!$this->_config) {
       $this->_config = Mage::getModel('salsify_connect/configuration')
-                           ->load($this->getInstance());
+                           ->getInstance();
       if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
         $this->set_error("you must first configure your Salsify account information.");
       }
