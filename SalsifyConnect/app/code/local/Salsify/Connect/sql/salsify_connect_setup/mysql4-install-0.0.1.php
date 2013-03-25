@@ -122,20 +122,6 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
     'nullable' => true,
     ), 'Salsify Connect Export Run End Time')
-  // ->addColumn('configuration_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-  //   'unsigned' => true,
-  //   'nullable' => false,
-  //   'primary'  => false,
-  //   'identity' => false,
-  //   ), 'Config Used for this Export Run')
-  // ->addForeignKey(
-  //         $installer->getFkName('salsify_connect/export_run', 'configuration_id',
-  //                               'salsify_connect/configuration', 'id'),
-  //         'configuration_id',
-  //         $installer->getTable('salsify_connect/configuration'),
-  //         'id',
-  //         Varien_Db_Ddl_Table::ACTION_NO_ACTION,
-  //         Varien_Db_Ddl_Table::ACTION_NO_ACTION)
   ->setComment('Salsify_Connect salsify_connect/export_run entity table');
 $installer->getConnection()->createTable($table);
 
