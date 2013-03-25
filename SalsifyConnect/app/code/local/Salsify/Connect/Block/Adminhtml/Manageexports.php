@@ -11,17 +11,17 @@ class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block
     $this->_headerText = $this->__('Manage Exports to Salsify');
 
     
-    // $this->_addButtonLabel = Mage::helper('salsify_connect')
-    //                              ->__('Create new Export');
-    $this->_addButton('new_button', array(
-      'label'   => Mage::helper('salsify_connect')->__('Create New Export'),
-      'onclick' => "setLocation('".$this->getUrl('*/*/index')."')"
-    ));
+    $this->_addButtonLabel = Mage::helper('salsify_connect')
+                                 ->__('Create new Export');
+    // $this->_addButton('new_button', array(
+    //   'label'   => Mage::helper('salsify_connect')->__('Create New Export'),
+    //   'onclick' => "setLocation('".$this->getUrl('*/*/index')."')"
+    // ));
 
     parent::__construct();
 
     // remove the original
-    $this->removeButton('add');
+    // $this->removeButton('add');
   }
 
 }
