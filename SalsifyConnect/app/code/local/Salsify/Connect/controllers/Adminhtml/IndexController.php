@@ -71,7 +71,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   private function _respond_with_json($obj) {
     $response = $this->getResponse();
     $response->setHeader('Content-type', 'application/json');
-    $response->setBody(Mage::helper('core')->jsonEncode($obj);
+    $response->setBody(Mage::helper('core')->jsonEncode($obj));
   }
 
 
