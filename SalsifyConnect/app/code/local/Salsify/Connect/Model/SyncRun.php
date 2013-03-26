@@ -1,11 +1,21 @@
 <?php
 
+/**
+ * Contains functionality shared by both Export and Import runs.
+ *
+ * FIXME finish refactor
+ */
 class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
 
   // cached handles on the helpers
   protected $_config;
   protected $_salsify_api;
+
+
+  const STATUS_ERROR       = -1;
+  const STATUS_NOT_STARTED = 0;
+  const STATUS_DONE        = 1000;
 
 
   // ensures that the Salsify account confguration is complete.

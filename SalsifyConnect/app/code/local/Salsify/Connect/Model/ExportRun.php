@@ -6,8 +6,6 @@
  *
  * A bunch of information is kept in the database, while temporary data is
  * kept on the filesystem in var/salsify/.
- *
- * TODO not DRY. Shares some key things with ImportRun.
  */
 class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
@@ -19,18 +17,16 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
   private $_export_file;
 
 
-  const STATUS_ERROR                 = -1;
-  const STATUS_NOT_STARTED           = 0;
+  
   const STATUS_EXPORTING             = 1;
   const STATUS_EXPORTING_DONE        = 2;
   const STATUS_UPLOADING_TO_SALSIFY  = 3;
   const STATUS_UPLOAD_DONE           = 4;
   const STATUS_SALSIFY_LOADING       = 5;
-  const STATUS_DONE                  = 6;
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
-        return "Error: Failed";
+        return "Export failed";
       case self::STATUS_NOT_STARTED:
         return "Export not started";
       case self::STATUS_EXPORTING:
