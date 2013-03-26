@@ -55,7 +55,7 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
     }
 
     $this->_set_status(self::STATUS_EXPORTING);
-    $this->setStartTime(date('Y-m-d h:m:s', time()));
+    $this->_set_start_time();
     $this->save();
 
     try {
@@ -79,7 +79,8 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
     $this->_set_status(self::STATUS_UPLOADING_TO_SALSIFY);
     $this->save();
 
-    $success = $this->_salsify_api->export_to_salsify($this->_export_file);
+    $salsify_api = $this->_get_salsify_api();
+    $success = $salsify_api->export_to_salsify($this->_export_file);
     if (!$success) {
       $this->set_error("export of file to Salsify failed: " . $file);
     }
@@ -100,7 +101,7 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
     // FIXME implement the wait polling
 
-    $this->setEndTime(date('Y-m-d h:m:s', time()));
+    $this->set_end_time();
     $this->_set_status(self::STATUS_DONE);
     $this->save();
   }

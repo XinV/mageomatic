@@ -6,8 +6,6 @@
  * Subclass models must contain 'status', 'status_message',
  * 'start_time', and 'end_time' columns
  * of types integer, text, datetime, and datetime respectively.
- *
- * FIXME finish refactor
  */
 abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
@@ -16,9 +14,8 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   }
 
 
-  // cached handles on the helpers
-  protected $_config;
-  protected $_salsify_api;
+  // cached handle
+  private $_salsify_api;
 
 
   const STATUS_ERROR       = -1;
@@ -32,21 +29,34 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
     $this->setStatusMessage($this->get_status_string());
   }
 
+
+  public function is_done() {
+    return ((int)$this->getStatus() === self::STATUS_DONE);
+  }
+
+
   // sets the status of this sync to error.
   public function set_error($e) {
     if (is_string($e)) {
       $e = new Exception($e);
     }
     self::_log("Setting sync run status to error: " . $e->getMessage());
-    $this->setEndTime(date('Y-m-d h:m:s', time()));
+    $this->_set_end_time();
     $this->setStatus(self::STATUS_ERROR);
     $this->setStatusMessage('Error: ' . $e->getMessage());
     $this->save();
     throw $e;
   }
 
-  public function is_done() {
-    return ((int)$this->getStatus() === self::STATUS_DONE);
+
+  // sets the start time to the current time. MySQL friendly datetime format.
+  protected function _set_start_time() {
+    $this->setStartTime(date('Y-m-d h:m:s', time()));
+  }
+
+  // sets the start time to the current time. MySQL friendly datetime format.
+  protected function _set_end_time() {
+    $this->setEndTime(date('Y-m-d h:m:s', time()));
   }
 
 
@@ -57,14 +67,13 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
       $this->setStartTime(date('Y-m-d h:m:s', time()));
     }
 
-    // done implicitly by _get_salsify_api()
-    // $this->_get_config();
+    $this->_ensure_complete_salsify_configuration();
     $this->_get_salsify_api();
   }
 
 
   // ensures that the Salsify account confguration is complete.
-  protected function _get_config() {
+  private function _ensure_complete_salsify_configuration() {
     if (!$this->_config) {
       $this->_config = Mage::getModel('salsify_connect/configuration')
                            ->getInstance();
@@ -78,12 +87,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
   protected function _get_salsify_api() {
     if (!$this->_salsify_api) {
-      $config = $this->_get_config();
-
-      // FIXME remove this since we're working as a singleton now
       $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
-      $this->_salsify_api->set_base_url($config->getUrl());
-      $this->_salsify_api->set_api_key($config->getApiKey());
     }
     return $this->_salsify_api;
   }

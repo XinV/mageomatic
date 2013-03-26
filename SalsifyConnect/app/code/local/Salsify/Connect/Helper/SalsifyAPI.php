@@ -8,9 +8,11 @@ require_once BP.DS.'lib'.DS.'MultipartUploader'.DS.'Uploader.php';
 class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
 
   private static function _log($msg) {
-    Mage::log('SalsifyAPI: ' . $msg, null, 'salsify.log', true);
+    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
+  // Salsify auth token
+  private $_api_key;
 
   // Base url to Salsify. Will usually be https://app.salsify.com/
   private $_base_url;
@@ -27,17 +29,11 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   const EXPORT_TO_SALSIFY_PATH = '/api/imports';
 
 
-  // Salsify auth token
-  private $_api_key;
-
-
-  public function set_base_url($baseurl) {
-    $this->_base_url = $baseurl;
-  }
-
-
-  public function set_api_key($apikey) {
-    $this->_api_key = $apikey;
+  protected function _construct() {
+    $this->_config = Mage::getModel('salsify_connect/configuration')
+                         ->getInstance();
+    $this->_api_key = $this->_config->getApiKey();
+    $this->_base_url = $this->_config->getUrl();
   }
 
 

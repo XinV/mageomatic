@@ -47,7 +47,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
 
   public function start_import() {
     $this->setStatus(self::STATUS_SALSIFY_PREPARING);
-    $this->setStartTime(date('Y-m-d h:m:s', time()));
+    $this->_set_start_time();
     try {
       $salsify_api = $this->_get_salsify_api();
       $import = $salsify_api->create_import();
@@ -78,8 +78,8 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       // we were waiting for a public URL signally that Salsify has prepared the
       // download.
 
-      $import = $this->_get_salsify_api()
-                     ->get_import($this->getToken());
+      $salsify_api = $this->_get_salsify_api();
+      $import = $salsify_api->get_import($this->getToken());
       if ($import['processing']) { return false; }
       $url = $import['url'];
       if (!$url) {
