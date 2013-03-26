@@ -333,6 +333,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
     }
 
+    // emit the product's category assignment
     $category_attribute = $this->_salsify
                                ->get_attribute_mapper()
                                ->getCategoryAssignemntMagentoCode();
