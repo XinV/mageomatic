@@ -173,6 +173,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
+  // json interface.
   // kicks off a worker. this is meant only to start a new worker thread, and as
   // such is only called via a javascript ajax call.
   public function createworkerAction() {
@@ -184,96 +185,26 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // TODO should refactor this and move accessors that know a lot about Magento
-  //      internals into the generic Data.php for reuse elsewhere.
+  /**
+   * Causes all Salsify data to be cleared from the system.
+   */
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
+
+    $cleaner = Mage::helper('salsify_connect/datacleaner');
+    $cleaner->clean();
 
     $this->_render_html("<h1>Salsify Data Cleaner</h1>");
     $this->_render_html("<p>This will remove all products, all categories, and all Salsify attributes.</p>");
     $this->_render_html("<ul>");
+    $this->_render_html("<li>Total products to be deleted: " . $cleaner->totalProductsDeleted() . '</li>');
+    $this->_render_html("<li>Total images deleted: " . $cleaner->totalImagesDeleted() . '</li>');
+    $this->_render_html("<li>Total categories trees (e.g. roots) deleted: " . $cleaner->totalCategoriesDeleted() . '</li>');
+    $this->_render_html("<li>Total attributes deleted: " . $cleaner->totalAttributesDeleted() . '</li>');
 
-    self::_log("Cleaner: deleting products...");
-    $products = Mage::getModel('catalog/product')
-                    ->getCollection();
-                    // if you just wanted to delete salsify data...
-                    // ->addFieldToFilter('price', array("eq"=>0.0100));
-    $this->_render_html("<li>Total products to be deleted: " . count($products) . '</li>');
-    $image_count = 0;
-    foreach($products as $product) {
-      $id = $product->getId();
-
-      $product = Mage::getModel('catalog/product')->load($id);
-
-      // various ways to do this, none pretty.
-      // http://stackoverflow.com/questions/5709496/magento-programmatically-remove-product-images
-      $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
-      $items = $mediaApi->items($id);
-      foreach($items as $item) {
-        $file = $item['file'];
-        $mediaApi->remove($id, $file);
-        $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
-        unlink($file);
-        $image_count += 1;
-      }
-
-      $product->delete();
-    }
-    $this->_render_html("<li>Total images deleted: " . $image_count . '</li>');
-    self::_log("Cleaner: products and images deleted.");
-
-    self::_log("Cleaner: deleting Salsify categories...");
-    $categories = Mage::getModel('catalog/category')
-                      ->getCollection();
-    $cat_count = 0;
-    foreach($categories as $category) {
-      if ($category->getLevel() === '1') {
-        // failsafe on the root, which i've deleted a few times...
-        continue;
-      }
-
-      $id = Mage::getResourceModel('catalog/category')
-                ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
-      // this messed things up for some reason...
-      // if ($category->getId() != 1) {
-      if ($id) {
-        $category->delete();
-        $cat_count++;
-      }
-    }
-    $this->_render_html("<li>Total categories trees (e.g. roots) deleted: " . $cat_count . '</li>');
-    self::_log("Cleaner: categories deleted.");
-
-    self::_log("Cleaner: deleting attributes...");
-    $mapper = Mage::getModel('salsify_connect/attributemapping');
-    $attr_count = $mapper::deleteSalsifyAttributes();
-    $this->_render_html("<li>Total attributes deleted: " . $attr_count . '</li>');
-    self::_log("Cleaner: attributes deleted.");
-
-    try {
-      $db = Mage::getSingleton('core/resource')
-                ->getConnection('core_write');
-
-      $db->query("drop table jobs;");
-      $this->_render_html("<li>Jobs table dropped.</li>");
-
-      $db->query("drop table salsify_connect_attribute_mapping;");
-      $this->_render_html("<li>Attribute mapping table dropped.</li>");
-
-      $db->query("drop table salsify_connect_import_run;");
-      $this->_render_html("<li>Import run table dropped.</li>");
-
-      $db->query("drop table salsify_connect_export_run;");
-      $this->_render_html("<li>Export run table dropped.</li>");
-
-      $db->query("drop table salsify_connect_configuration;");
-      $this->_render_html("<li>Import configuration table dropped.</li>");
-
-      $db->query("delete from core_resource where code = 'salsify_connect_setup';");
-      $this->_render_html("<li>Salsify db installation removed (hitting any Salsify admin URL will recreate the tables).</li>");
-    } catch (Exception $e) {
-      self::_log("FAIL: " . $e->getMessage());
-      throw $e;
+    $tables_dropped = $cleaner->tablesDropped();
+    foreach ($tables_dropped as $table) {
+      $this->_render_html("<li>" . $table . "table dropped.</li>");
     }
 
     $this->_render_html("</ul>");
