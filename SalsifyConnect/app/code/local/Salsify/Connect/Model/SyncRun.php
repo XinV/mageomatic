@@ -7,6 +7,10 @@
  */
 class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
+  const STATUS_ERROR       = -1;
+  const STATUS_NOT_STARTED = 0;
+  const STATUS_DONE        = 1000;
+
 
   // cached handles on the helpers
   protected $_config;

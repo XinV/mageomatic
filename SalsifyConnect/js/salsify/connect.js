@@ -40,7 +40,7 @@ var salsify = (function (parent) {
     // return).
 
     // first create the export run...
-    new Ajax.Request(createUrl, {
+    new Ajax.Request(syncUrl, {
       method: 'post',
       onSuccess: function(response) {
         // next kickoff the background worker and, if successful, reload page
