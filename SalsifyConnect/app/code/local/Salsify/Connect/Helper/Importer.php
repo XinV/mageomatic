@@ -269,8 +269,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // Note: the only multi-valued assignments we currently deal with here are
   //       product relationships. Multi-valued properties are squished into a
   //       single value.
-  //
-  // TODO handle multiple category assignments.
   private function _prepare_product($product) {
     if (!array_key_exists('sku', $product)) {
       $this->_log("ERROR: product must have a SKU and does not: " . var_export($product, true));
@@ -305,11 +303,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         $product[$key] = array_shift($categories);
         foreach ($categories as $category) {
           array_push($extra_product_values,
-                     array('_category' => $category));
+                     array($key => $category));
         }
-
-        self::_log("PRODUCT CATEGORY: " . var_export($product[$key], true));
-        self::_log("EXTRA VALUES: " . var_export($extra_product_values,true));
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
