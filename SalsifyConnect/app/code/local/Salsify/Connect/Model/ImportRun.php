@@ -32,7 +32,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       case self::STATUS_LOADING_DIGITAL_ASSETS:
         return "Downloading and loading digital assets into Magento.";
       case self::STATUS_DONE:
-        return "Import from Salsify has been successfully loaded into Magento.";
+        return "Import from Salsify to Magento completed successfully.";
       default:
         throw new Exception("INTERNAL ERROR: unknown status: " . $this->getStatus());
     }
@@ -60,7 +60,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
     try {
       // 0) create the export in salsify.
       self::_log("waiting for Salsify to prepare export document.");
-      $this->setStatus(self::STATUS_SALSIFY_PREPARING);
+      $this->_set_status(self::STATUS_SALSIFY_PREPARING);
       $this->_set_start_time();
       $this->save();
       $token = $salsify_api->create_import();
@@ -70,26 +70,26 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
 
       // 1) fetch data from salsify
       self::_log("downloading export document from Salsify.");
-      $this->setStatus(self::STATUS_DOWNLOADING);
+      $this->_set_status(self::STATUS_DOWNLOADING);
       $this->save();
       $filename = $salsify->get_temp_file('import','json');
       $filename = $salsify->download_file($url, $filename);
 
       // 2) parse file and load into Magento
       self::_log("loading Salsify export document into Magento.");
-      $this->setStatus(self::STATUS_LOADING);
+      $this->_set_status(self::STATUS_LOADING);
       $this->save();
       $salsify->import_data($filename);
 
       // 3) download and load digital assets
       self::_log("downloading digital assets from Salsify into Magento.");
-      $this->setStatus(self::STATUS_LOADING_DIGITAL_ASSETS);
+      $this->_set_status(self::STATUS_LOADING_DIGITAL_ASSETS);
       $this->save();
       $importer = $salsify->get_importer();
       $digital_assets = $this->_load_digital_assets($importer->get_digital_assets());
 
       // DONE!
-      $this->setStatus(self::STATUS_DONE);
+      $this->_set_status(self::STATUS_DONE);
       $this->save();
     } catch (Exception $e) {
       $this->set_error($e);
