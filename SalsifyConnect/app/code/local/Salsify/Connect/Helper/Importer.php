@@ -305,6 +305,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
           array_push($extra_product_values,
                      array($key => $category));
         }
+
+        self::_log("ALL CATEGORIES: " .var_export($categories));
+        self::_log("PRODUCT CATEGORY: " . var_export($product[$key], true));
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
