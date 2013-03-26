@@ -11,7 +11,7 @@
  */
 abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
-  private static function _log($msg) {
+  protected static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
@@ -27,7 +27,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   abstract function get_status_string();
 
   // sets the status and status message of the sync.
-  private function _set_status($code) {
+  protected function _set_status($code) {
     $this->setStatus($code);
     $this->setStatusMessage($this->get_status_string());
   }
