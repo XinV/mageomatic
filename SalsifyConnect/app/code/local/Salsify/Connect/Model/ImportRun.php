@@ -10,25 +10,13 @@
  * TODO clean out the temp directory every so often (maybe once it has, say, 3
  *      files in it? could make that configurable).
  */
-class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
+class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
 
-  private function _log($msg) {
-    Mage::log('ImportRun: ' . $msg, null, 'salsify.log', true);
-  }
-
-
-  // cached copies
-  private $_config;
-  private $_salsify_api;
-
-
-  const STATUS_ERROR                 = -1;
-  const STATUS_NOT_STARTED           = 0;
   const STATUS_SALSIFY_PREPARING     = 1;
   const STATUS_DOWNLOAD_JOB_IN_QUEUE = 2;
   const STATUS_DOWNLOADING           = 3;
   const STATUS_LOADING               = 4;
-  const STATUS_DONE                  = 5;
+
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
@@ -51,25 +39,9 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
   }
 
 
-  public function set_error($e) {
-    if (is_string($e)) {
-      $e = new Exception($e);
-    }
-    $this->_log("Setting import run status to error: " . $e->getMessage());
-    $this->setStatus(self::STATUS_ERROR);
-    $this->save();
-    throw $e;
-  }
-
-
   protected function _construct() {
     $this->_init('salsify_connect/importrun');
-
-    if (!$this->getId()) {
-      $this->setStatus(self::STATUS_NOT_STARTED);
-      // start time is updated with actual start time if there are not failures
-      $this->setStartTime(date('Y-m-d h:m:s', time()));
-    }
+    parent::_construct();
   }
 
 
@@ -85,11 +57,6 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
     $this->setToken($import['id']);
     $this->save();
-  }
-
-
-  public function is_done() {
-    return ((int)$this->getStatus() === self::STATUS_DONE);
   }
 
 
@@ -153,32 +120,6 @@ class Salsify_Connect_Model_ImportRun extends Mage_Core_Model_Abstract {
 
     $this->setStatus(self::STATUS_DONE);
     $this->save();
-  }
-
-
-  // FIXME move somewhere else
-  private function _get_config() {
-    if (!$this->_config) {
-      $this->_config = Mage::getModel('salsify_connect/configuration')
-                           ->getInstance();
-      if (!$this->_config->getId()) {
-        throw new Exception("you must first configure your Salsify account information.");
-      }
-    }
-    return $this->_config;
-  }
-
-
-  private function _get_salsify_api() {
-    if (!$this->_salsify_api) {
-      $config = $this->_get_config();
-      // FIXME remove this since we're working as a singleton now
-      $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
-      $this->_salsify_api->set_base_url($config->getUrl());
-      $this->_salsify_api->set_api_key($config->getApiKey());
-      $token = $this->getToken();
-    }
-    return $this->_salsify_api;
   }
 
 

@@ -9,11 +9,6 @@
  */
 class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
-  private static function _log($msg) {
-    Mage::log('ExportRun: ' . $msg, null, 'salsify.log', true);
-  }
-
-
   private $_export_file;
 
 
@@ -46,37 +41,10 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
     }
   }
 
-  private function _set_status($code) {
-    $this->setStatus($code);
-    $this->setStatusMessage($this->get_status_string());
-  }
-
-
-  public function set_error($e) {
-    if (is_string($e)) {
-      $e = new Exception($e);
-    }
-    self::_log("Setting export run status to error: " . $e->getMessage());
-    $this->setEndTime(date('Y-m-d h:m:s', time()));
-    $this->setStatus(self::STATUS_ERROR);
-    $this->setStatusMessage('An error occurred export Magento to Salsify: ' . $e->getMessage());
-    $this->save();
-    throw $e;
-  }
-
 
   protected function _construct() {
     $this->_init('salsify_connect/exportrun');
-
-    if (!$this->getId()) {
-      $this->_set_status(self::STATUS_NOT_STARTED);
-      // start time is updated with actual start time if there are not failures
-      $this->setStartTime(date('Y-m-d h:m:s', time()));
-    }
-
-    // done implicitly by _get_salsify_api()
-    // $this->_get_config();
-    $this->_get_salsify_api();
+    parent::_construct();
   }
 
 
