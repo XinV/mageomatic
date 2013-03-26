@@ -557,11 +557,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       if (!array_key_exists('_category', $this->_product)) {
         $this->_product['_category'] = array();
       }
-      $path = $this->_get_category_path($category);
-      // FIXME
-      self::_log("CATEGORY: " . var_export($category,true));
-      self::_log("CATEGORY PATH: " . var_export($path,true));
-      array_push($this->_product['_category'], $path);
+      array_push($this->_product['_category'], $this->_get_category_path($category);
     } else {
       $this->_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
     }
@@ -876,12 +872,12 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
       $parent_depth = $parent_category['__depth'];
       $category['__depth'] = $parent_depth + 1;
-      if ($parent_depth == 0) {
-        // path is relative not to the root, but to the first child of the root...
-        $category['__path']  = $category['name'];
-      } else {
-        $category['__path']  = $parent_category['__path'] . '/' . $category['name'];
-      }
+      // if ($parent_depth === 0) {
+      //   // path is relative not to the root, but to the first child of the root...
+      //   $category['__path'] = $category['name'];
+      // } else {
+        $category['__path'] = $parent_category['__path'] . '/' . $category['name'];
+      // }
     } else {
       // root category
       $category['__root']  = $category['name'];
