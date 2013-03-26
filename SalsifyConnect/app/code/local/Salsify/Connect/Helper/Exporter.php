@@ -357,6 +357,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $gallery_images = $product->getMediaGalleryImages();
     foreach ($gallery_images as $image) {
       self::_log("MEDIA GALLERY IMAGES: " . var_export($image,true));
+      self::_log("URL: " . $image->getUrl());
 
       // $da = array();
       // $da["url"] = $image->getUrl();
