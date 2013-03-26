@@ -115,7 +115,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     $model = Mage::getModel('salsify_connect/exportrun');
     $model->save();
-    $model->setName('Export to Salsify #' . $export_run_id)
+    $model->setName('Export to Salsify #' . $model->getId())
           ->enqueue();
 
     $this->_respond_with_json(array('success' => true));
