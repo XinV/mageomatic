@@ -16,12 +16,14 @@ var salsify = (function (parent) {
     new Ajax.Request(workerUrl, {
       method: 'post',
       onSuccess: function(response) {
+        console.log(response);
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
-        reloadPage();
+        // reloadPage();
       },
       onFailure: function(response) {
         // console.log(response);
+        reloadPage();
       }
     });
   }
@@ -46,11 +48,13 @@ var salsify = (function (parent) {
     new Ajax.Request(syncUrl, {
       method: 'post',
       onSuccess: function(response) {
+        console.log(response);
+
         // next kickoff the background worker and, if successful, reload page
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        reloadPage();
+        // reloadPage();
       },
       onFailure: function(response) {
         // console.log(response);
