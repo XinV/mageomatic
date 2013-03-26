@@ -299,6 +299,14 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       } elseif ($key === 'digital_assets') {
         $this->_digital_assets[$product['sku']] = $value;
         unset($product['digital_assets']);
+      } elseif ($key === '_category') {
+        // support for multiple category assignments
+        $catgories = $product[$key];
+        $product['_category'] = array_shift($categories);
+        foreach ($categories as $category) {
+          array_push($extra_product_values,
+                     array('_category' => $category));
+        }
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
@@ -568,6 +576,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     } catch (Exception $e) {
       $this->_log('ERROR: could not flush batch: ' . $e->getMessage());
       $this->_log('BACKTRACE:' . $e->getTraceAsString());
+      // TODO throw and exception to prevent further work
     }
   }
 
