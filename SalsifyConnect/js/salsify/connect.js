@@ -7,6 +7,9 @@
  *       JS library for the basic calls that we're making here.
  */
 
+// FIXME remove the console.log statements and add back in the reloadPage stuff
+// TODO need to gracefully show error messages that come back from the server
+
 var salsify = (function (parent) {
   var sc = parent.connect = parent.connect || {};
 
@@ -15,6 +18,7 @@ var salsify = (function (parent) {
   function createWorker(workerUrl) {
     new Ajax.Request(workerUrl, {
       method: 'post',
+      loaderArea : false, // don't show the 'Please wait' dialog here
       onSuccess: function(response) {
         console.log(response);
         // note that this is unlikely to ever be called since the page will

@@ -3,6 +3,8 @@
 /**
  * Writes out Magento data to a Salsify format.
  *
+ * TODO categories on products
+ * TODO related products
  * TODO enable partial exports (just products, etc.).
  */
 class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
@@ -61,7 +63,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
 
-  // TODO: Doxygen vs. some other PHP documentation?
   /**
    * Creates a COMPLETE export of Magento data to Salsify.
    *
@@ -331,7 +332,18 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
     }
 
-    // TODO category assignments. might already be in. need to test...
+    $category_attribute = $this->_salsify
+                               ->get_attribute_mapper()
+                               ->getCategoryAssignemntMagentoCode();
+    $category_collection = $product->getCategoryCollection();
+    $salsify_categories_for_product = array();
+    foreach ($category_collection as $category) {
+      $id = $category->getId();
+      array_push($salsify_categories_for_product, $this->_category_mapping($id);
+    }
+    if (!empty($salsify_categories_for_product)) {
+      $product_json[$category_attribute] = $salsify_categories_for_product;
+    }
 
     // TODO accessories
 
