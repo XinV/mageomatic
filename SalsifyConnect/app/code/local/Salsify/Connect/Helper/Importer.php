@@ -306,9 +306,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
                      array($key => $category));
         }
 
-        // FIXME the issue is maybe the get path thing...
-        self::_log("ALL CATEGORIES: " .var_export($categories));
-        self::_log("PRODUCT CATEGORY: " . var_export($product[$key], true));
+        // FIXME extras don't seem to work here
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
@@ -872,13 +870,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
       $parent_depth = $parent_category['__depth'];
       $category['__depth'] = $parent_depth + 1;
-      // if ($parent_depth === 0) {
-      //   // path is relative not to the root, but to the first child of the root...
-      //   $category['__path'] = $category['name'];
-      // } else {
-      // FIXME remove this condition?
-        $category['__path'] = $parent_category['__path'] . '/' . $category['name'];
-      // }
+      $category['__path'] = $parent_category['__path'] . '/' . $category['name'];
     } else {
       // root category
       $category['__root']  = $category['name'];
