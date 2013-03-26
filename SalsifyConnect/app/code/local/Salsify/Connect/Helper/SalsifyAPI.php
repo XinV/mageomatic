@@ -118,8 +118,9 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   }
 
 
-  // sends the given file to Salsify
-  public function export_to_salsify($export_file) {
+  // sends the given salsify product data file to Salsify and kicks off its
+  // processing
+  public function upload_product_data_to_salsify($export_file) {
     self::_log("Exporting " . $export_file . " to Salsify.");
 
     // first we need to get a mount point

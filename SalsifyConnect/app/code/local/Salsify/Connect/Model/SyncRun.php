@@ -52,11 +52,13 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_start_time() {
     $this->setStartTime(date('Y-m-d h:m:s', time()));
+    return $this;
   }
 
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_end_time() {
     $this->setEndTime(date('Y-m-d h:m:s', time()));
+    return $this;
   }
 
 
@@ -69,6 +71,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
     $this->_ensure_complete_salsify_configuration();
     $this->_get_salsify_api();
+    return $this;
   }
 
 
@@ -90,5 +93,13 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
       $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
     }
     return $this->_salsify_api;
+  }
+
+
+  // causes this job to be enqueued in the DJJob database
+  public function enqueue() {
+    $salsify = Mage::helper('salsify_connect');
+    $salsify->enqueue_job($this);
+    return $this;
   }
 }
