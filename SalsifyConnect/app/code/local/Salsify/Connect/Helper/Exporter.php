@@ -322,9 +322,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         array_push($this->_attribute_codes_to_skip, $key);
         continue;
       } elseif ($key === 'media_gallery') {
-        // TODO digital assets
-        //      the media items don't have URLs associated with them, so maybe
-        //      we want to use the mediaApi stuff like in the controller...
+        // skip. we'll deal with this separately
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
         $product_json[$salsify_id] = $value;
@@ -333,7 +331,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
     }
 
-    // emit the product's category assignment
+
+    // write out category assignments
     $category_attribute = $this->_salsify
                                ->get_attribute_mapper()
                                ->getCategoryAssignemntMagentoCode();
@@ -351,7 +350,26 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $product_json[$category_attribute] = $salsify_categories_for_product;
     }
 
-    // TODO accessories
+
+    // write out digital assets
+    $digital_assets = array();
+    $gallery_images = $product->getGalleryImages();
+    foreach ($gallery_images as $image) {
+      $da = array();
+      $da["url"] = $_image->getUrl();
+
+      // TODO we do have some of this other information, especially the ID which
+      //      we should be saving to avoid unnecessary duplicate round-trips.
+      // "id": "3635065-FRONT-VIEW",
+      // "name": "Sony 40in Bravia TV Front View",
+      // "is_primary_image": "true"
+    }
+    if (!empty($digital_assets)) {
+      $product_json['digital_assets'] = $digital_assets;
+    }
+
+
+    // write out accessories
 
     $this->_write_object($product_json);
   }
