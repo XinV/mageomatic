@@ -161,4 +161,28 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
     return Mage::getModel('salsify_connect/attributemapping');
   }
 
+
+  // useful helper function for downloading the file at the given URL to the
+  // specified local file location.
+  public function download_file($url, $filename) {
+    self::_log("starting download from " . $url . " to: " . $filename);
+
+    $file = null;
+    try {
+      $ch = curl_init($url);
+      $file = fopen($filename, "wb");
+      curl_setopt($ch, CURLOPT_FILE, $file);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
+      curl_exec($ch);
+      curl_close($ch);
+      fclose($file);
+    } catch (Exception $e) {
+      if ($file) { fclose($file); }
+      unlink($filenmae);
+      throw $e;
+    }
+
+    self::_log("download successful. Local file: " . $filename);
+    return $filename;
+  }
 }

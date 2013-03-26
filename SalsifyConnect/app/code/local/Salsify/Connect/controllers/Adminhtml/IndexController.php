@@ -6,7 +6,7 @@
 class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controller_action {
 
   private static function _log($msg) {
-    Mage::log('Adminhtml_Index: ' . $msg, null, 'salsify.log', true);
+    Mage::log(get_called_class() . $msg, null, 'salsify.log', true);
   }
 
 
@@ -87,42 +87,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
 
   /**
-   * Action for managing imports from Salsify to Magento.
-   */
-  public function indexAction() {
-    $this->_start_render(self::IMPORTS_MENU_ID);
-    // everything for managing imports already taken care of by standard layout
-    // stuff.
-    $this->_end_render();
-  }
-
-
-  /**
-   * Action for managing exports from Magento to Salsify.
-   */
-  public function exportsAction() {
-    $this->_start_render(self::EXPORTS_MENU_ID);
-    // everything for managing exports already taken care of by standard layout
-    // stuff.
-    $this->_end_render();
-  }
-
-
-  // creates a new export
-  // FIXME need to give better error messages and show them in the client
-  public function createexportAction() {
-    self::_log("creating export run...");
-
-    $model = Mage::getModel('salsify_connect/exportrun');
-    $model->save();
-    $model->setName('Export to Salsify #' . $model->getId())
-          ->enqueue();
-
-    $this->_respond_with_json(array('success' => true));
-  }
-
-
-  /**
    * Action for displaying and editing Salsify account details.
    */
   public function configurationAction() {
@@ -155,76 +119,57 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // TODO remove for production
-  public function importAction() {
-    $params = $this->getRequest()->getParams();
-    if (!array_key_exists('config', $params)) {
-      throw new Exception("Must specify configuration ID to use for import.");
-    }
-    $config_id = $params['config'];
-
-    $model = Mage::getModel('salsify_connect/importrun');
-    $model->setConfigurationId($config_id);
-    $model->save();
-    $model->start_import();
-
-    $url = $this->getUrl('*/*/chimport') . '?id=' . $model->getId();
-    $this->_redirectUrl($url);
-  }
-
-
-  // TODO make this into some kind of polling/monitoring/restful thing that
-  //      is called by JS from the index main area
-  public function chimportAction() {
-    $this->_start_render('salsify_connect_menu/chimport');
-
-    $params = $this->getRequest()->getParams();
-    $import_id = $params['id'];
-
-    $import = Mage::getModel('salsify_connect/importrun');
-    $import->load((int)$import_id);
-    if (!$import->getId()) {
-      throw new Exception("Must specify a valid import ID.");
-    }
-    $this->_render_html("Current status: " . $import->get_status_string() . '<br/>');
-
-    if (!$import->is_done()) {
-      $this->_render_html("<br/><br/>Attempting next stage...");
-      if($import->is_waiting_on_salsify()) {
-        $advanced = $import->start_download_if_ready();
-        if (!$advanced) {
-          $this->_render_html('<br/>Still waiting on Salsify.');
-        } else {
-          $this->_render_html('<br/>Download is ready. Enqueued background job to complete import.');
-          $this->sneaky_worker_thread_start();
-        }
-      } elseif ($import->is_waiting_on_worker()) {
-        $this->_render_html('<br/>Still waiting on background worker to pick up the job.');
-        $this->sneaky_worker_thread_start();
-      }
-    }
-
-    $url = $this->getUrl('*/*/chimport') . '?id=' . $import_id;
-    $this->_render_html('<br><a href="'.$url.'">Re-chimport</a>');
-
+  /**
+   * Action for managing imports from Salsify to Magento.
+   */
+  public function indexAction() {
+    $this->_start_render(self::IMPORTS_MENU_ID);
+    // everything for managing imports already taken care of by standard layout
+    // stuff.
     $this->_end_render();
   }
 
 
-  // FIXME remove once no longer necessary when full admin window is setup
-  private function sneaky_worker_thread_start() {
-    $worker_url = $this->getUrl('*/*/createworker');
+  /**
+   * Action for managing exports from Magento to Salsify.
+   *
+   * Same as Index, actually.
+   */
+  public function exportsAction() {
+    $this->_start_render(self::EXPORTS_MENU_ID);
+    // everything for managing exports already taken care of by standard layout
+    // stuff.
+    $this->_end_render();
+  }
 
-    // send in AJAX request to kick off the server worker process
-    $worker_js = "
-    <script type=\"text/javascript\">
-      new Ajax.Request('" . $worker_url ."', {
-        onSuccess: function(response) {
-          // woo hoo!
-        }
-      });
-    </script>";
-    $this->_render_js($worker_js);
+
+  // json interface.
+  // creates a new import.
+  // TODO need to give better error messages and show them in the client
+  public function createimportAction() {
+    self::_log("creating import run...");
+
+    $model = Mage::getModel('salsify_connect/importrun');
+    $model->save();
+    $model->setName('Import from Salsify #' . $model->getId())
+          ->enqueue();
+
+    $this->_respond_with_json(array('success' => true));
+  }
+
+
+  // json interface.
+  // creates a new export
+  // TODO need to give better error messages and show them in the client
+  public function createexportAction() {
+    self::_log("creating export run...");
+
+    $model = Mage::getModel('salsify_connect/exportrun');
+    $model->save();
+    $model->setName('Export to Salsify #' . $model->getId())
+          ->enqueue();
+
+    $this->_respond_with_json(array('success' => true));
   }
 
 

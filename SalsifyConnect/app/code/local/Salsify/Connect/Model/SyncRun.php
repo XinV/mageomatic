@@ -30,11 +30,6 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   }
 
 
-  public function is_done() {
-    return ((int)$this->getStatus() === self::STATUS_DONE);
-  }
-
-
   // sets the status of this sync to error.
   public function set_error($e) {
     if (is_string($e)) {

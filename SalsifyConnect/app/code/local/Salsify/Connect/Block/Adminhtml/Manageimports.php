@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Simply holds the grid that will display all the import runs.
  */
@@ -18,9 +17,12 @@ class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block
 
     // create the new button. evidently 'new_button' could be anything. doesn't
     // show up or anything
+    $createImportUrl = $this->getUrl('*/*/createimport');
+    $createWorkerUrl = $this->getUrl('*/*/createworker');
     $this->_addButton('new_button', array(
       'label'   => Mage::helper('salsify_connect')->__('Create New Import'),
-      'onclick' => "salsify.connect.createImport();",
+      'onclick' => "salsify.connect.createExport('" .
+                            $createImportUrl ."','" . $createWorkerUrl . "');",
       'class'   => 'add new_import_button',
     ));
 

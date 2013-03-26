@@ -81,6 +81,8 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   }
 
 
+  // creates an actual import in Salsify that can be referred to by its token.
+  //
   // TODO make this configurable with "compressed" vs. not once we figure out
   //      how to deal with GZipped stuff in PHP.
   public function create_import() {
@@ -89,6 +91,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     if (!$this->_base_url || !$this->_api_key) {
       throw new Exception("Base URL and API key must be set to create a new import.");
     }
+
     $url = $this->_get_create_import_url();
     $req = new HttpRequest($url, HTTP_METH_POST);
     $mes = $req->send();
@@ -97,11 +100,18 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
       throw new Exception("Error received from Salsify when creating import: " . $mes->getResponseStatus());
     }
 
-    self::_log("SUCCESS creating import");
-    return json_decode($mes->getBody(), true);
+    $import = json_decode($mes->getBody(), true);
+    if (!array_key_exists('id', $import)) {
+      throw new Exception("Error: no token returned when creating Salsify import.");
+    }
+    $token = $import['id'];
+    self::_log("SUCCESS creating import. Salsify import token: " . $token);
+    return $token;
   }
 
 
+  // returns the JSON document from salsify as a php array that describes what
+  // the status of the import with the given token is.
   public function get_import($id) {
     if (!$this->_base_url || !$this->_api_key) {
       throw new Exception("Base URL and API key must be set to create a new import.");
@@ -115,6 +125,47 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     }
 
     return json_decode($mes->getBody(), true);
+  }
+
+
+  // checks whether salsify is done preparing the import with the given id.
+  // return null if not.
+  // return the url of the document if it's done.
+  // throw an Exception if anything strange occurs.
+  public function is_salsify_done_preparing_export($id) {
+    $import = $this->get_import($id);
+
+    if (!array_key_exists('processing', $import)) {
+      throw new Exception('malformed import document returned from salsify: ' . var_export($import,true));
+    }
+    if ($import['processing']) {
+      // still going
+      return null;
+    }
+
+    // done! however, there may have been a failure. make sure there is a URL
+    // for the export document.
+    if (!array_key_exists('url', $import)) {
+      $url = null;
+    } else {
+      $url = $import['url'];
+    }
+    if (!$url) {
+      $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
+    }
+
+    return $url;
+  }
+
+
+  // waits until salsify is done preparing the given export, and returns the URL
+  // when done. throws an exception if anything funky occurs.
+  public function wait_for_salsify_to_finish_preparing_export($id) {
+    do {
+      sleep(5);
+      $url = $this->is_salsify_done_preparing_export($id);
+    } while (!$url);
+    return $url;
   }
 
 
@@ -142,7 +193,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     // finally we can check the status until it's done...
     while ($this->_still_running($salsify_import_run_id)) {
       self::_log("Salsify import not yet done...");
-      sleep(1);
+      sleep(5);
     }
 
     self::_log("Export to Salsify done!");

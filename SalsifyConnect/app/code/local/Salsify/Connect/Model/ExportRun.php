@@ -70,10 +70,6 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
   // creates the export document for Salsify.
   // major work is done by Exporter.
   private function create_export_file() {
-    if ($this->getStatus() != self::STATUS_NOT_STARTED) {
-      $this->set_error("cannot create an export file when the ExportRun is not new.");
-    }
-
     // set the actual start time now.
     $this->_set_status(self::STATUS_EXPORTING);
     $this->_set_start_time();
@@ -97,15 +93,13 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
   // uploads the prepared export document to Salsify.
   // all the real heavy lifting is done by the SalsifyApi.
   private function upload_to_salsify() {
-    if ($this->getStatus() !== self::STATUS_EXPORTING_DONE) {
-      $this->set_error("cannot start uploading to Salsify until the file has been exported");
-    }
-
     $this->_set_status(self::STATUS_UPLOADING_TO_SALSIFY);
     $this->save();
 
     $salsify_api = $this->_get_salsify_api();
     try {
+      // FIXME should get error/status message from salsify in the event of
+      //       failure and store it here instead of just a boolean.
       $success = $salsify_api->upload_product_data_to_salsify($this->_export_file);
     } catch (Exception $e) {
       $this->set_error($e);
