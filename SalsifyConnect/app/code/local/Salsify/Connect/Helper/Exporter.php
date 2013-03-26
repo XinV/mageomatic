@@ -323,7 +323,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         continue;
       } elseif ($key === 'media_gallery') {
         // skip. we'll deal with this separately
-        self::_log("MEDIA GALLER: " . var_export($value,true));
+        self::_log("MEDIA GALLERY: " . var_export($value,true));
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
         $product_json[$salsify_id] = $value;
@@ -356,8 +356,10 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $digital_assets = array();
     $gallery_images = $product->getMediaGalleryImages();
     foreach ($gallery_images as $image) {
-      $da = array();
-      $da["url"] = $image->getUrl();
+      self::_log("MEDIA GALLERY IMAGES: " . var_export($image,true));
+
+      // $da = array();
+      // $da["url"] = $image->getUrl();
 
       // TODO we do have some of this other information, especially the ID which
       //      we should be saving to avoid unnecessary duplicate round-trips.
