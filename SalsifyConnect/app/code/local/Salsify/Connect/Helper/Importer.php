@@ -301,12 +301,12 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         // support for multiple category assignments
         $categories = $product[$key];
         $product[$key] = array_shift($categories);
-        foreach ($categories as $category) {
+        // foreach ($categories as $category) {
+          // TODO Avs FastSimpleImport doesn't seem to support this currently.
+          //      see: https://github.com/avstudnitz/AvS_FastSimpleImport/issues/30
           // array_push($extra_product_values,
           //            array($key => $category));
-        }
-
-        // FIXME extras don't seem to work here
+        // }
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
