@@ -43,6 +43,7 @@ var salsify = (function (parent) {
     new Ajax.Request(syncUrl, {
       method: 'post',
       onSuccess: function(response) {
+        console.log(response);
         // next kickoff the background worker and, if successful, reload page
         createWorker(workerUrl);
 
