@@ -323,7 +323,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         continue;
       } elseif ($key === 'media_gallery') {
         // skip. we'll deal with this separately
-        self::_log("MEDIA GALLERY: " . var_export($value,true));
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
         $product_json[$salsify_id] = $value;
@@ -356,16 +355,13 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $digital_assets = array();
     $gallery_images = $product->getMediaGalleryImages();
     foreach ($gallery_images as $image) {
-      self::_log("MEDIA GALLERY IMAGES: " . var_export($image,true));
-      self::_log("URL: " . $image->getUrl());
-
-      // $da = array();
-      // $da["url"] = $image->getUrl();
+      $da = array();
+      $da["url"] = $image->getUrl();
+      $da["name"] = $image->getLabel();
 
       // TODO we do have some of this other information, especially the ID which
       //      we should be saving to avoid unnecessary duplicate round-trips.
       // "id": "3635065-FRONT-VIEW",
-      // "name": "Sony 40in Bravia TV Front View",
       // "is_primary_image": "true"
     }
     if (!empty($digital_assets)) {
