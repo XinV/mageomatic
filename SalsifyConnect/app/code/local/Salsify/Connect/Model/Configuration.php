@@ -11,10 +11,13 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
+
+  // The default URL location of the Salsify app.
+  const DEFAULT_SALSIFY_URL = 'https://app.salsify.com/';
+
+
   protected function _construct() {
-    self::_log("constructing");
     $this->_init('salsify_connect/configuration');
-    self::_log("constructing");
   }
 
   /**
@@ -28,8 +31,7 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
     }
 
     // need to create the singleton
-    $salsify = Mage::helper('salsify_connect/salsifyapi');
-    $config->setUrl($salsify::DEFAULT_SALSIFY_URL);
+    $config->setUrl(self::DEFAULT_SALSIFY_URL);
     $config->save();
     return $config;
   }

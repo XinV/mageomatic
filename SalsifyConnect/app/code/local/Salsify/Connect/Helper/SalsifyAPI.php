@@ -18,10 +18,6 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   private $_base_url;
 
 
-  // The default URL location of the Salsify app.
-  const DEFAULT_SALSIFY_URL = 'https://app.salsify.com/';
-
-
   // When we're IMPORTING from Salsify, it thinks of it as an EXPORT
   const IMPORT_FROM_SALSIFY_PATH = '/api/exports';
 
