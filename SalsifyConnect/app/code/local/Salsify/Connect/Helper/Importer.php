@@ -302,8 +302,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         $categories = $product[$key];
         $product[$key] = array_shift($categories);
         foreach ($categories as $category) {
-          array_push($extra_product_values,
-                     array($key => $category));
+          // array_push($extra_product_values,
+          //            array($key => $category));
         }
 
         // FIXME extras don't seem to work here
@@ -820,6 +820,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     }
     return $prepped_categories;
   }
+
 
   // returns the database model category for the given category if it exists.
   //         null otherwise.
