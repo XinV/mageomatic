@@ -308,7 +308,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     $id = $product->getId();
     // need to load the full product model to have access to all of its
-    // attribute values.
+    // attribute values, gallery images, etc.
     $product = Mage::getModel('catalog/product')
                    ->load($id);
 
@@ -353,7 +353,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     // write out digital assets
     $digital_assets = array();
-    $gallery_images = $product->getGalleryImages();
+    $gallery_images = $product->getMediaGalleryImages();
     foreach ($gallery_images as $image) {
       $da = array();
       $da["url"] = $_image->getUrl();
