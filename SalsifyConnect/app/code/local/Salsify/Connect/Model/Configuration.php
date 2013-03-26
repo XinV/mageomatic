@@ -12,9 +12,9 @@ class Salsify_Connect_Model_Configuration extends Mage_Core_Model_Abstract {
   }
 
   protected function _construct() {
-    self::log("constructing");
+    self::_log("constructing");
     $this->_init('salsify_connect/configuration');
-    self::log("constructing");
+    self::_log("constructing");
   }
 
   /**
