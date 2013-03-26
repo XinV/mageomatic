@@ -870,7 +870,12 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
       $parent_depth = $parent_category['__depth'];
       $category['__depth'] = $parent_depth + 1;
-      $category['__path'] = $parent_category['__path'] . '/' . $category['name'];
+      if ($parent_depth == 0) {
+        // path is relative not to the root, but to the first child of the root...
+        $category['__path'] = $category['name'];
+      } else {
+        $category['__path'] = $parent_category['__path'] . '/' . $category['name'];
+      }
     } else {
       // root category
       $category['__root']  = $category['name'];
