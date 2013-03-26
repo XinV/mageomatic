@@ -30,6 +30,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
 
 
   protected function _construct() {
+    self::_log("YEEEEEEEEEEEEEEEE");
     $this->_config = Mage::getModel('salsify_connect/configuration')
                          ->getInstance();
     $this->_api_key = $this->_config->getApiKey();
