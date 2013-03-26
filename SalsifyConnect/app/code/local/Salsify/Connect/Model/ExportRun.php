@@ -17,9 +17,9 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
   const STATUS_EXPORTING             = 1;
   const STATUS_EXPORTING_DONE        = 2;
   const STATUS_UPLOADING_TO_SALSIFY  = 3;
-  const STATUS_UPLOAD_DONE           = 4;
-  const STATUS_SALSIFY_LOADING       = 5;
-  
+
+  // returns a nice message that can be used in the UI or stored in the DB in
+  // the status_message field.  
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
@@ -116,7 +116,7 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
     // note at this point the file has been uploaded to salsify AND loaded.
 
-    $this->_set_status(self::STATUS_UPLOAD_DONE);
+    $this->_set_status(self::STATUS_DONE);
     $this->save();
   }
 }
