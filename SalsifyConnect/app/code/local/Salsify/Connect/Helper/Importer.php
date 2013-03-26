@@ -904,6 +904,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
   // self-explanatory.
   private function _sort_categories_by_depth($categories) {
+    if (empty($categories)) {
+      return $categories;
+    }
+
     $bins = array();
     $max_depth = 0;
     foreach ($categories as $category) {
