@@ -338,8 +338,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $category_collection = $product->getCategoryCollection();
     $salsify_categories_for_product = array();
     foreach ($category_collection as $category) {
-      $id = $category->getId();
-      array_push($salsify_categories_for_product, $this->_category_mapping($id));
+      $catid = $category->getId();
+      if (!array_key_exists($catid, $this->_category_mapping)) {
+        self::_log("WARNING: category assignment in product " . $id . " does not exist in mapping. cat id: " . $catid);
+      } else {
+        array_push($salsify_categories_for_product, $this->_category_mapping[$catid]);
+      }
     }
     if (!empty($salsify_categories_for_product)) {
       $product_json[$category_attribute] = $salsify_categories_for_product;
