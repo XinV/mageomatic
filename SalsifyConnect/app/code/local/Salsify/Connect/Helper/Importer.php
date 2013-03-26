@@ -306,6 +306,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
                      array($key => $category));
         }
 
+        // FIXME the issue is maybe the get path thing...
         self::_log("ALL CATEGORIES: " .var_export($categories));
         self::_log("PRODUCT CATEGORY: " . var_export($product[$key], true));
       } elseif (is_array($value)) {
@@ -556,7 +557,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       if (!array_key_exists('_category', $this->_product)) {
         $this->_product['_category'] = array();
       }
-      array_push($this->_product['_category'], $this->_get_category_path($category));
+      $path = $this->_get_category_path($category);
+      // FIXME
+      self::_log("CATEGORY PATH: " . var_export($path,true));
+      array_push($this->_product['_category'], $path);
     } else {
       $this->_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
     }
