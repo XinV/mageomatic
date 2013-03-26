@@ -356,7 +356,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $gallery_images = $product->getMediaGalleryImages();
     foreach ($gallery_images as $image) {
       $da = array();
-      $da["url"] = $_image->getUrl();
+      $da["url"] = $image->getUrl();
 
       // TODO we do have some of this other information, especially the ID which
       //      we should be saving to avoid unnecessary duplicate round-trips.
