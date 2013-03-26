@@ -70,7 +70,6 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
 
   protected function _construct() {
-    self::_log("HERE");
     $this->_init('salsify_connect/exportrun');
 
     if (!$this->getId()) {
@@ -82,6 +81,8 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
     // done implicitly by _get_salsify_api()
     // $this->_get_config();
     $this->_get_salsify_api();
+    self::_log("HERE");
+    
   }
 
 
