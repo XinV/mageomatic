@@ -302,11 +302,14 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       } elseif ($key === '_category') {
         // support for multiple category assignments
         $categories = $product[$key];
-        $product['_category'] = array_shift($categories);
+        $product[$key] = array_shift($categories);
         foreach ($categories as $category) {
           array_push($extra_product_values,
                      array('_category' => $category));
         }
+
+        self::_log("PRODUCT CATEGORY: " . var_export($product[$key], true));
+        self::_log("EXTRA VALUES: " . var_export($extra_product_values,true));
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
