@@ -3,9 +3,6 @@ require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 /**
  * Parser of Salsify data. Also loads into the Magento database.
- *
- * FIXME products with multiple category assignments do not show any category in
- *       magento.
  */
 class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
 
@@ -446,6 +443,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
           $this->_product[$key] = $value;
         } elseif ($key === 'digital_assets') {
           $this->_product[$key] = $value;
+        } elseif (array_key_exists($key, $this->_categories)) {
+          // multiple categories
+          foreach ($value as $catid) {
+            $this->_add_category_to_product($key, $catid);
+          }
         } else {
           $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
@@ -524,16 +526,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         $this->_category[$key] = $value;
       } elseif ($this->_in_products) {
         if (array_key_exists($key, $this->_categories)) {
-          self::_log("CATEGORY SEEN IN IMPORT: " . var_export($value,true));
-          // FIXME allow multiple category assignments per product
-          // FIXME HERE
-
-          if (array_key_exists($value, $this->_categories[$key])) {
-            $category = $this->_categories[$key][$value];
-            $this->_product['_category'] = $this->_get_category_path($category);
-          } else {
-            $this->_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
-          }
+          $this->_add_category_to_product($key, $value);
         } elseif (array_key_exists($key, $this->_attributes)) {
           $code = $this->_get_attribute_code($this->_attributes[$key]);
           $this->_product[$code] = $value;
@@ -543,6 +536,20 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
       $this->_add_nested_value($value);
+    }
+  }
+
+
+  private function _add_category_to_product($cat_attr, $catid) {
+    // this will always be a single category assignment
+    if (array_key_exists($catid, $this->_categories[$cat_attr])) {
+      $category = $this->_categories[$cat_attr][$catid];
+      if (!array_key_exists('_category', $this->_product)) {
+        $this->_product['_category'] = array();
+      }
+      array_push($this->_product['_category'], $this->_get_category_path($category));
+    } else {
+      $this->_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
     }
   }
 
