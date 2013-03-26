@@ -91,18 +91,18 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function testAction() {
     $this->_start_render('salsify_connect_menu/exports');
 
-    // $salsify = Mage::helper('salsify_connect');
-    // $export_file = $salsify->export_data();
-    // $this->_render_html('Exported data: ' . $export_file);
+    $salsify = Mage::helper('salsify_connect');
+    $export_file = $salsify->export_data();
+    $this->_render_html('Exported data: ' . $export_file);
 
-    $categories = Mage::getModel('catalog/category')
-                      ->getCollection();
-    foreach($categories as $category) {
-      $magento_id = $category->getId();
-      $salsify_id = Mage::getResourceModel('catalog/category')
-                        ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
-      $this->_render_html('salsify id: ' . $salsify_id . '<br/>');
-    }
+    // $categories = Mage::getModel('catalog/category')
+    //                   ->getCollection();
+    // foreach($categories as $category) {
+    //   $magento_id = $category->getId();
+    //   $salsify_id = Mage::getResourceModel('catalog/category')
+    //                     ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
+    //   $this->_render_html('salsify id: ' . $salsify_id . '<br/>');
+    // }
 
     $this->_end_render();
   }
