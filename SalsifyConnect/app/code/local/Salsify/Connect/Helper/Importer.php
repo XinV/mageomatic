@@ -523,10 +523,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       } elseif ($this->_in_attribute_values) {
         $this->_category[$key] = $value;
       } elseif ($this->_in_products) {
-        self::_log("CATEGORY SEEN IN IMPORT: " . var_export($value,true));
-        // FIXME allow multiple category assignments per product
-        // FIXME HERE
         if (array_key_exists($key, $this->_categories)) {
+          self::_log("CATEGORY SEEN IN IMPORT: " . var_export($value,true));
+          // FIXME allow multiple category assignments per product
+          // FIXME HERE
+
           if (array_key_exists($value, $this->_categories[$key])) {
             $category = $this->_categories[$key][$value];
             $this->_product['_category'] = $this->_get_category_path($category);
