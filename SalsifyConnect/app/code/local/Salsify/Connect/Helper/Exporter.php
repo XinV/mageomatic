@@ -363,6 +363,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       //      we should be saving to avoid unnecessary duplicate round-trips.
       // "id": "3635065-FRONT-VIEW",
       // "is_primary_image": "true"
+
+      array_push($digital_assets, $da);
     }
     if (!empty($digital_assets)) {
       $product_json['digital_assets'] = $digital_assets;
