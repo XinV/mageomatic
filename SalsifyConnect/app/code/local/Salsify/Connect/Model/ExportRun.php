@@ -17,12 +17,16 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
   private $_export_file;
 
 
-  
+  const STATUS_ERROR       = -1;
+  const STATUS_NOT_STARTED = 0;
+  const STATUS_DONE        = 1000;
+
   const STATUS_EXPORTING             = 1;
   const STATUS_EXPORTING_DONE        = 2;
   const STATUS_UPLOADING_TO_SALSIFY  = 3;
   const STATUS_UPLOAD_DONE           = 4;
   const STATUS_SALSIFY_LOADING       = 5;
+  
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:

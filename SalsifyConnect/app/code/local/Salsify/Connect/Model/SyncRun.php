@@ -13,11 +13,6 @@ class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   protected $_salsify_api;
 
 
-  const STATUS_ERROR       = -1;
-  const STATUS_NOT_STARTED = 0;
-  const STATUS_DONE        = 1000;
-
-
   // ensures that the Salsify account confguration is complete.
   // FIXME move somewhere else
   protected function _get_config() {
