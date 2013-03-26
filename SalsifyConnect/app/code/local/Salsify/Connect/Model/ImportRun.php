@@ -73,7 +73,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       $this->setStatus(self::STATUS_DOWNLOADING);
       $this->save();
       $filename = $salsify->get_temp_file('import','json');
-      $filename = $salsify->download($url, $filename);
+      $filename = $salsify->download_file($url, $filename);
 
       // 2) parse file and load into Magento
       self::_log("loading Salsify export document into Magento.");
@@ -136,7 +136,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
           if (file_exists($filename)) {
             self::_log('local file already exists for product ' . $sku . ' from ' . $url);
           } else {
-            $salsify->download($url, $filename);
+            $salsify->download_file($url, $filename);
             self::_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
           }
 
