@@ -24,10 +24,10 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
   private function _start_render($menu_id) {
     self::_log('rendering ' . $menu_id);
-self::_log('loading layout');
+
     $this->loadLayout();
     $layout = $this->getLayout();
-self::_log('setting active menu');
+
     // deal with the menu and breadcrumbs.
     $this->_setActiveMenu($menu_id)
          ->_title('Salsify Connect');
@@ -35,7 +35,7 @@ self::_log('setting active menu');
          // ->_title($this->__('My Menu Item'))
          // ->_addBreadcrumb('Salsify Connect', 'Salsify Connect')
          // ->_addBreadcrumb($this->__('My Menu Item'), $this->__('My Menu Item'));
-self::_log('creating menu block');
+
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
       array('label' => 'Salsify Account Details', 'action' => 'configuration'),

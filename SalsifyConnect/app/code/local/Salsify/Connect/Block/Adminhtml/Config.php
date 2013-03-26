@@ -3,12 +3,18 @@
 // Block to provide a form to configure the Salsify connection.
 class Salsify_Connect_Block_Adminhtml_Config extends Mage_Core_Block_Template {
 
+  private static function _log($msg) {
+    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
+  }
+
+
   private $_salsify_config;
 
   public function _construct() {
+self::_log("getting singletone...");
     $this->_salsify_config = Mage::getModel('salsify_connect/configuration')
                                  ->getInstance();
-
+self::_log("getting singletone...");
     $this->setTemplate('salsify/config.phtml');
     return parent::_construct();
   }
