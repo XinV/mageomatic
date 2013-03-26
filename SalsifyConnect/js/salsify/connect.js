@@ -38,7 +38,7 @@ var salsify = (function (parent) {
     // AJAX call that will take quite some time to return (and, in fact, we'll
     // probably have refreshed the page or gone elsewhere before it even does
     // return).
-
+alert('foo');
     // first create the export run...
     new Ajax.Request(createUrl, {
       method: 'post',
