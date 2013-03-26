@@ -47,12 +47,14 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_start_time() {
+    // FIXME this doesn't seem to be working. time set is weird.
     $this->setStartTime(date('Y-m-d h:m:s', time()));
     return $this;
   }
 
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_end_time() {
+    // FIXME this doesn't seem to be working. time set is weird.
     $this->setEndTime(date('Y-m-d h:m:s', time()));
     return $this;
   }

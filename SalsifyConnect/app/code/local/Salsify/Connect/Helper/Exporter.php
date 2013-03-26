@@ -155,8 +155,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $this->_write(',');
     }
 
-    // don't escape the slashes here
-    $json = json_encode($object, JSON_UNESCAPED_SLASHES);
+    $json = json_encode($object);
     $this->_write($json);
     $this->_first_item = false;
   }

@@ -3,11 +3,14 @@ require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 /**
  * Parser of Salsify data. Also loads into the Magento database.
+ *
+ * FIXME products with multiple category assignments do not show any category in
+ *       magento.
  */
 class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
 
   private function _log($msg) {
-    Mage::log('Importer: ' . $msg, null, 'salsify.log', true);
+    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
 
