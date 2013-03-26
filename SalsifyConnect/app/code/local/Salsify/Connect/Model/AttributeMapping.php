@@ -161,6 +161,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array_push($roles['products'], 'name');
     }
 
+    // FIXME not correct. we need a separate category for accessories
     // if ($code === self::getCategoryAssignemntMagentoCode()) {
     //   $roles['global'] = array();
     //   array_push($roles['global'], 'accessory_label');
