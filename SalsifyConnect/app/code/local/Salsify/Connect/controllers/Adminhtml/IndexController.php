@@ -98,7 +98,10 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     foreach($categories as $category) {
-      $this->_render_html('path: ' . $category->getPath());
+      $magento_id = $category->getId();
+      $salsify_id = Mage::getResourceModel('catalog/category')
+                        ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
+      $this->_render_html('salsify id: ' . $salsify_id . '<br/>');
     }
 
     $this->_end_render();
