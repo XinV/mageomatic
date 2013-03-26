@@ -559,6 +559,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       }
       $path = $this->_get_category_path($category);
       // FIXME
+      self::_log("CATEGORY: " . var_export($category,true));
       self::_log("CATEGORY PATH: " . var_export($path,true));
       array_push($this->_product['_category'], $path);
     } else {
