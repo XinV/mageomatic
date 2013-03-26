@@ -31,6 +31,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
 
   // sets the status of this sync to error.
+  // FIXME must remove myself from the job queue if this happens...
   public function set_error($e) {
     if (is_string($e)) {
       $e = new Exception($e);

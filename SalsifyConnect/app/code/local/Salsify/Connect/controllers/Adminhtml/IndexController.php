@@ -87,6 +87,18 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
+  // TODO remove this when there is no longer a need.
+  public function testAction() {
+    $this->_start_render('salsify_connect_menu/exports');
+
+    $salsify = Mage::helper('salsify_connect');
+    $export_file = $salsify->export_data();
+    $this->_render_html('Exported data: ' . $export_file);
+
+    $this->_end_render();
+  }
+
+
   /**
    * Action for displaying and editing Salsify account details.
    */
