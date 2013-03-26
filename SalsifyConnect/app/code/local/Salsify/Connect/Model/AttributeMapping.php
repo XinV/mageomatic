@@ -161,10 +161,10 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array_push($roles['products'], 'name');
     }
 
-    if ($code === self::getCategoryAssignemntMagentoCode()) {
-      $roles['global'] = array();
-      array_push($roles['global'], 'accessory_label');
-    }
+    // if ($code === self::getCategoryAssignemntMagentoCode()) {
+    //   $roles['global'] = array();
+    //   array_push($roles['global'], 'accessory_label');
+    // }
 
     if (empty($roles)) {
       return null;
