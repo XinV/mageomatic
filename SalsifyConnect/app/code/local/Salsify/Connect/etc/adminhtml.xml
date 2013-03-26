@@ -29,11 +29,11 @@
         </manage_exports>
 
         <!-- FIXME remove when done -->
-        <cleaner module="salsify_connect">
+        <test module="salsify_connect">
           <title>TEST</title>
           <sort_order>99</sort_order>
           <action>salsify/adminhtml_index/test</action>
-        </cleaner>
+        </test>
 
         <!-- FIXME link to this ONLY from the manage salsify page -->
         <cleaner module="salsify_connect">
