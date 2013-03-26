@@ -29,7 +29,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   const EXPORT_TO_SALSIFY_PATH = '/api/imports';
 
 
-  protected function __construct() {
+  public function __construct() {
     $this->_config = Mage::getModel('salsify_connect/configuration')
                          ->getInstance();
     $this->_api_key = $this->_config->getApiKey();
