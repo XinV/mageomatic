@@ -323,6 +323,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         continue;
       } elseif ($key === 'media_gallery') {
         // skip. we'll deal with this separately
+        self::_log("MEDIA GALLER: " . var_export($value,true));
       } elseif(array_key_exists($key, $this->_attribute_map)) {
         $salsify_id = $this->_attribute_map[$key];
         $product_json[$salsify_id] = $value;
