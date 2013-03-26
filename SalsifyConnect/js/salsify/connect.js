@@ -48,7 +48,7 @@ var salsify = (function (parent) {
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        reloadPage();
+        // reloadPage();
       },
       onFailure: function(response) {
         // console.log(response);
