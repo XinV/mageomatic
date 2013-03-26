@@ -371,7 +371,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     }
 
 
-    // write out accessories
+    // FIXME write out accessories
+
 
     $this->_write_object($product_json);
   }
