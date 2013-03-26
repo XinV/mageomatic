@@ -95,6 +95,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     // $export_file = $salsify->export_data();
     // $this->_render_html('Exported data: ' . $export_file);
 
+    $categories = Mage::getModel('catalog/category')
+                      ->getCollection();
     foreach($categories as $category) {
       $this->_render_html('path: ' . $category->getPath());
     }
