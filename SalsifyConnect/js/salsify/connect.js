@@ -32,16 +32,7 @@ var salsify = (function (parent) {
   }
 
 
-  // creates and kicks off a new import job from Salsify.
-  //
-  // the createUrl and workerUrl parameters are necessary since they contain
-  // extra information (noteably security stuff) that we won't know in advance.
-  sc.createImport = function (createUrl, workerUrl) {
-    alert("FIXME: need to impleent the createImport");
-  };
-
-
-  sc.createExport = function (createUrl, workerUrl) {
+  function createSync(syncUrl, workerUrl) {
     // this has to be done in 2 steps. the first is to create the export, and
     // the second is to kick off the worker process in the background with an
     // AJAX call that will take quite some time to return (and, in fact, we'll
@@ -56,14 +47,28 @@ var salsify = (function (parent) {
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
-        // FIXME uncomment
-        // reloadPage();
+        reloadPage();
       },
       onFailure: function(response) {
         // console.log(response);
       }
     });
+  }
+
+
+  // creates and kicks off a new import job from Salsify.
+  //
+  // the createUrl and workerUrl parameters are necessary since they contain
+  // extra information (noteably security stuff) that we won't know in advance.
+  sc.createImport = function (createUrl, workerUrl) {
+    createSync(createUrl, workerUrl);
   };
+
+  // basically the same as createImport, but for exports.
+  sc.createExport = function (createUrl, workerUrl) {
+    createSync(createUrl, workerUrl);
+  };
+
 
   return parent;
 }(salsify || {}));

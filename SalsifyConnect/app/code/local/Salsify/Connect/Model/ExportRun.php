@@ -9,16 +9,11 @@
  *
  * TODO not DRY. Shares some key things with ImportRun.
  */
-class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
+class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
   private static function _log($msg) {
     Mage::log('ExportRun: ' . $msg, null, 'salsify.log', true);
   }
-
-
-  // cached handles on the helpers
-  private $_config;
-  private $_salsify_api;
 
 
   private $_export_file;
@@ -89,38 +84,9 @@ class Salsify_Connect_Model_ExportRun extends Mage_Core_Model_Abstract {
   }
 
 
-  // ensures that the Salsify account confguration is complete.
-  // FIXME move somewhere else
-  private function _get_config() {
-    if (!$this->_config) {
-      $this->_config = Mage::getModel('salsify_connect/configuration')
-                           ->getInstance();
-      if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
-        $this->set_error("you must first configure your Salsify account information.");
-      }
-    }
-    return $this->_config;
-  }
-
-
-  private function _get_salsify_api() {
-    if (!$this->_salsify_api) {
-      $config = $this->_get_config();
-
-      // FIXME remove this since we're working as a singleton now
-      $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');
-      $this->_salsify_api->set_base_url($config->getUrl());
-      $this->_salsify_api->set_api_key($config->getApiKey());
-    }
-    return $this->_salsify_api;
-  }
-
-
   // creates the export document for Salsify.
   public function create_export_file() {
     if ($this->getStatus() != self::STATUS_NOT_STARTED) {
-      // FIXME remove
-      self::_log("BAD STATUS: " . $this->getStatus());
       $this->set_error("cannot create an export file when the ExportRun is not new.");
     }
 
