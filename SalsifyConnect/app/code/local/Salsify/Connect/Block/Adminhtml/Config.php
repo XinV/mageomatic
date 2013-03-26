@@ -11,10 +11,8 @@ class Salsify_Connect_Block_Adminhtml_Config extends Mage_Core_Block_Template {
   private $_salsify_config;
 
   public function _construct() {
-self::_log("getting singletone...");
     $this->_salsify_config = Mage::getModel('salsify_connect/configuration')
                                  ->getInstance();
-self::_log("getting singletone...");
     $this->setTemplate('salsify/config.phtml');
     return parent::_construct();
   }
