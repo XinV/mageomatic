@@ -6,9 +6,6 @@
  *
  * A bunch of information is kept in the database, while temporary data is
  * kept on the filesystem in var/salsify/.
- *
- * TODO clean out the temp directory every so often (maybe once it has, say, 3
- *      files in it? could make that configurable).
  */
 class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
 

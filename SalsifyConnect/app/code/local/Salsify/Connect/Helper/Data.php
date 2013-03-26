@@ -9,10 +9,14 @@ require_once('DJJob.php');
  * orchestrating downloading of Salsify Data, parsing the downloaded documents,
  * and saving to the database. In a real way, this "helper" is the heart of the
  * Salsify Connect module.
+ *
+ * TODO clean out the temp directory every so often (maybe once it has, say, 3
+ *      files in it? could make that configurable).
  */
 class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
+
   private static function _log($msg) {
-    Mage::log('Data: ' . $msg, null, 'salsify.log', true);
+    Mage::log(get_called_class() . 'Data: ' . $msg, null, 'salsify.log', true);
   }
 
 

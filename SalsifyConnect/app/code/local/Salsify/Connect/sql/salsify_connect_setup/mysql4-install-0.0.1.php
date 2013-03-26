@@ -53,6 +53,11 @@ $table = $installer->getConnection()->newTable($installer->getTable(
 $installer->getConnection()->createTable($table);
 
 
+
+// FIXME the two following table creations are not DRY. should move them to a
+//       function which is called a couple times.
+
+
 // Create table for Salsify imports. Keeps a record of every import pulled into
 // Magento from Salsify.
 $table = $installer->getConnection()->newTable($installer->getTable(

@@ -18,6 +18,7 @@ var salsify = (function (parent) {
       onSuccess: function(response) {
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
+        reloadPage();
       },
       onFailure: function(response) {
         // console.log(response);
@@ -28,6 +29,8 @@ var salsify = (function (parent) {
 
   // just reloads the page. no big deal.
   function reloadPage() {
+    // true is to force a get from the server (rather than using the browser
+    // cache).
     document.location.reload(true);
   }
 
@@ -51,6 +54,7 @@ var salsify = (function (parent) {
       },
       onFailure: function(response) {
         // console.log(response);
+        reloadPage();
       }
     });
   }

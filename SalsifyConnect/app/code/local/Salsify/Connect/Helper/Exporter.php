@@ -3,20 +3,17 @@
 /**
  * Writes out Magento data to a Salsify format.
  *
- * @todo enable partial exports (just products, etc.).
+ * TODO enable partial exports (just products, etc.).
  */
 class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
   private static function _log($msg) {
-    Mage::log('Exporter: ' . $msg, null, 'salsify.log', true);
+    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
 
-  // TODO: Doxygen vs. some other PHP documentation?
-  //! Open export stream
-  /*! File that we're writing data out to. We do not have responsibility for
-      opening and closing this stream; that must be done by the calling class.
-   */
+  // File that we're writing data out to. We do not have responsibility for
+  // opening and closing this stream; that must be done by the calling class.
   private $_output_stream;
 
 

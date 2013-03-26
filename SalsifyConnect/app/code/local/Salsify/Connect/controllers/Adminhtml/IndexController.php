@@ -10,8 +10,9 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // TODO these necessary here?
-  const CONFIG_MENU_ID = 'salsify_connect_menu/configuration';
+  // the 'salsify_connect_ment' refers to the XML element of the menu in
+  // adminhtml.xml.
+  const CONFIG_MENU_ID   = 'salsify_connect_menu/configuration';
   const IMPORTS_MENU_ID  = 'salsify_connect_menu/index';
   const EXPORTS_MENU_ID  = 'salsify_connect_menu/exports';
   
@@ -204,7 +205,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
     $tables_dropped = $cleaner->tablesDropped();
     foreach ($tables_dropped as $table) {
-      $this->_render_html("<li>" . $table . "table dropped.</li>");
+      $this->_render_html("<li>" . $table . " table dropped.</li>");
     }
 
     $this->_render_html("</ul>");
