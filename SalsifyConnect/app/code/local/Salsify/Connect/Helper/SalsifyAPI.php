@@ -193,7 +193,7 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     // finally we can check the status until it's done...
     while ($this->_still_running($salsify_import_run_id)) {
       self::_log("Salsify import not yet done...");
-      sleep(5);
+      sleep(10);
     }
 
     $import = $this->_get_salsify_import_details($salsify_import_run_id);
