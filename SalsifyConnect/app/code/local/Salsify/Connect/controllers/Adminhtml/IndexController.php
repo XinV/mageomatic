@@ -91,9 +91,9 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function testAction() {
     $this->_start_render('salsify_connect_menu/exports');
 
-    $salsify = Mage::helper('salsify_connect');
-    $export_file = $salsify->export_data();
-    $this->_render_html('Exported data: ' . $export_file);
+    // $salsify = Mage::helper('salsify_connect');
+    // $export_file = $salsify->export_data();
+    // $this->_render_html('Exported data: ' . $export_file);
 
     // $categories = Mage::getModel('catalog/category')
     //                   ->getCollection();
@@ -103,6 +103,27 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     //                     ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
     //   $this->_render_html('salsify id: ' . $salsify_id . '<br/>');
     // }
+
+
+    $sku = '15825261';
+    $url = 'http://res.cloudinary.com/salsify/image/upload/amsskkckauueek4audgm.jpg';
+
+    $this->_render_html("Trying to filter all the mappings<br/>");
+    self::_log("1");
+    $mappings = Mage::getModel('salsify_connect/imagemapping')
+                    ->getCollection()
+                    ->addAttributeToFilter('sku', array('eq' => $sku))
+                    ->addAttributeToFilter('url', array('eq' => $url));
+    self::_log("2");
+    $this->_render_html("Got collection...<br/>");
+    $mapping = $mappings->getFirstItem();
+    self::_log("3");
+    $this->_render_html("Got first item...<br/>");
+    if (!$mapping || !$mapping->getId()) {
+      $this->_render_html("No matching mapping found...<br/>");
+    } else {
+      $this->_render_html("Matching mapping found...<br/>");
+    }
 
     $this->_end_render();
   }
