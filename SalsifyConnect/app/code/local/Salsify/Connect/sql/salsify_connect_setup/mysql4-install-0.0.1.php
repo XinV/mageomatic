@@ -64,7 +64,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'nullable' => false,
     'primary' => true,
     'identity' => true,
-    ), 'Salsify Connect Attribute Mapping ID')
+    ), 'Salsify Connect Image Mapping ID')
   ->addColumn('magento_product_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     'unsigned' => true,
     'nullable' => false,
