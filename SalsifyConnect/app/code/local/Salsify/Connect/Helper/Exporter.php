@@ -198,7 +198,13 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     $name = $attribute->getFrontendLabel();
     if (!$name) {
-      $name = $id;
+      $category_attribute_code = $mapper::getCategoryAssignemntMagentoCode();
+      // TODO if we find any other special cases we should move this to the mapper
+      if ($code === $category_attribute_code) {
+        $name = 'Category';
+      } else {
+        $name = $id;
+      }
     }
     $attribute_json['name'] = $name;
 
