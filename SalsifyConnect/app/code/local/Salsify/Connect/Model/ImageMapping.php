@@ -17,12 +17,67 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  // returns the ImageMapping model instance if it exists for the given sku and
+  // url, null otherwise.
+  private static function _get_mapping($sku, $url) {
+    $mappings = Mage::getModel('salsify_connect/imagemapping')
+                    ->getCollection()
+                    ->addAttributeToFilter('sku', array('eq' => $sku))
+                    ->addAttributeToFilter('url', array('eq' => $url));
+    $mapping = $mappings->getFirstItem();
+    if (!$mapping || $mapping->getId()) {
+      return null;
+    }
+    return $mapping;
+  }
+
+
   // This is a pretty key function. It has to create unique local filename for
   // each digital asset.
+  //
+  // Ensures that the file doesn't already exist.
   private static function _get_local_filename_for_image($sku, $digital_asset) {
     $import_dir = Mage::getBaseDir('media') . DS . 'import/';
     $pathinfo = pathinfo($digital_asset['url']);
-    return $import_dir . $sku . '--' . $pathinfo['basename'];
+    $filename = $import_dir . $sku . '--' . $pathinfo['basename'];
+
+    if (file_exists($filename)) {
+      // this snould only really happen in development if there is something
+      // that goes wrong right in the middle of an import that we then retry.
+      try {
+        unlink($filename);
+      } catch (Exception $e) {
+        self::_log("WARNING: file that cannot be removed already exists for product " . $sku . ' from ' . $url . ' at ' . $filename . ' so skipping');
+        return null;
+      }
+    }
+
+    return $filename;
+  }
+
+
+  // downloads the image locally so that it's available to add to a product's
+  // image gallery.
+  private static function _download_image_to_local($salsify, $url, $filename) {
+    try {
+      $salsify->download_file($url, $filename);
+      self::_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
+      return true;
+    } catch (Exception $e) {
+      self::_log("WARNING: could not download digital asset: " . $e->getMessage());
+      self::_log("       " . var_export($da, true));
+
+      // in case that there was only a partial download
+      if (file_exists($filename)) {
+        try {
+          unlink($filename);
+        } catch (Exception $f) {
+          self::_log("WARNING: could not delete file after load failure: " . $filename);
+        }
+      }
+
+      return false;
+    }
   }
 
 
@@ -64,65 +119,48 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
         // FIXME do we already have this puppy?
         // self::_log('local file already exists for product ' . $sku . ' from ' . $url);
+        $mapping = self::_get_mapping($sku, $url);
+        if ($mapping) {
+          self::_log("IMAGE MAPPING EXISTS: " . var_export($mapping,true));
+          continue;
+        }
 
         $filename = self::_get_local_filename_for_image($sku, $da);
-        if (file_exists($filename)) {
-          // this snould only really happen in development if there is something
-          // that goes wrong right in the middle of an import that we then retry.
-          // 
-          try {
-            unlink($filename);
-          } catch (Exception $e) {
-            self::_log("WARNING: file already exists for product " . $sku . ' from ' . $url . ' at ' . $filename . ' so skipping');
-            continue;
-          }
+        if (!$filename) { continue; }
+
+        $success = self::_download_image_to_local($salsify, $url, $filename);
+        if (!$success) { continue; }
+
+        $product->addImageToMediaGallery(
+          $filename,
+          array('image', 'small_image', 'thumbnail'),
+          true,  // whether to move the file
+          false  // true hides from product page
+        );
+
+        // FIXME finish adding the ImageMapping object
+        $image_mapping = Mage::getModel('salsify_connect/imagemapping');
+        $image_mapping->setSku($sku);
+        $image_mapping->setMagentoId(1); // FIXME
+        $image_mapping->setUrl($url);
+        $image_mapping->save();
+
+
+        if (array_key_exists('name', $da)) {
+          // set the label metadata in the image.
+          //
+          // this is terrible. thanks:
+          // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+          $gallery = $product->getData('media_gallery');
+          $last_image = array_pop($gallery['images']);
+          $last_image['label'] = $da['name'];
+          array_push($gallery['images'], $last_image);
+          $product->setData('media_gallery', $gallery);
         }
 
-        try {
-          $salsify->download_file($url, $filename);
-           self::_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
-
-          $product->addImageToMediaGallery(
-            $filename,
-            array('image', 'small_image', 'thumbnail'),
-            true,  // whether to move the file
-            false  // true hides from product page
-          );
-
-          // FIXME finish adding the ImageMapping object
-          $image_mapping = Mage::getModel('salsify_connect/imagemapping');
-          $image_mapping->setSku($sku);
-          $image_mapping->setMagentoId(1); // FIXME
-          $image_mapping->setUrl($url);
-          $image_mapping->save();
-
-
-          if (array_key_exists('name', $da)) {
-            // set the label metadata in the image.
-            //
-            // this is terrible. thanks:
-            // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-            $gallery = $product->getData('media_gallery');
-            $last_image = array_pop($gallery['images']);
-            $last_image['label'] = $da['name'];
-            array_push($gallery['images'], $last_image);
-            $product->setData('media_gallery', $gallery);
-          }
-
-          // need to save the product for any changes to the media gallery to
-          // take effect.
-          $product->save();
-        } catch (Exception $e) {
-          self::_log("WARNING: could not load digital asset. skipping: " . $e->getMessage());
-          self::_log("       " . var_export($da, true));
-          if (file_exists($filename)) {
-            try {
-              unlink($filename);
-            } catch (Exception $f) {
-              self::_log("WARNING: could not delete file after load failure: " . $filename);
-            }
-          }
-        }
+        // need to save the product for any changes to the media gallery to
+        // take effect.
+        $product->save();
       }
     }
   }
