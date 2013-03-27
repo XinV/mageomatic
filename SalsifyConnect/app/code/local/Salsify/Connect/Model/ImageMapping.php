@@ -162,8 +162,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         // $image_name = substr($_image->getUrl(), strrpos($_image->getUrl(), '/') + 1);
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
-        self::_log("LAST IMAGE: " . var_export($last_image,true));
-        $image_mapping->setMagentoId('FIXME');
+        $image_mapping->setMagentoId($last_image['file']);
         $image_mapping->setUrl($url);
         $image_mapping->save();
 
