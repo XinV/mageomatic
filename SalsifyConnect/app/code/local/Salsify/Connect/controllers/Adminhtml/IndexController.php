@@ -112,8 +112,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     self::_log("1");
     $mappings = Mage::getModel('salsify_connect/imagemapping')
                     ->getCollection()
-                    ->addAttributeToFilter('sku', array('eq' => $sku))
-                    ->addAttributeToFilter('url', array('eq' => $url));
+                    ->addFieldToFilter('sku', array('eq' => $sku))
+                    ->addFieldToFilter('url', array('eq' => $url));
     self::_log("2");
     $this->_render_html("Got collection...<br/>");
     $mapping = $mappings->getFirstItem();
