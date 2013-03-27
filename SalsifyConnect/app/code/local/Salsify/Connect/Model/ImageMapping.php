@@ -25,7 +25,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
                     ->addAttributeToFilter('sku', array('eq' => $sku))
                     ->addAttributeToFilter('url', array('eq' => $url));
     $mapping = $mappings->getFirstItem();
-    if (!$mapping || $mapping->getId()) {
+    if (!$mapping || !$mapping->getId()) {
       return null;
     }
     return $mapping;
@@ -119,11 +119,11 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
         // FIXME do we already have this puppy?
         // self::_log('local file already exists for product ' . $sku . ' from ' . $url);
-        $mapping = self::_get_mapping($sku, $url);
-        if ($mapping) {
-          self::_log("IMAGE MAPPING EXISTS: " . var_export($mapping,true));
-          continue;
-        }
+        // $existing_mapping = self::_get_mapping($sku, $url);
+        // if ($existing_mapping) {
+        //   self::_log("IMAGE MAPPING EXISTS: " . var_export($existing_mapping, true));
+        //   continue;
+        // }
 
         $filename = self::_get_local_filename_for_image($sku, $da);
         if (!$filename) { continue; }
