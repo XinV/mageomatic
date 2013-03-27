@@ -20,11 +20,14 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   // returns the ImageMapping model instance if it exists for the given sku and
   // url, null otherwise.
   private static function _get_mapping($sku, $url) {
+    self::_log("MAPPING: TRYING TO FIND THEM");
     $mappings = Mage::getModel('salsify_connect/imagemapping')
                     ->getCollection()
                     ->addAttributeToFilter('sku', array('eq' => $sku))
                     ->addAttributeToFilter('url', array('eq' => $url));
+    self::_log("MAPPING: COLLECTION SUCCEEDED");
     $mapping = $mappings->getFirstItem();
+    self::_log("MAPPING: GOT FIRST ITEM");
     if (!$mapping || !$mapping->getId()) {
       return null;
     }
@@ -118,11 +121,11 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
         // FIXME do we already have this puppy?
         // self::_log('local file already exists for product ' . $sku . ' from ' . $url);
-        // $existing_mapping = self::_get_mapping($sku, $url);
-        // if ($existing_mapping) {
-        //   self::_log("IMAGE MAPPING EXISTS: " . var_export($existing_mapping, true));
-        //   continue;
-        // }
+        $existing_mapping = self::_get_mapping($sku, $url);
+        if ($existing_mapping) {
+          self::_log("IMAGE MAPPING EXISTS: " . var_export($existing_mapping, true));
+          continue;
+        }
 
         $filename = self::_get_local_filename_for_image($sku, $da);
         if (!$filename) { continue; }
