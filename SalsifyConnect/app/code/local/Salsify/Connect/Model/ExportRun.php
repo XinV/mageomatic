@@ -98,14 +98,12 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
     $salsify_api = $this->_get_salsify_api();
     try {
-      // FIXME should get error/status message from salsify in the event of
-      //       failure and store it here instead of just a boolean.
       $success = $salsify_api->upload_product_data_to_salsify($this->_export_file);
     } catch (Exception $e) {
       $this->set_error($e);
     }
     if (!$success) {
-      $this->set_error("export of file to Salsify failed: " . $file);
+      $this->set_error("Error: Export of file to Salsify failed: " . $file);
     }
 
     // note at this point the file has been uploaded to salsify AND loaded.

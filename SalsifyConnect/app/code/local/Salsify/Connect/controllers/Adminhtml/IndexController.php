@@ -76,7 +76,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-   /**
+  /**
    * Check currently called action by permissions for current user
    *
    * @return bool

@@ -16,7 +16,7 @@ require_once('DJJob.php');
 class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
   private static function _log($msg) {
-    Mage::log(get_called_class() . 'Data: ' . $msg, null, 'salsify.log', true);
+    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
 

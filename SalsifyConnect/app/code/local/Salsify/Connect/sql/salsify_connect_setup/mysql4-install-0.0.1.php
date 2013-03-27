@@ -1,8 +1,10 @@
 <?php
 
-// NOTE: to UNDO this:
-// DELETE from core_resource where code = 'salsify_connect_setup'; drop table salsify_connect_import_run; drop table salsify_connect_configuration; drop table jobs;
+// NOTE: to UNDO this install:
+// DROP each of the tables created
+// DELETE from core_resource where code = 'salsify_connect_setup';
 
+// improves readability
 $installer = $this;
 $installer->startSetup();
 
@@ -53,73 +55,69 @@ $table = $installer->getConnection()->newTable($installer->getTable(
 $installer->getConnection()->createTable($table);
 
 
-
-// FIXME the two following table creations are not DRY. should move them to a
-//       function which is called a couple times.
-
-
-// Create table for Salsify imports. Keeps a record of every import pulled into
-// Magento from Salsify.
+// in order to avoid re-importing the same images over and over again, we need
+// to store metadata about an image's source somewhere.
 $table = $installer->getConnection()->newTable($installer->getTable(
-  'salsify_connect/import_run'))
+  'salsify_connect/image_mapping'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     'unsigned' => true,
     'nullable' => false,
     'primary' => true,
     'identity' => true,
-    ), 'Salsify Connect Import ID')
-  ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    ), 'Salsify Connect Attribute Mapping ID')
+  ->addColumn('magento_product_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    ), 'ID of product related to the image in Magento')
+  ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    ), 'ID of image in Magento')
+  ->addColumn('url', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => true,
     'default'  => NULL,
-    ), 'Salsify Connect Import Token (provided by Salsify Server)')
-  ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'nullable' => false,
-  ), 'Salsify Connect Import Run Status')
-  ->addColumn('status_message', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-    'nullable' => true,
-    'default'  => NULL,
-    ), 'Salsify Status Message')
-  ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-    'nullable' => false,
-    ), 'Salsify Connect Import Run Start Time')
-  ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-    'nullable' => true,
-    ), 'Salsify Connect Import Run End Time')
-  ->setComment('Salsify_Connect salsify_connect/import_run entity table');
+    ), 'Source URL of the image')
+  ->setComment('Salsify_Connect salsify_connect/image_mapping table');
 $installer->getConnection()->createTable($table);
 
 
-// Create export table for Salsify imports. Keeps a record of every export that
-// pushes data from Magento Salsify.
-$table = $installer->getConnection()->newTable($installer->getTable(
-  'salsify_connect/export_run'))
-  ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'unsigned' => true,
-    'nullable' => false,
-    'primary' => true,
-    'identity' => true,
-    ), 'Salsify Connect Export ID')
+function stub_import_export_table($installer, $table_id, $label) {
+  $table = $installer->getConnection()->newTable($installer->getTable(
+    'salsify_connect/' . $table_id))
+    ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+      'unsigned' => true,
+      'nullable' => false,
+      'primary' => true,
+      'identity' => true,
+      ), 'Salsify Connect ' . $label . ' ID')
+    ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+      'nullable' => true,
+      'default'  => NULL,
+      ), 'Salsify Connect ' . $label . ' Token (provided by Salsify Server)')
+    ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+      'nullable' => false,
+    ), 'Salsify Connect ' . $label . ' Run Status')
+    ->addColumn('status_message', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+      'nullable' => true,
+      'default'  => NULL,
+      ), 'Salsify Status Message')
+    ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
+      'nullable' => true,
+      'default'  => NULL,
+      ), 'Salsify Connect ' . $label . ' Run Start Time')
+    ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
+      'nullable' => true,
+      'default'  => NULL,
+      ), 'Salsify Connect ' . $label . ' Run End Time')
+    ->setComment('Salsify_Connect salsify_connect/' . $table_id . ' entity table');
 
-  // FIXME is this even used?
-  ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-    'nullable' => true,
-    'default'  => NULL,
-    ), 'Salsify Connect Export Token (provided by Salsify Server)')
+  return $table;
+}
 
-  ->addColumn('status', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-    'nullable' => false,
-  ), 'Salsify Connect Export Run Status')
-  ->addColumn('status_message', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-    'nullable' => true,
-    'default'  => NULL,
-    ), 'Salsify Status Message')
-  ->addColumn('start_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-    'nullable' => true,
-    ), 'Salsify Connect Export Run Start Time')
-  ->addColumn('end_time', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-    'nullable' => true,
-    ), 'Salsify Connect Export Run End Time')
-  ->setComment('Salsify_Connect salsify_connect/export_run entity table');
+$table = stub_import_export_table($installer, 'import_run', 'Import');
+$installer->getConnection()->createTable($table);
+
+$table = stub_import_export_table($installer, 'export_run', 'Export');
 $installer->getConnection()->createTable($table);
 
 

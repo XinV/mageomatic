@@ -131,21 +131,23 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   public function is_salsify_done_preparing_export($id) {
     $import = $this->get_import($id);
 
-    if (!array_key_exists('processing', $import)) {
-      throw new Exception('malformed import document returned from salsify: ' . var_export($import,true));
+    if (!array_key_exists('status', $import)) {
+      throw new Exception('Malformed import document returned from Salsify: ' . var_export($import,true));
     }
-    if ($import['processing']) {
+    $status = $import['status'];
+    if ($status === 'running') {
       // still going
       return null;
+    } elseif ($status === 'failed') {
+      // extremely unlikely. this would be an internal error in Salsify
+      throw new Exception('Salsify failed to produce an export for Magento.');
+    } elseif ($status !== 'completed') {
+      throw new Exception('Malformed import document returned from Salsify. Unknown status: ' . $import['status']);
+    } elseif (!array_key_exists('url', $import)) {
+      throw new Exception('Malformed import document returned from Salsify. No URL returned for successful Salsify export.');
     }
 
-    // done! however, there may have been a failure. make sure there is a URL
-    // for the export document.
-    if (!array_key_exists('url', $import)) {
-      $url = null;
-    } else {
-      $url = $import['url'];
-    }
+    $url = $import['url'];
     if (!$url) {
       $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
     }
@@ -166,7 +168,9 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
 
 
   // sends the given salsify product data file to Salsify and kicks off its
-  // processing
+  // processing.
+  //
+  // throws an exception is anything goes wrong.
   public function upload_product_data_to_salsify($export_file) {
     self::_log("Exporting " . $export_file . " to Salsify.");
 
@@ -192,11 +196,16 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
       sleep(5);
     }
 
-    self::_log("Export to Salsify done!");
+    $import = $this->_get_salsify_import_details($salsify_import_run_id);
+    if (array_key_exists('failure_reason', $import)) {
+      // something has gone wrong. return the failure.
+      $failure_reason = $import['failure_reason'];
+      $error_msg = "Error: Salsify count not complete the export. Failure reason given: " . $failure_reason;
+      self::_log($error_msg);
+      throw new Exception($error_msg);
+    }
 
-    // done!
-
-    // TODO: need to return something else if failed
+    self::_log("Export to Salsify completed successfully!");
     return true;
   }
 
@@ -277,15 +286,21 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
   }
 
 
-  // returns whether the salsify import run is still going
-  private function _still_running($salsify_import_run_id) {
+  // fetches the details from Salsify about the given import run
+  private function _get_salsify_import_details($salsify_import_run_id) {
     $request = new HttpRequest($this->_get_check_salsify_import_run_url($salsify_import_run_id), HTTP_METH_GET);
     $response = $request->send();
     if (!$this->_response_valid($response)) {
       throw new Exception("ERROR: could not check up on import run status: " . var_export($response,true));
     }
-    $response_json = json_decode($response->getBody(), true);
-    $status = $response_json['status'];
+    return json_decode($response->getBody(), true);
+  }
+
+
+  // returns whether the salsify import run is still going
+  private function _still_running($salsify_import_run_id) {
+    $import = $this->_get_salsify_import_details($salsify_import_run_id);
+    $status = $import['status'];
 
     // there are multiple 'done' or 'stopped' states, so we just want to return
     // whether it's really done.
