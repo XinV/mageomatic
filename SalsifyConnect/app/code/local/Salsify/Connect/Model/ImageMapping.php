@@ -20,14 +20,11 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   // returns the ImageMapping model instance if it exists for the given sku and
   // url, null otherwise.
   private static function _get_mapping($sku, $url) {
-    self::_log("MAPPING: TRYING TO FIND THEM");
     $mappings = Mage::getModel('salsify_connect/imagemapping')
                     ->getCollection()
-                    ->addAttributeToFilter('sku', array('eq' => $sku))
-                    ->addAttributeToFilter('url', array('eq' => $url));
-    self::_log("MAPPING: COLLECTION SUCCEEDED");
+                    ->addFieldToFilter('sku', array('eq' => $sku))
+                    ->addFieldToFilter('url', array('eq' => $url));
     $mapping = $mappings->getFirstItem();
-    self::_log("MAPPING: GOT FIRST ITEM");
     if (!$mapping || !$mapping->getId()) {
       return null;
     }
@@ -119,19 +116,23 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
       foreach ($das as $da) {
         $url = $da['url'];
 
-        // FIXME do we already have this puppy?
-        // self::_log('local file already exists for product ' . $sku . ' from ' . $url);
         $existing_mapping = self::_get_mapping($sku, $url);
         if ($existing_mapping) {
-          self::_log("IMAGE MAPPING EXISTS: " . var_export($existing_mapping, true));
+          // we already have that image. skipping...
           continue;
         }
 
         $filename = self::_get_local_filename_for_image($sku, $da);
-        if (!$filename) { continue; }
+        if (!$filename) {
+          // very rare
+          continue;
+        }
 
         $success = self::_download_image_to_local($salsify, $url, $filename);
-        if (!$success) { continue; }
+        if (!$success) {
+          // download problem. bad URL or the like.
+          continue;
+        }
 
         $product->addImageToMediaGallery(
           $filename,
@@ -139,14 +140,6 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
           true,  // whether to move the file
           false  // true hides from product page
         );
-
-        // FIXME finish adding the ImageMapping object
-        $image_mapping = Mage::getModel('salsify_connect/imagemapping');
-        $image_mapping->setSku($sku);
-        $image_mapping->setMagentoId(1); // FIXME
-        $image_mapping->setUrl($url);
-        $image_mapping->save();
-
 
         if (array_key_exists('name', $da)) {
           // set the label metadata in the image.
@@ -159,6 +152,15 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
           array_push($gallery['images'], $last_image);
           $product->setData('media_gallery', $gallery);
         }
+
+        self::_log("MEDIA GALLERY: " . var_export($product->getData('media_gallery'), true));
+
+        // FIXME finish adding the ImageMapping object
+        $image_mapping = Mage::getModel('salsify_connect/imagemapping');
+        $image_mapping->setSku($sku);
+        $image_mapping->setMagentoId(1); // FIXME
+        $image_mapping->setUrl($url);
+        $image_mapping->save();
 
         // need to save the product for any changes to the media gallery to
         // take effect.
