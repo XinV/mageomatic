@@ -209,6 +209,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
   /**
    * Causes all Salsify data to be cleared from the system.
+   * TODO remove this when we send the plugin out to people.
    */
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
@@ -230,6 +231,12 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     }
 
     $this->_render_html("</ul>");
+
+    // re-add the basic configuration info
+    $config = Mage::getModel('salsify_connect/configuration')->getInstance();
+    $config->setUrl('http://127.0.0.1/');
+    $config->setApiKey('P9kH55zimg4viXWBdvB5');
+    $config->save();
 
     $this->_end_render();
   }

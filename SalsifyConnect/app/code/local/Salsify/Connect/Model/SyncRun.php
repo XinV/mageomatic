@@ -33,8 +33,14 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   }
 
 
-  // sets the status of this sync to error.
-  // FIXME must remove myself from the job queue if this happens...
+  // sets the status of this sync to error. records the error message in
+  // 'status_message' for display in the UI. (re)throws an exception to stall
+  // further progress of the import.
+  //
+  // FIXME must remove myself from the job queue if this happens. have had issues
+  //       with zombie jobs sitting around that make it hard for furthe processes
+  //       to continue, though that's much more likely to happen in development
+  //       when there will be things like syntax errors.
   public function set_error($e) {
     if (is_string($e)) {
       $e = new Exception($e);
@@ -73,7 +79,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
     if (!$this->getId()) {
       $this->_set_status(self::STATUS_NOT_STARTED);
       // start time is updated with actual start time if there are not failures
-      $this->setStartTime(date('Y-m-d h:m:s', time()));
+      $this->setStartTime($this->_current_time());
     }
 
     $this->_ensure_complete_salsify_configuration();

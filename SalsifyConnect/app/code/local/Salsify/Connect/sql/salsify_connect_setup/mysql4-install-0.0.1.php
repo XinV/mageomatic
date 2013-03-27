@@ -65,7 +65,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'primary' => true,
     'identity' => true,
     ), 'Salsify Connect Image Mapping ID')
-  ->addColumn('magento_product_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+  ->addColumn('sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'unsigned' => true,
     'nullable' => false,
     ), 'ID of product related to the image in Magento')

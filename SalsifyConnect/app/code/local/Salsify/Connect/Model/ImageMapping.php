@@ -1,7 +1,9 @@
 <?php
 
 /**
- * FIXME
+ * ImageMapping that keeps track of which local, Magento images correspond to
+ * which images in the Salsify CDN. This enables us to avoid re-downloading
+ * images that we already have, discovering new images in Salsify, etc.
  */
 class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
@@ -59,17 +61,26 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
       foreach ($das as $da) {
         $url = $da['url'];
-        $filename = self::_get_local_filename_for_image($sku, $da);
-        try {
-          if (file_exists($filename)) {
-            self::_log('local file already exists for product ' . $sku . ' from ' . $url);
-          } else {
-            $salsify->download_file($url, $filename);
-            self::_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
-          }
 
-          // FIXME don't re-add the image to the gallery if it's already been
-          //       downloaded
+        // FIXME do we already have this puppy?
+        // self::_log('local file already exists for product ' . $sku . ' from ' . $url);
+
+        $filename = self::_get_local_filename_for_image($sku, $da);
+        if (file_exists($filename)) {
+          // this snould only really happen in development if there is something
+          // that goes wrong right in the middle of an import that we then retry.
+          // 
+          try {
+            unlink($filename);
+          } catch (Exception $e) {
+            self::_log("WARNING: file already exists for product " . $sku . ' from ' . $url . ' at ' . $filename . ' so skipping');
+            continue;
+          }
+        }
+
+        try {
+          $salsify->download_file($url, $filename);
+           self::_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
 
           $product->addImageToMediaGallery(
             $filename,
@@ -77,6 +88,14 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
             true,  // whether to move the file
             false  // true hides from product page
           );
+
+          // FIXME finish adding the ImageMapping object
+          $image_mapping = Mage::getModel('salsify_connect/image_mapping');
+          $image_mapping->setSku($sku);
+          $image_mapping->setMagentoId(1); // FIXME
+          $image_mapping->setUrl($url);
+          $image_mapping->save();
+
 
           if (array_key_exists('name', $da)) {
             // set the label metadata in the image.
