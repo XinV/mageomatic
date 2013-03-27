@@ -154,6 +154,8 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         }
 
         self::_log("MEDIA GALLERY: " . var_export($product->getData('media_gallery'), true));
+        $gallery_images = $product->getMediaGalleryImages();
+        self::_log("GALLERY IMAGES: " . var_export($gallery_images, true));
 
         // FIXME finish adding the ImageMapping object
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
