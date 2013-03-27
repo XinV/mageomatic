@@ -61,17 +61,16 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   private static function _download_image_to_local($salsify, $url, $filename) {
     try {
       $salsify->download_file($url, $filename);
-      self::_log('successfully downloaded image for ' . $sku . ' from ' . $url . ' to ' . $filename);
+      self::_log('successfully downloaded image from ' . $url . ' to ' . $filename);
       return true;
     } catch (Exception $e) {
       self::_log("WARNING: could not download digital asset: " . $e->getMessage());
-      self::_log("       " . var_export($da, true));
 
       // in case that there was only a partial download
       if (file_exists($filename)) {
         try {
           unlink($filename);
-        } catch (Exception $f) {
+        } catch (Exception $e) {
           self::_log("WARNING: could not delete file after load failure: " . $filename);
         }
       }
