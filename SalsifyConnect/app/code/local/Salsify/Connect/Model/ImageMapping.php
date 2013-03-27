@@ -90,7 +90,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
           );
 
           // FIXME finish adding the ImageMapping object
-          $image_mapping = Mage::getModel('salsify_connect/image_mapping');
+          $image_mapping = Mage::getModel('salsify_connect/imagemapping');
           $image_mapping->setSku($sku);
           $image_mapping->setMagentoId(1); // FIXME
           $image_mapping->setUrl($url);
