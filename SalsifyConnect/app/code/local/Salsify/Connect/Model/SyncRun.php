@@ -48,17 +48,23 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   }
 
 
+  // silly that this is required
+  // thanks: http://magentocookbook.wordpress.com/2010/02/15/magento-date-time/
+  private function _current_time() {
+    $now = Mage::getModel('core/date')->timestamp(time());
+    return date('m/d/y h:i:s', $now);
+  }
+
+
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_start_time() {
-    // FIXME this doesn't seem to be working. time set is weird.
-    $this->setStartTime(date('Y-m-d h:m:s'));
+    $this->setStartTime($this->_current_time());
     return $this;
   }
 
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_end_time() {
-    // FIXME this doesn't seem to be working. time set is weird.
-    $this->setEndTime(date('Y-m-d h:m:s'));
+    $this->setEndTime($this->_current_time());
     return $this;
   }
 
