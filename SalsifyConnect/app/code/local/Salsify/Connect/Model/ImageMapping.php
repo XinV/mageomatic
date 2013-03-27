@@ -141,28 +141,34 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
           false  // true hides from product page
         );
 
+        // this is a little terrible. addImageToMediaGallery doesn't return a
+        // handle to the thing just created, but you can get a handle to the last
+        // item in the gallery this way. definitely not thread safe...
+        // thanks: http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+        $gallery = $product->getData('media_gallery');
+        $last_image = array_pop($gallery['images']);
+
         if (array_key_exists('name', $da)) {
-          // set the label metadata in the image.
-          //
-          // this is terrible. thanks:
-          // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-          $gallery = $product->getData('media_gallery');
-          $last_image = array_pop($gallery['images']);
           $last_image['label'] = $da['name'];
-          array_push($gallery['images'], $last_image);
-          $product->setData('media_gallery', $gallery);
         }
 
-        self::_log("MEDIA GALLERY: " . var_export($product->getData('media_gallery'), true));
-        $gallery_images = $product->getMediaGalleryImages();
-        self::_log("GALLERY IMAGES: " . var_export($gallery_images, true));
-
-        // FIXME finish adding the ImageMapping object
+        // create the new ImageMapping. The only part of this that is not
+        // straightforward is that there is no universal ID given to any image
+        // in Magento. Here we're assigning the file, but THE FILE CAN CHANGE
+        // so that it points to a cache rather than the file itself over time.
+        // see this SO post for interesting workarounds:
+        // http://stackoverflow.com/questions/9049088/how-to-compare-a-products-images-in-magento
+        // In particular (just in case it goes away for some reason):
+        // $image_name = substr($_image->getUrl(), strrpos($_image->getUrl(), '/') + 1);
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
-        $image_mapping->setMagentoId(1); // FIXME
+        $image_mapping->setMagentoId($last_image['file']);
         $image_mapping->setUrl($url);
         $image_mapping->save();
+
+        // fix the gallery up
+        array_push($gallery['images'], $last_image);
+        $product->setData('media_gallery', $gallery);
 
         // need to save the product for any changes to the media gallery to
         // take effect.
