@@ -69,7 +69,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'unsigned' => true,
     'nullable' => false,
     ), 'ID of product related to the image in Magento')
-  ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+  ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'unsigned' => true,
     'nullable' => false,
     ), 'ID of image in Magento')
