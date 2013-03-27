@@ -83,7 +83,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       $this->_set_status(self::STATUS_LOADING_DIGITAL_ASSETS);
       $this->save();
       $importer = $salsify->get_importer();
-      $image_mapper = Mage::getModel('salsify_connect/image_mapper');
+      $image_mapper = Mage::getModel('salsify_connect/imagemapping');
       $image_mapper::load_digital_assets($importer->get_digital_assets());
 
       // DONE!
