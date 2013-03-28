@@ -330,6 +330,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   private static function _createAttribute($attribute_type, $id, $name, $roles) {
     $code = self::getCodeForId($id, $roles);
 
+    // FIXME remove
+    self::_log("CREATING ATTRIBUTE: " . $code);
+
     // At the moment we only get text properties from Salsify. In fact, since
     // we don't enforce datatypes in Salsify a single attribute could, in
     // theory, have a numeric value and a text value, so for now we have to
@@ -437,7 +440,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     try {
       $model->save();
     } catch (Exception $e) {
-      $this->_log('ERROR: could not create attribute for Salsify ID ' . $id . ': ' . $e->getMessage());
+      self::_('ERROR: could not create attribute for Salsify ID ' . $id . ': ' . $e->getMessage());
       return null;
     }
 
