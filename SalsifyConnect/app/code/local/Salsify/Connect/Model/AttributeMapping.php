@@ -208,10 +208,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //      might not even be necessary...
   public static function getMagentoOwnedAttributeCodes() {
     return array(
+      '_store',
       'entity_id',
       'entity_type_id',
       '_attribute_set',
       'attribute_set_id',
+      '_category',
       'category_ids',
       '_type',
       'type_id',

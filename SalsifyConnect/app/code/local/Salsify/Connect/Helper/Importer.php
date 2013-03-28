@@ -578,9 +578,15 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $this->_log("Flushing product batch of size: " . count($this->_batch));
 
     try {
-      Mage::getSingleton('fastsimpleimport/import')
-          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
-          ->processProductImport($this->_batch);
+      // FIXME the fastsimpleimport doesn't work with multi-valued anything
+      // Mage::getSingleton('fastsimpleimport/import')
+      //     ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+      //     ->setContinueAfterErrors(true)
+      //     ->processProductImport($this->_batch);
+
+      $entity_type = Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode();
+      Mage::getModel('api_import/import_api')
+          ->importEntities($this->_batch, $entityType['entity']);
 
       // for PHP GC
       unset($this->_batch);
