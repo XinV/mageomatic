@@ -37,6 +37,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   public static function get_mapping_by_sku_and_image($sku, $image) {
     $url = $image->getUrl();
     $id = self::get_image_mapping_id_from_url($sku, $url);
+    self::_log("URL: " . $url);
     self::_log("ID: " . $id);
     $mappings = Mage::getModel('salsify_connect/imagemapping')
                     ->getCollection()
