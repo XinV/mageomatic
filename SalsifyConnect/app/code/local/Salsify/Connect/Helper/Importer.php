@@ -366,61 +366,30 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // adds values for all the properties required by Magento so that the product
   // can be imported.
   //
-  // TODO query the system to get the full list of required attributes.
-  //      otherwise the bulk import fails silently...
+  // if we're just updating the existing products in the system we get the values
+  // from the existing product.
+  //
+  // TODO query the system to get the full list of required attributes beyond
+  //      those required by Magento.
   //
   // TODO get more sophisticated mapping of keys from Salsify properties to
   //      Magento properties.
   private function _prepare_product_add_required_values($product) {
-    // FIXME if updating products I should omit these
-
-    // TODO when Salsify supports Kits, this will have to change.
-    $product['_type'] = 'simple';
-
-    // TODO get the attribute set from its category? we could be precalculating
-    //      the attributes that are used in each of the categories in Salsify
-    //      in order to get a rough cut into Magento.
-    $product['_attribute_set'] = 'Default';
-
-    // TODO multi-store support
-    $product['_product_websites'] = 'base';
-
-    if (!array_key_exists('price', $product)) {
-      $product['price'] = 0.01;
-    }
-    if (!array_key_exists('short_description', $product)) {
-      $product['short_description'] = 'IMPORTED FROM SALSIFY';
-    }
-    if (!array_key_exists('description', $product)) {
-      $product['description'] = 'IMPORTED FROM SALSIFY';
-    }
-    if (!array_key_exists('weight', $product)) {
-      // TODO i read that this should be '1' if not used. currently using 0.
-      //      wondering if having '0' is a problem?
-      // source: http://www.mag-manager.com/useful-articles/tipstricks/how-should-the-sample-of-csv-file-for-magento-import-look-like?utm_source=social&utm_medium=marketing&utm_campaign=linkedin
-      $product['weight'] = 0;
+    $existing_product_id = Mage::getModel('catalog/product')
+                               ->getIdBySku($product['sku']);
+    if ($existing_product_id) {
+      $existing_product = Mage::getModel('catalog/product')
+                              ->load($existing_product_id);
     }
 
-    if (!array_key_exists('status', $product)) {
-      // TODO what does the status value mean?
-      //      default should be something like "ENABLED". is there somewhere to
-      //      get this?
-      $product['status'] = 1;
-    }
-
-    if (!array_key_exists('visibility', $product)) {
-      // TODO what does visibility '4' mean?
-      $product['visibility'] = 4;
-    }
-
-    if (!array_key_exists('tax_class_id', $product)) {
-      // TODO should we be setting a different tax class? can we get the system
-      //      default?
-      $product['tax_class_id'] = 2;
-    }
-
-    if (!array_key_exists('qty', $product)) {
-      $product['qty'] = 0;
+    $mapper = $this->_get_attribute_mapper();
+    $required_attributes  = $mapper::getRequiredProductAttributesWithDefaults();
+    foreach ($required_attributes as $code => $default) {
+      if ($existing_product) {
+        $product[$code] = $existing_product->getData($code);
+      } else {
+        $product[$code] = $default;
+      }
     }
 
     return $product;

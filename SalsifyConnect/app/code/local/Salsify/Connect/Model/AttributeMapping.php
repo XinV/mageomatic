@@ -219,6 +219,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
       'entity_id',
       'entity_type_id',
+      'created_at',
+
       '_attribute_set',
       'attribute_set_id',
       '_category',
@@ -255,6 +257,41 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'stock_item',
       'is_in_stock',
       'is_salable',
+      'Tax Class',
+    );
+  }
+
+
+  // returns an array of key => value for attributes that must be present for
+  // a product to be imported into the system, along with some reasonable
+  // defaults to use.
+  public static function getRequiredProductAttributesWithDefaults() {
+    return array(
+      'sku' => null,
+      '_type' => 'simple',
+      '_attribute_set' => 'Default',
+      '_product_websites' => 'base',
+      'price' => 0.01,
+      'qty' => 0,
+
+      'short_description' => 'Imported from Salsify',
+      'description' => 'Imported from Salsify',
+
+      // TODO i read that this should be '1' if not used. currently using 0.
+      //      wondering if having '0' is a problem?
+      // source: http://www.mag-manager.com/useful-articles/tipstricks/how-should-the-sample-of-csv-file-for-magento-import-look-like
+      'weight' => 0,
+
+      // TODO what does the status value mean?
+      //      default should be something like "ENABLED". is there somewhere to
+      //      get this?
+      'status' => 1, // TODO good default?
+
+      // TODO what does visibility '4' mean?
+      'visibility' => 4,
+
+      // TODO system default that we should be using?
+      'tax_class_id' => 2,
     );
   }
 

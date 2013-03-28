@@ -196,24 +196,17 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         }
 
         if (array_key_exists('is_primary_image', $da) && $da['is_primary_image']) {
-          // $image_roles = array('image', 'small_image', 'thumbnail');
-          $product->addImageToMediaGallery(
-            $filename,
-            array('image', 'small_image', 'thumbnail'),
-            true,  // whether to move the file
-            false  // true hides from product page
-          );
+          $image_roles = array('image', 'small_image', 'thumbnail');
         } else {
-          // $image_roles = null;
-          $product->addImageToMediaGallery(
-            $filename,
-            null,
-            true,  // whether to move the file
-            false  // true hides from product page
-          );
+          $image_roles = null;
         }
 
-
+        $product->addImageToMediaGallery(
+          $filename,
+          $image_roles,
+          true,  // whether to move the file
+          false  // true hides from product page
+        );
 
         // this is a little terrible. addImageToMediaGallery doesn't return a
         // handle to the thing just created, but you can get a handle to the last
