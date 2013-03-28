@@ -609,17 +609,17 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array(
         "id" => "cross-sell",
         "name" => "Cross-sell",
-        "attribute_id": self::getDefaultAccessoryAttribute()
+        "attribute_id" => self::getDefaultAccessoryAttribute()
       ),
       array(
         "id" => "up-sell",
         "name" => "Up-sell",
-        "attribute_id": self::getDefaultAccessoryAttribute()
+        "attribute_id" => self::getDefaultAccessoryAttribute()
       ),
       array(
         "id" => "related product",
         "name" => "Related Product",
-        "attribute_id": self::getDefaultAccessoryAttribute()
+        "attribute_id" => self::getDefaultAccessoryAttribute()
       )
     );
   }
