@@ -80,7 +80,11 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
         $file = $item['file'];
         $mediaApi->remove($id, $file);
         $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
-        unlink($file);
+        try {
+          unlink($file);
+        } catch (Exception $e) {
+          self::_log("WARNING: could not unlink file " . $file . ": " . $e->getMessage());
+        }
         $this->_total_images += 1;
       }
 
