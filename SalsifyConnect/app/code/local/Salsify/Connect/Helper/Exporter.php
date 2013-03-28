@@ -415,10 +415,37 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $accessories = array();
 
     $cross_sell_ids = $product->getCrossSellProductIds();
-    self::_log("CROSS SELLS: " . var_export($cross_sell_ids,true));
-    
-    // FIXME return the accessories
+    $cross_sell_json = $this->_get_accessories_json_for_ids($cross_sell_ids);
+    array_merge($accessories, $cross_sell_ids);
 
+    $up_sell_ids = $product->getUpSellProductIds();
+    $up_sell_json = $this->_get_accessories_json_for_ids($up_sell_ids);
+    array_merge($accessories, $up_sell_ids);
+
+    $related_ids = $product->getRelatedProductIds();
+    $related_json = $this->_get_accessories_json_for_ids($related_ids);
+    array_merge($accessories, $related_ids);
+
+    return $accessories;
+  }
+
+
+  private function _get_accessories_json_for_ids($related_product_ids) {
+    $accessories = array();
+    if (!$related_product_ids || empty($related_product_ids)) {
+      return $accessories;
+    }
+
+    $related_products = Mage::getModel('catalog/product')
+                            ->getCollection()
+                            ->addAttributeToFilter('entity_id', array('in' => $related_product_ids));
+    if ($related_products) {
+      foreach ($related_products as $rp) {
+        $accessory = array('sku' => $rp->getSku());
+        // FIXME add the catgory here
+        array_push($accessories, $accessory);
+      }
+    }
     return $accessories;
   }
 }
