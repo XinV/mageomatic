@@ -37,6 +37,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   public static function get_mapping_by_sku_and_image($sku, $image) {
     $url = $image->getUrl();
     $id = self::get_image_mapping_id_from_url($sku, $url);
+    // FIXME
     self::_log("URL: " . $url);
     self::_log("ID: " . $id);
     $mappings = Mage::getModel('salsify_connect/imagemapping')
@@ -182,7 +183,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
         $image_mapping->setUrl($url);
-        $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $url));
+        $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $last_image['file']));
         $image_mapping->save();
 
         // fix the gallery up
