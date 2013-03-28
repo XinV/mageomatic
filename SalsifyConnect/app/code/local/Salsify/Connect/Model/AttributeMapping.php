@@ -440,7 +440,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     try {
       $model->save();
     } catch (Exception $e) {
-      self::_('ERROR: could not create attribute for Salsify ID ' . $id . ': ' . $e->getMessage());
+      self::_log('ERROR: could not create attribute for Salsify ID ' . $id . ': ' . $e->getMessage());
       return null;
     }
 
