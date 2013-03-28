@@ -197,19 +197,21 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       if (in_array('target_product_id', $accessory_roles)) {
         $this->_target_product_attribute = $this->_attribute['id'];
       }
-    } elseif ($roles && array_key_exists('global', $roles)) {
+    }
+
+    if ($roles && array_key_exists('global', $roles)) {
       // given attribute is the attribute associated with a product relationship
       // hierarchy (as opposed to a product hierarchy).
       $global_roles = $roles['global'];
       if (in_array('accessory_label', $global_roles)) {
         array_push($this->_relationship_attributes, $this->_attribute['id']);
       }
-    } else {
-      // NOTE: if the attribute turns out to be a category--other than a product
-      //       accessory category, which we can't tell at this point in the
-      //       import--it will be deleted from Magento during category loading.
-      $this->_get_or_create_attribute($this->_attribute);
     }
+
+    // NOTE: if the attribute turns out to be a category--other than a product
+    //       accessory category, which we can't tell at this point in the
+    //       import--it will be deleted from Magento during category loading.
+    $this->_get_or_create_attribute($this->_attribute);
 
     unset($this->_attribute);
   }
