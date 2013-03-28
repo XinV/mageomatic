@@ -26,6 +26,8 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
                     ->addFieldToFilter('url', array('eq' => $url));
     $mapping = $mappings->getFirstItem();
     if (!$mapping || !$mapping->getId()) {
+      // FIXME REMOVE
+      self::_log("MAPPING DOES NOT EXIST: " . $sku . " AND " . $url);
       return null;
     }
     return $mapping;
@@ -43,8 +45,6 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
                     ->addFieldToFilter('magento_id', array('eq' => $id));
     $mapping = $mappings->getFirstItem();
     if (!$mapping || !$mapping->getId()) {
-      // FIXME remove
-      self::_log("IMAGE MAPPING ID NOT FOUND: " . $id);
       return null;
     }
     return $mapping;
