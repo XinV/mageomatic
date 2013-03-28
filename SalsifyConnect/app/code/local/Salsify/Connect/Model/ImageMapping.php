@@ -175,7 +175,8 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         $checksum = md5_file($filename);
         if (!$checksum) {
           $checksum = null;
-          self::_log("WARNING: could not calculate checksum on import for " . $filename . ". This could lead to duplicate images over time.");
+          self::_log("WARNING: could not calculate checksum on import for " . $filename . ". This could lead to duplicate images over time, so skipping.");
+          continue;
         }
 
         // the URL may have changed with Salsify. this happens if, for example,
@@ -199,7 +200,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         {
           $image_roles = array('image', 'small_image', 'thumbnail');
         } else {
-          $image_roles = '';
+          $image_roles = null;
         }
 
         $product->addImageToMediaGallery(
