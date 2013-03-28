@@ -441,6 +441,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $related_products = Mage::getModel('catalog/product')
                             ->getCollection()
                             ->addAttributeToFilter('entity_id', array('in' => $related_product_ids));
+
+    self::_log("RELATED: " . var_export($related_products,true));
+
     if ($related_products) {
       foreach ($related_products as $rp) {
         $accessory = array('sku' => $rp->getSku());
