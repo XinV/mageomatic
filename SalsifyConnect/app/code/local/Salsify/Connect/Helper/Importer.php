@@ -540,10 +540,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         } elseif (array_key_exists($key, $this->_attributes)) {
           $code = $this->_get_attribute_code($this->_attributes[$key]);
           $mapper = $this->_get_attribute_mapper();
+
+          // make sure to skip attributes that are owned by Magento
           if (!$mapper::isAttributeMagentoOwned($code)) {
             $this->_product[$code] = $value;
           }
-          // else we skip since the attribute is owned by magento
         } else {
           $this->_log('WARNING: skipping unrecognized attribute id on product: ' . $key);
         }
@@ -570,6 +571,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
   private function _flush_batch() {
     $this->_log("Flushing product batch of size: " . count($this->_batch));
+
+    // FIXME remove
+    $this->_log("BATCH: " . var_export($this->_batch,true));
 
     try {
       Mage::getSingleton('fastsimpleimport/import')
