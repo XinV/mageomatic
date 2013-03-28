@@ -193,6 +193,31 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  // when importing data from Salsify we get all strings at this time. however,
+  // for round-trips magento->salsify->magento the last import will fail if we
+  // try to import values like '2' instead of values like 2.
+  //
+  // TODO when Salsify supports datatypes (especially for export) we'll need to
+  //      revisit how this works.
+  public static function castAttributeToMagentoFriendlyDatatype($code, $value) {
+    $int_attrs = self::_getIntegerAttributes($code);
+    if (in_array('$code', $int_attrs)) {
+      return ((int)$value);
+    } else {
+      return $value;
+    }
+  }
+
+  // this list was build up by trial-and-error...
+  private static function _getIntegerAttributes($code) {
+    return array(
+      'options_container',
+      'msrp_enabled',
+      'msrp_display_actual_price_type'
+    );
+  }
+
+
   // Salsify is much more permissive when it comes to codes/ids than is Magento.
   // Magento cannot handle spaces, and the codes must be no more than 30 chars
   // long. By convention they are also lowercase.
@@ -330,9 +355,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   private static function _createAttribute($attribute_type, $id, $name, $roles) {
     $code = self::getCodeForId($id, $roles);
 
-    // FIXME remove
-    self::_log("CREATING ATTRIBUTE: " . $code);
-
     // At the moment we only get text properties from Salsify. In fact, since
     // we don't enforce datatypes in Salsify a single attribute could, in
     // theory, have a numeric value and a text value, so for now we have to
@@ -440,6 +462,10 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     try {
       $model->save();
     } catch (Exception $e) {
+      // this will happen for certain Magento reserved attributes that we export
+      // to salsify and then reimport here.
+      // TODO get a list of reserved attributes somewhere to avoid having to
+      //      get to this point every time...
       self::_log('ERROR: could not create attribute for Salsify ID ' . $id . ': ' . $e->getMessage());
       return null;
     }

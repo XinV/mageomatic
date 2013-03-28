@@ -539,7 +539,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
           $this->_add_category_to_product($key, $value);
         } elseif (array_key_exists($key, $this->_attributes)) {
           $code = $this->_get_attribute_code($this->_attributes[$key]);
-          $this->_product[$code] = $value;
+          $mapper = $this->_get_attribute_mapper();
+          $this->_product[$code] = $mapper::castAttributeToMagentoFriendlyDatatype($code, $value);
         } else {
           $this->_log('WARNING: skipping unrecognized attribute id on product: ' . $key);
         }
