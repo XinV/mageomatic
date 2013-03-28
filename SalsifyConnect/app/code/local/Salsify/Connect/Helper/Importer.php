@@ -291,7 +291,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
               array_push($extra_product_values,
                          array('_links_crosssell_sku' => $accessory_sku,
                                'sku' => null,
-                               '_type' => null));
+                               '_type' => null,
+                               '_attribute_set' => null));
             }
           }
         } else {
