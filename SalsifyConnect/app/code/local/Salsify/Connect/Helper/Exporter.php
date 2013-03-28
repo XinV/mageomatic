@@ -416,23 +416,21 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     $cross_sell_ids = $product->getCrossSellProductIds();
     $cross_sell_json = $this->_get_accessories_json_for_ids($cross_sell_ids);
-    array_merge($accessories, $cross_sell_json);
+    $accessories = array_merge($accessories, $cross_sell_json);
 
     $up_sell_ids = $product->getUpSellProductIds();
     $up_sell_json = $this->_get_accessories_json_for_ids($up_sell_ids);
-    array_merge($accessories, $up_sell_json);
+    $accessories = array_merge($accessories, $up_sell_json);
 
     $related_ids = $product->getRelatedProductIds();
     $related_json = $this->_get_accessories_json_for_ids($related_ids);
-    array_merge($accessories, $related_json);
+    $accessories = array_merge($accessories, $related_json);
 
     return $accessories;
   }
 
 
   private function _get_accessories_json_for_ids($related_product_ids) {
-    self::_log("ACCESSORY IDS: " . var_export($related_product_ids,true));
-
     $accessories = array();
     if (!$related_product_ids || empty($related_product_ids)) {
       return $accessories;
@@ -450,7 +448,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
     }
 
-    self::_log("ACCESSORIES: " . var_export($accessories,true));
     return $accessories;
   }
 }
