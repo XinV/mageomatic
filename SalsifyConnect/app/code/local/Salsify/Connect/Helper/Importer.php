@@ -379,6 +379,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
                             ->loadByAttribute('sku', $product['sku']);
     if (!$existing_product || !$existing_product->getId()) {
       $existing_product = null;
+    } else {
+      // need to do this to load ALL attribute values for the product
+      $existing_product = Mage::getModel('catalog/product')
+                              ->load($existing_product->getId());
     }
 
     $mapper = $this->_get_attribute_mapper();
