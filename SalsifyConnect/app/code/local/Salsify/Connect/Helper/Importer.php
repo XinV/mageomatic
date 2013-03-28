@@ -289,7 +289,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
             $product['_links_crosssell_sku'] = array_pop($accessory_skus);
             foreach ($accessory_skus as $accessory_sku) {
               array_push($extra_product_values,
-                         array('_links_crosssell_sku' => $accessory_sku));
+                         array('_links_crosssell_sku' => $accessory_sku,
+                               'sku' => null));
             }
           }
         } else {
@@ -596,9 +597,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       unset($this->_batch);
       $this->_batch = array();
     } catch (Exception $e) {
-      $this->_log('ERROR: could not flush batch: ' . $e->getMessage());
+      $error_msg = 'ERROR: could not flush batch: ' . $e->getMessage();
+      $this->_log($error_msg);
       $this->_log('BACKTRACE:' . $e->getTraceAsString());
-      // TODO throw and exception to prevent further work
+      throw new Exception($error_msg);
     }
   }
 
