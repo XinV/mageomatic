@@ -309,6 +309,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
                      $this->_row_for_extra_product_value($key, $category));
         }
       } elseif (is_array($value)) {
+        // FIXME try the trick from above for this.
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
         $product[$key] = implode(', ', $value);
@@ -589,17 +590,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $this->_log("Flushing product batch of size: " . count($this->_batch));
 
     try {
-      // FIXME the fastsimpleimport doesn't work with multi-valued anything
       Mage::getSingleton('fastsimpleimport/import')
           ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
           ->setContinueAfterErrors(true)
           ->processProductImport($this->_batch);
-
-      // This is using ApiImport, which ALSO doesn't work with multiple values...
-      // see Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode()
-      // $entity_type = 'catalog_product';
-      // Mage::getModel('api_import/import_api')
-      //     ->importEntities($this->_batch, $entity_type);
 
       // for PHP GC
       unset($this->_batch);

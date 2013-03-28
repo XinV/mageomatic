@@ -3,8 +3,6 @@
 /**
  * Writes out Magento data to a Salsify format.
  *
- * TODO categories on products
- * TODO related products
  * TODO enable partial exports (just products, etc.).
  */
 class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
