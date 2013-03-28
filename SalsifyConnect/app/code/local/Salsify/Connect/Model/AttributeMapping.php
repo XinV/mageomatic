@@ -217,6 +217,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'category_ids',
       '_type',
       'type_id',
+      '_media_image',
       'image_label',
       'small_image_label',
       'thumbnail_label',

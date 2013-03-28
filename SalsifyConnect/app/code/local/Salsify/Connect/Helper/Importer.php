@@ -354,6 +354,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // TODO get more sophisticated mapping of keys from Salsify properties to
   //      Magento properties.
   private function _prepare_product_add_required_values($product) {
+    // FIXME if updating products I should omit these
+
     // TODO when Salsify supports Kits, this will have to change.
     $product['_type'] = 'simple';
 
@@ -579,15 +581,16 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
     try {
       // FIXME the fastsimpleimport doesn't work with multi-valued anything
-      // Mage::getSingleton('fastsimpleimport/import')
-      //     ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
-      //     ->setContinueAfterErrors(true)
-      //     ->processProductImport($this->_batch);
+      Mage::getSingleton('fastsimpleimport/import')
+          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+          ->setContinueAfterErrors(true)
+          ->processProductImport($this->_batch);
 
+      // This is using ApiImport, which ALSO doesn't work with multiple values...
       // see Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode()
-      $entity_type = 'catalog_product';
-      Mage::getModel('api_import/import_api')
-          ->importEntities($this->_batch, $entity_type);
+      // $entity_type = 'catalog_product';
+      // Mage::getModel('api_import/import_api')
+      //     ->importEntities($this->_batch, $entity_type);
 
       // for PHP GC
       unset($this->_batch);
