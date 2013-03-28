@@ -156,6 +156,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array_push($roles['products'], 'id');
 
       // we use sku to relate products together
+      // see getAttributeForAccessoryIds
       $roles['accessories'] = array();
       array_push($roles['accessories'], 'target_product_id');
     }
@@ -176,6 +177,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     } else {
       return $roles;
     }
+  }
+
+
+  // attribute with target_product_id role
+  public static function getAttributeForAccessoryIds() {
+    return 'sku';
   }
 
 
@@ -571,6 +578,50 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     }
 
     return $all_attributes;
+  }
+
+
+  public static function getDefaultAccessoryAttribute() {
+    return "Accessory Category";
+  }
+
+
+  // returns attributes that are for accessories (e.g. cross-sells, up-sells,
+  // and related products).
+  //
+  // returns the array of these attributes in an array matching the salsify json
+  // document format.
+  public static function getAccessoryAttributes() {
+    return array(
+      array(
+        "id" => self::getDefaultAccessoryAttribute(),
+        "roles" => array("global" => array("accessory_label"))
+      )
+    );
+  }
+
+
+  // similar to getAccessoryAttributes this returns, in an array format
+  // consistent with the Salsify json document format, the set of attribute
+  // values that are used in accessory relationships.
+  public static function getAccessoryAttributeValues() {
+    return array(
+      array(
+        "id" => "cross-sell",
+        "name" => "Cross-sell",
+        "attribute_id": self::getDefaultAccessoryAttribute()
+      ),
+      array(
+        "id" => "up-sell",
+        "name" => "Up-sell",
+        "attribute_id": self::getDefaultAccessoryAttribute()
+      ),
+      array(
+        "id" => "related product",
+        "name" => "Related Product",
+        "attribute_id": self::getDefaultAccessoryAttribute()
+      )
+    );
   }
 
 

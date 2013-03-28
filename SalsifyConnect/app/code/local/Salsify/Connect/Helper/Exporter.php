@@ -176,7 +176,13 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $this->_write_attribute($mapper, $attribute);
     }
 
-    // TODO need to write out a "target_product_id" kind of attribute as well
+    // need to do the accessory attributes separately because they don't exist
+    // in magento as attributes, so we'd get errors trying to load them up and
+    // examine their metadata.
+    $accessory_attributes = $mapper::getAccessoryAttributes();
+    foreach ($accessory_attributes as $attr) {
+      $this->_write_object($attr);
+    }
   }
 
   private function _write_attribute($mapper, $attribute) {
@@ -235,6 +241,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     foreach($categories as $category) {
       $this->_write_category($category, $category_attribute);
+    }
+
+    $mapper = $this->_salsify->get_attribute_mapper();
+    $accessory_attribute_values = $mapper::getAccessoryAttributeValues();
+    foreach ($accessory_attribute_values as $attrv) {
+      $this->_write_object($attrv);
     }
   }
 
@@ -414,35 +426,40 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   private function _get_accessories_json($product) {
     $accessories = array();
 
+    $mapper = $this->_salsify->get_attribute_mapper();
+    $category = $mapper::getDefaultAccessoryAttribute();
+
     $cross_sell_ids = $product->getCrossSellProductIds();
-    $cross_sell_json = $this->_get_accessories_json_for_ids($cross_sell_ids);
+    $cross_sell_json = $this->_get_accessories_json_for_ids($category, 'cross-sell', $cross_sell_ids);
     $accessories = array_merge($accessories, $cross_sell_json);
 
     $up_sell_ids = $product->getUpSellProductIds();
-    $up_sell_json = $this->_get_accessories_json_for_ids($up_sell_ids);
+    $up_sell_json = $this->_get_accessories_json_for_ids($category, 'up-sell', $up_sell_ids);
     $accessories = array_merge($accessories, $up_sell_json);
 
     $related_ids = $product->getRelatedProductIds();
-    $related_json = $this->_get_accessories_json_for_ids($related_ids);
+    $related_json = $this->_get_accessories_json_for_ids($category, 'related product', $related_ids);
     $accessories = array_merge($accessories, $related_json);
 
     return $accessories;
   }
 
 
-  private function _get_accessories_json_for_ids($related_product_ids) {
+  private function _get_accessories_json_for_ids($category, $label, $related_product_ids) {
     $accessories = array();
     if (!$related_product_ids || empty($related_product_ids)) {
       return $accessories;
     }
 
+    // these collection selects will only bring back product skus by default,
+    // which works for us here since that's all we need.
     $related_products = Mage::getModel('catalog/product')
                             ->getCollection()
                             ->addAttributeToFilter('entity_id', array('in' => $related_product_ids));
 
     if ($related_products) {
       foreach ($related_products as $rp) {
-        $accessory = array('sku' => $rp->getSku());
+        $accessory = array($attribute => $rp->getSku());
         // FIXME add the catgory here
         array_push($accessories, $accessory);
       }
