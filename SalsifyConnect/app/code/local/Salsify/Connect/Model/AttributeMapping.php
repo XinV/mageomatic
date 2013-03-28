@@ -196,7 +196,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns whether the given attribute code is 'owned' by magento and so
   // should not be imported.
   public static function isAttributeMagentoOwned($code) {
-    $mag_attrs = self::_magentoOwnedAttributes($code);
+    $mag_attrs = self::getMagentoOwnedAttributeCodes();
     return in_array($code, $mag_attrs);
   }
 
@@ -206,11 +206,26 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //      for these, but the import interface requires strings from an enum of
   //      sorts. if i could export the correct, string values from Magento this
   //      might not even be necessary...
-  private static function _magentoOwnedAttributes($code) {
+  public static function getMagentoOwnedAttributeCodes() {
     return array(
+      'entity_id',
+      'entity_type_id',
+      '_attribute_set',
+      'attribute_set_id',
+      'category_ids',
+      '_type',
+      'type_id',
+      'image_label',
+      'small_image_label',
+      'thumbnail_label',
       'options_container',
       'msrp_enabled',
-      'msrp_display_actual_price_type'
+      'msrp_display_actual_price_type',
+      'visibility',
+      '_product_websites',
+      'url_key',
+      'enable_googlecheckout',
+      'status',
     );
   }
 

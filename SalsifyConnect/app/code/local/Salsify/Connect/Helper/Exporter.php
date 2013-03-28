@@ -38,21 +38,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
 
   private function _init_skip_list() {
-    $this->_attribute_codes_to_skip = array();
-
-    // internal magento properties that we shouldn't be exporting
-    array_push($this->_attribute_codes_to_skip, 'entity_id');
-    array_push($this->_attribute_codes_to_skip, 'entity_type_id');
-    array_push($this->_attribute_codes_to_skip, 'attribute_set_id');
-    array_push($this->_attribute_codes_to_skip, 'type_id');
-
-    // TODO should we be writing this or not? seems redundant. see longer note
-    //      in AttributeMapping in getIdForCode
     $mapper = $this->_salsify->get_attribute_mapper();
+    $this->_attribute_codes_to_skip = $mapper::getMagentoOwnedAttributeCodes();
     array_push($this->_attribute_codes_to_skip, $mapper::getSalsifyProductIdAttributeCode());
-    // array_push($mapper->getSalsifyProductIdAttributeCode());
-
-    // TODO are there more of these?
   }
 
 
