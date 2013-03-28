@@ -309,15 +309,18 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
                      $this->_row_for_extra_product_value($key, $category));
         }
       } elseif (is_array($value)) {
-        // FIXME try the trick from above for this.
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
-        // $product[$key] = implode(', ', $value);
-        $product[$key] = array_pop($value);
-        foreach ($value as $v) {
-          array_push($extra_product_values,
-                     $this->_row_for_extra_product_value($key, $v));
-        }
+        $product[$key] = implode(', ', $value);
+        
+        // Tried this, but only the first one actually shows up. Magento doesn't
+        // seem to support multi-valued attriutes for a product.
+        //
+        // $product[$key] = array_pop($value);
+        // foreach ($value as $v) {
+        //   array_push($extra_product_values,
+        //              $this->_row_for_extra_product_value($key, $v));
+        // }
       }
     }
 
