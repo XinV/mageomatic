@@ -375,12 +375,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // TODO get more sophisticated mapping of keys from Salsify properties to
   //      Magento properties.
   private function _prepare_product_add_required_values($product) {
-    $existing_product_id = Mage::getModel('catalog/product')
-                               ->getIdBySku($product['sku']);
-    if ($existing_product_id) {
-      $existing_product = Mage::getModel('catalog/product')
-                              ->load($existing_product_id);
-    } else {
+    $existing_product = Mage::getModel('catalog/product')
+                            ->loadByAttribute('sku', $product['sku']);
+    if (!$existing_product->getId()) {
       $existing_product = null;
     }
 
