@@ -540,7 +540,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         } elseif (array_key_exists($key, $this->_attributes)) {
           $code = $this->_get_attribute_code($this->_attributes[$key]);
           $mapper = $this->_get_attribute_mapper();
-          $this->_product[$code] = $mapper::castAttributeToMagentoFriendlyDatatype($code, $value);
+          if (!$mapper::isAttributeMagentoOwned($code)) {
+            $this->_product[$code] = $value;
+          }
+          // else we skip since the attribute is owned by magento
         } else {
           $this->_log('WARNING: skipping unrecognized attribute id on product: ' . $key);
         }

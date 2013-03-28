@@ -193,23 +193,16 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  // when importing data from Salsify we get all strings at this time. however,
-  // for round-trips magento->salsify->magento the last import will fail if we
-  // try to import values like '2' instead of values like 2.
-  //
-  // TODO when Salsify supports datatypes (especially for export) we'll need to
-  //      revisit how this works.
-  public static function castAttributeToMagentoFriendlyDatatype($code, $value) {
-    $int_attrs = self::_getIntegerAttributes($code);
-    if (in_array('$code', $int_attrs)) {
-      return ((int)$value);
-    } else {
-      return $value;
-    }
+  // returns whether the given attribute code is 'owned' by magento and so
+  // should not be imported.
+  public static function isAttributeMagentoOwned($code) {
+    $mag_attrs = self::_magentoOwnedAttributes($code);
+    return in_array($code, $mag_attrs);
   }
 
   // this list was build up by trial-and-error...
-  private static function _getIntegerAttributes($code) {
+  // TODO this should be configurable somewhere
+  private static function _magentoOwnedAttributes($code) {
     return array(
       'options_container',
       'msrp_enabled',
