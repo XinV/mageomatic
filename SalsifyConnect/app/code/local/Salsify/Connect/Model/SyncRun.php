@@ -42,14 +42,16 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   //       to continue, though that's much more likely to happen in development
   //       when there will be things like syntax errors.
   public function set_error($e) {
-    if (is_string($e)) {
+    if (!$e) {
+      $e = new Exception("ERROR NOT GIVEN");
+    } elseif (is_string($e)) {
       $e = new Exception($e);
     }
-    self::_log("Setting sync run status to error: " . $e->getMessage());
-    $this->_set_end_time();
     $this->setStatus(self::STATUS_ERROR);
+    $this->_set_end_time();
     $this->setStatusMessage('Error: ' . $e->getMessage());
     $this->save();
+    self::_log("Setting sync run status to error: " . $e->getMessage());
     throw $e;
   }
 

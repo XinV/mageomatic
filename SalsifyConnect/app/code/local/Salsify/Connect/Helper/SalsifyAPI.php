@@ -197,12 +197,18 @@ class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
     }
 
     $import = $this->_get_salsify_import_details($salsify_import_run_id);
-    if (array_key_exists('failure_reason', $import)) {
-      // something has gone wrong. return the failure.
-      $failure_reason = $import['failure_reason'];
-      $error_msg = "Error: Salsify count not complete the export. Failure reason given: " . $failure_reason;
-      self::_log($error_msg);
-      throw new Exception($error_msg);
+    if (!array_key_exists('status', $import)) {
+      throw new Exception("Malformed import reponse given from Salsify: " . var_export($import,true));
+    }
+    $status = $import['status'];
+    if ($status === 'failed') {
+      if (array_key_exists('failure_reason', $import)) {
+        // something has gone wrong. return the failure.
+        $failure_reason = $import['failure_reason'];
+        $error_msg = "Error: Salsify count not complete the export. Failure reason given: " . $failure_reason;
+        self::_log($error_msg);
+        throw new Exception($error_msg);
+      }
     }
 
     self::_log("Export to Salsify completed successfully!");
