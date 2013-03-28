@@ -37,9 +37,6 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   public static function get_mapping_by_sku_and_image($sku, $image) {
     $url = $image->getUrl();
     $id = self::get_image_mapping_id_from_url($sku, $url);
-    // FIXME
-    self::_log("URL: " . $url);
-    self::_log("ID: " . $id);
     $mappings = Mage::getModel('salsify_connect/imagemapping')
                     ->getCollection()
                     ->addFieldToFilter('sku', array('eq' => $sku))
@@ -201,6 +198,8 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   // see larger comment above
   // thanks http://stackoverflow.com/questions/9049088/how-to-compare-a-products-images-in-magento
   public static function get_image_mapping_id_from_url($sku, $url) {
+    // sku ends up being redundant here, but worth keeping around just in case
+    // magento decides to change how it's randomly-generated file names change
     return $sku . '---' . substr($url, strrpos($url, '/') + 1);
   }
 }

@@ -309,6 +309,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     }
   }
 
+
   private function _write_product($product) {
     $product_json = array();
 
@@ -356,12 +357,32 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $product_json[$category_attribute] = $salsify_categories_for_product;
     }
 
-    $image_mapper = Mage::getModel('salsify_connect/imagemapping');
+    
+    $digital_assets = $this->_get_digital_assets_json($product);
+    if (!empty($digital_assets)) {
+      $product_json['digital_assets'] = $digital_assets;
+    }
 
-    // write out digital assets
+
+    $accessories = $this->_get_accessories_json($product);
+    if (!empty($accessories)) {
+      $product_json['accessories'] = $accessories;
+    }
+
+
+    $this->_write_object($product_json);
+  }
+
+
+  // returns a nicely, Salsify JSON document-formatted version of the product's
+  // digital assets.
+  private function _get_digital_assets_json($product) {
     $digital_assets = array();
-    $gallery_images = $product->getMediaGalleryImages();
+
     $sku = $product->getSku();
+    $image_mapper = Mage::getModel('salsify_connect/imagemapping');
+    $gallery_images = $product->getMediaGalleryImages();
+
     foreach ($gallery_images as $image) {
       $da = array();
       $da["name"] = $image->getLabel();
@@ -383,14 +404,21 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
       array_push($digital_assets, $da);
     }
-    if (!empty($digital_assets)) {
-      $product_json['digital_assets'] = $digital_assets;
-    }
+
+    return $digital_assets;
+  }
 
 
-    // FIXME write out accessories
+  // returns a nicely, Salsify JSON document-formatted version of the product's
+  // accessory relationships.
+  private function _get_accessories_json($product) {
+    $accessories = array();
 
+    $cross_sell_ids = $product->getCrossSellProductIds();
+    self::_log("CROSS SELLS: " . var_export($cross_sell_ids,true));
+    
+    // FIXME return the accessories
 
-    $this->_write_object($product_json);
+    return $accessories;
   }
 }
