@@ -171,7 +171,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         }
 
         // calculate this here since addImageToMediaGallery moves the file
-        $checksum = md5_file($filenmae);
+        $checksum = md5_file($filename);
         if (!$checksum) {
           $checksum = null;
           self::_log("WARNING: could not calculate checksum on import for " . $filename . ". This could lead to duplicate images over time.");
