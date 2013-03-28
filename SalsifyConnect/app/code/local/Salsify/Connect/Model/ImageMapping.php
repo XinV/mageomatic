@@ -18,12 +18,29 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
 
   // returns the ImageMapping model instance if it exists for the given sku and
-  // url, null otherwise.
+  // source (e.g. external) url, null otherwise.
   private static function _get_mapping($sku, $url) {
     $mappings = Mage::getModel('salsify_connect/imagemapping')
                     ->getCollection()
                     ->addFieldToFilter('sku', array('eq' => $sku))
                     ->addFieldToFilter('url', array('eq' => $url));
+    $mapping = $mappings->getFirstItem();
+    if (!$mapping || !$mapping->getId()) {
+      return null;
+    }
+    return $mapping;
+  }
+
+
+  // takes a sku and the image get getMediaGalleryImages and returns the mapping
+  // for the image if it exists.
+  public static function get_mapping_by_sku_and_image($sku, $image) {
+    $url = $image->getUrl();
+    $id = self::get_image_mapping_id_from_url($url);
+    $mappings = Mage::getModel('salsify_connect/imagemapping')
+                    ->getCollection()
+                    ->addFieldToFilter('sku', array('eq' => $sku))
+                    ->addFieldToFilter('magento_id', array('eq' => $id));
     $mapping = $mappings->getFirstItem();
     if (!$mapping || !$mapping->getId()) {
       return null;
@@ -162,8 +179,8 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         // $image_name = substr($_image->getUrl(), strrpos($_image->getUrl(), '/') + 1);
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
-        $image_mapping->setMagentoId($last_image['file']);
         $image_mapping->setUrl($url);
+        $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $url));
         $image_mapping->save();
 
         // fix the gallery up
@@ -175,5 +192,12 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         $product->save();
       }
     }
+  }
+
+
+  // see larger comment above
+  // thanks http://stackoverflow.com/questions/9049088/how-to-compare-a-products-images-in-magento
+  public static function get_image_mapping_id_from_url($sku, $url) {
+    return $sku . '---' . substr($url, strrpos($url, '/') + 1);
   }
 }
