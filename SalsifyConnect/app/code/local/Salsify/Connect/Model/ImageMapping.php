@@ -130,7 +130,8 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   //      salsify, recognize and update the local image).
   //
   // TODO get images for different digital asset roles (thumbnail vs. image,
-  //      etc.) from salsify.
+  //      etc.) from salsify. right now at least we're setting the primary
+  //      image correctly.
   public static function load_digital_assets($digital_assets) {
     if (!$digital_assets || empty($digital_assets)) {
       self::_log("no digital assets passed in to process.");
@@ -193,9 +194,17 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
           continue;
         }
 
+        if (array_key_exists('is_primary_image', $da) &&
+            $da['is_primary_image'] == 'true')
+        {
+          $image_roles = array('image', 'small_image', 'thumbnail');
+        } else {
+          $image_roles = '';
+        }
+
         $product->addImageToMediaGallery(
           $filename,
-          array('image', 'small_image', 'thumbnail'),
+          $image_roles,
           true,  // whether to move the file
           false  // true hides from product page
         );

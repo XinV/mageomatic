@@ -312,7 +312,12 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         // FIXME try the trick from above for this.
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
-        $product[$key] = implode(', ', $value);
+        // $product[$key] = implode(', ', $value);
+        $product[$key] = array_pop($value);
+        foreach ($value as $v) {
+          array_push($extra_product_values,
+                     $this->_row_for_extra_product_value($key, $v));
+        }
       }
     }
 

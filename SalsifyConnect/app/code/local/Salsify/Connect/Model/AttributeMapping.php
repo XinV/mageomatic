@@ -200,15 +200,23 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     return in_array($code, $mag_attrs);
   }
 
-  // this list was build up by trial-and-error...
+  // this list was build up by trial-and-error. these are the attributes that
+  // come back as part of the product attribute list that should be owned by
+  // magento.
+  //
+  // right now we're not even exporting these to Salsify; they live in Magento
+  // and are only visible in Magento. we'd have to think about how we want to
+  // handle properties like this in general in terms of Salsify behavior (maybe
+  // Salsify can get the properties but not export them, or Magento ignores
+  // values for these properties if they come as part of an import, or something
+  // like that).
+  //
   // TODO this should be configurable somewhere
-  // TODO the root cause of problems is that Salsify gets integers from Magento
-  //      for these, but the import interface requires strings from an enum of
-  //      sorts. if i could export the correct, string values from Magento this
-  //      might not even be necessary...
   public static function getMagentoOwnedAttributeCodes() {
     return array(
       '_store',
+      '_product_websites',
+
       'entity_id',
       'entity_type_id',
       '_attribute_set',
@@ -217,18 +225,36 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'category_ids',
       '_type',
       'type_id',
+
       '_media_image',
+      'image',
       'image_label',
+      'small_image',
       'small_image_label',
+      'thumbnail',
       'thumbnail_label',
+
       'options_container',
+      'has_options',
+      'required_options',
+
       'msrp_enabled',
       'msrp_display_actual_price_type',
+
       'visibility',
-      '_product_websites',
+      'status',
       'url_key',
       'enable_googlecheckout',
-      'status',
+      'special_from_date',
+
+      'group_price',
+      'group_price_changed',
+      'tier_price',
+      'tier_price_changed',
+
+      'stock_item',
+      'is_in_stock',
+      'is_salable',
     );
   }
 
