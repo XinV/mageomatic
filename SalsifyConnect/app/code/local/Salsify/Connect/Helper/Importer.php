@@ -289,10 +289,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
             $product['_links_crosssell_sku'] = array_pop($accessory_skus);
             foreach ($accessory_skus as $accessory_sku) {
               array_push($extra_product_values,
-                         array('_links_crosssell_sku' => $accessory_sku,
-                               'sku' => null,
-                               '_type' => null,
-                               '_attribute_set' => null));
+                         $this->_row_for_extra_product_value('_links_crosssell_sku',
+                                                             $accessory_sku));
             }
           }
         } else {
@@ -306,12 +304,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         // support for multiple category assignments
         $categories = $product[$key];
         $product[$key] = array_shift($categories);
-        // foreach ($categories as $category) {
-          // TODO Avs FastSimpleImport doesn't seem to support this currently.
-          //      see: https://github.com/avstudnitz/AvS_FastSimpleImport/issues/30
-          // array_push($extra_product_values,
-          //            array($key => $category));
-        // }
+        foreach ($categories as $category) {
+          array_push($extra_product_values,
+                     $this->_row_for_extra_product_value($key, $category));
+        }
       } elseif (is_array($value)) {
         // multi-valued thing. wish we could do better, but see this for why not:
         // https://github.com/avstudnitz/AvS_FastSimpleImport/issues/9
@@ -330,6 +326,16 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     }
 
     return $prepped_product;
+  }
+
+
+  // see https://github.com/avstudnitz/AvS_FastSimpleImport/issues/30
+  // for why this is necessary
+  private function _row_for_extra_product_value($key, $value) {
+    return array($key             => $value,
+                 'sku'            => null,
+                 '_type'          => null,
+                 '_attribute_set' => null);
   }
 
 
