@@ -377,7 +377,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   private function _prepare_product_add_required_values($product) {
     $existing_product = Mage::getModel('catalog/product')
                             ->loadByAttribute('sku', $product['sku']);
-    if (!$existing_product->getId()) {
+    if (!$existing_product || !$existing_product->getId()) {
       $existing_product = null;
     }
 
