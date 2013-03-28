@@ -449,6 +449,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         array_push($accessories, $accessory);
       }
     }
+
+    self::_log("ACCESSORIES: " . var_export($accessories,true));
     return $accessories;
   }
 }
