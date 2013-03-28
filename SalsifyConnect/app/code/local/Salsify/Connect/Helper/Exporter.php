@@ -460,8 +460,10 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
     if ($related_products) {
       foreach ($related_products as $rp) {
-        $accessory = array($id_attribute => $rp->getSku());
-        // FIXME add the catgory here
+        $accessory = array(
+          $id_attribute => $rp->getSku(),
+          $category => $label
+        );
         array_push($accessories, $accessory);
       }
     }
