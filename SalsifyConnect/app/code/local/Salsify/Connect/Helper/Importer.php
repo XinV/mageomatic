@@ -584,9 +584,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       //     ->setContinueAfterErrors(true)
       //     ->processProductImport($this->_batch);
 
-      $entity_type = Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode();
+      // see Mage_ImportExport_Model_Export_Entity_Product::getEntityTypeCode()
+      $entity_type = 'catalog_product';
       Mage::getModel('api_import/import_api')
-          ->importEntities($this->_batch, $entityType['entity']);
+          ->importEntities($this->_batch, $entity_type);
 
       // for PHP GC
       unset($this->_batch);
