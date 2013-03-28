@@ -202,6 +202,10 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
   // this list was build up by trial-and-error...
   // TODO this should be configurable somewhere
+  // TODO the root cause of problems is that Salsify gets integers from Magento
+  //      for these, but the import interface requires strings from an enum of
+  //      sorts. if i could export the correct, string values from Magento this
+  //      might not even be necessary...
   private static function _magentoOwnedAttributes($code) {
     return array(
       'options_container',
