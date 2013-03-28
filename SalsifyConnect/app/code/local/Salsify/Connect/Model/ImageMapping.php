@@ -17,13 +17,18 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   }
 
 
-  // returns the ImageMapping model instance if it exists for the given sku and
-  // source (e.g. external) url, null otherwise.
-  private static function _get_mapping($sku, $url) {
-    $mappings = Mage::getModel('salsify_connect/imagemapping')
-                    ->getCollection()
-                    ->addFieldToFilter('sku', array('eq' => $sku))
-                    ->addFieldToFilter('url', array('eq' => $url));
+  // returns a collection that includes all mappings for the given sku. usually
+  // this is refined further.
+  private static function _get_mappings_collection_for_sku($sku) {
+    return Mage::getModel('salsify_connect/imagemapping')
+               ->getCollection()
+               ->addFieldToFilter('sku', array('eq' => $sku));
+  }
+
+
+  // we do this in several '_get_mapping*' methods, so it made sense to factor
+  // it out.
+  private static function _get_mapping_from_mappings($mappings) {
     $mapping = $mappings->getFirstItem();
     if (!$mapping || !$mapping->getId()) {
       return null;
@@ -32,20 +37,33 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  // returns the ImageMapping model instance if it exists for the given sku and
+  // source (e.g. external) url, null otherwise.
+  private static function _get_mapping_by_sku_and_url($sku, $url) {
+    $mappings = self::_get_mappings_collection_for_sku($sku);
+    $mappings = $mappings->addFieldToFilter('url', array('eq' => $url));
+    return self::_get_mapping_from_mappings($mappings);
+  }
+
+
+  // returns the ImageMapping model instance if it exists for the given sku and
+  // checksum.
+  private static function _get_mapping_by_sku_and_checksum($sku, $checksum) {
+    $mappings = self::_get_mappings_collection_for_sku($sku);
+    $mappings = $mappings->addFieldToFilter('checksum', array('checksum' => $checksum));
+    return self::_get_mapping_from_mappings($mappings);
+  }
+
+
   // takes a sku and the image get getMediaGalleryImages and returns the mapping
   // for the image if it exists.
   public static function get_mapping_by_sku_and_image($sku, $image) {
     $url = $image->getUrl();
     $id = self::get_image_mapping_id_from_url($sku, $url);
-    $mappings = Mage::getModel('salsify_connect/imagemapping')
-                    ->getCollection()
-                    ->addFieldToFilter('sku', array('eq' => $sku))
-                    ->addFieldToFilter('magento_id', array('eq' => $id));
-    $mapping = $mappings->getFirstItem();
-    if (!$mapping || !$mapping->getId()) {
-      return null;
-    }
-    return $mapping;
+
+    $mappings = self::_get_mappings_collection_for_sku($sku);
+    $mappings = $mappings->addFieldToFilter('magento_id', array('eq' => $id));
+    return self::_get_mapping_from_mappings($mappings);
   }
 
 
@@ -133,7 +151,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
       foreach ($das as $da) {
         $url = $da['url'];
 
-        $existing_mapping = self::_get_mapping($sku, $url);
+        $existing_mapping = self::_get_mapping_by_sku_and_url($sku, $url);
         if ($existing_mapping) {
           // we already have that image. skipping...
           continue;
@@ -147,7 +165,31 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
         $success = self::_download_image_to_local($salsify, $url, $filename);
         if (!$success) {
-          // download problem. bad URL or the like.
+          // download problem. bad URL or the like. error message already
+          // logged elsewhere.
+          continue;
+        }
+
+        // calculate this here since addImageToMediaGallery moves the file
+        $checksum = md5_file($filenmae);
+        if (!$checksum) {
+          $checksum = null;
+          self::_log("WARNING: could not calculate checksum on import for " . $filename . ". This could lead to duplicate images over time.");
+        }
+
+        // the URL may have changed with Salsify. this happens if, for example,
+        // we go from Magento->Salsify->Magento.
+        $existing_mapping = self::_get_mapping_by_sku_and_checksum($sku, $checksum);
+        if ($existing_mapping) {
+          // this means that the source URL has changed. let's update it and
+          // then move on.
+          $existing_mapping->setUrl($url);
+          $existing_mapping->save();
+          try {
+            unlink($filename);
+          } catch (Exception $e) {
+            self::_log("WARNING: could not remove unnecessary image file: " . $filename);
+          }
           continue;
         }
 
@@ -180,6 +222,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
         $image_mapping->setUrl($url);
+        $image_mapping->setChecksum($checksum);
         $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $last_image['file']));
         $image_mapping->save();
 
