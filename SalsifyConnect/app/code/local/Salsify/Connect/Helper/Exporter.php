@@ -431,6 +431,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
 
   private function _get_accessories_json_for_ids($related_product_ids) {
+    self::_log("ACCESSORY IDS: " . var_export($related_product_ids,true));
+
     $accessories = array();
     if (!$related_product_ids || empty($related_product_ids)) {
       return $accessories;
