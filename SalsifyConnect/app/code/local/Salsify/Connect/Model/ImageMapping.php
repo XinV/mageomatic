@@ -195,9 +195,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
           continue;
         }
 
-        if (array_key_exists('is_primary_image', $da) &&
-            $da['is_primary_image'] == 'true')
-        {
+        if (array_key_exists('is_primary_image', $da) && $da['is_primary_image']) {
           $image_roles = array('image', 'small_image', 'thumbnail');
         } else {
           $image_roles = null;
@@ -239,11 +237,11 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         // fix the gallery up
         array_push($gallery['images'], $last_image);
         $product->setData('media_gallery', $gallery);
-
-        // need to save the product for any changes to the media gallery to
-        // take effect.
-        $product->save();
       }
+
+      // need to save the product for any changes to the media gallery to
+      // take effect.
+      $product->save();
     }
   }
 
