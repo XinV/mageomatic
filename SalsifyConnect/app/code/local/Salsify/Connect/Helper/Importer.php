@@ -380,6 +380,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     if ($existing_product_id) {
       $existing_product = Mage::getModel('catalog/product')
                               ->load($existing_product_id);
+    } else {
+      $existing_product = null;
     }
 
     $mapper = $this->_get_attribute_mapper();
