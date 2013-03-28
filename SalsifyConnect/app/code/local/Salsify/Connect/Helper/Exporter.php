@@ -442,10 +442,11 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
                             ->getCollection()
                             ->addAttributeToFilter('entity_id', array('in' => $related_product_ids));
 
-    self::_log("RELATED: " . var_export($related_products,true));
-
     if ($related_products) {
+      self::_log("HERE");
       foreach ($related_products as $rp) {
+        self::_log("HERE: " . $rp->getSku());
+
         $accessory = array('sku' => $rp->getSku());
         // FIXME add the catgory here
         array_push($accessories, $accessory);
