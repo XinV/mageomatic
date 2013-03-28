@@ -77,6 +77,10 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'nullable' => true,
     'default'  => NULL,
     ), 'Source URL of the image')
+  ->addColumn('checksum', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => true,
+    'default'  => NULL,
+    ), 'MD5 checksum of the image file')
   ->setComment('Salsify_Connect salsify_connect/image_mapping table');
 $installer->getConnection()->createTable($table);
 
