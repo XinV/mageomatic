@@ -395,6 +395,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       }
     }
 
+    self::_log("PRODUCT: " .var_export($product,true));
+
+    // FIXME this isn't working right now...
+
     return $product;
   }
 
