@@ -74,7 +74,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'ID of product related to the image in Magento')
   ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
-    ), 'ID of image in Magento')
+    ), 'ID of image in Magento (made up by plugin based on path)')
   ->addColumn('url', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => true,
     'default'  => NULL,
@@ -189,9 +189,17 @@ function stub_import_export_table($installer, $table_id, $label) {
 
 $table = stub_import_export_table($installer, 'import_run', 'Import');
 $installer->getConnection()->createTable($table);
+$installer->run("
+  CREATE INDEX import_run_by_id
+  ON import_run(id);
+");
 
 $table = stub_import_export_table($installer, 'export_run', 'Export');
 $installer->getConnection()->createTable($table);
+$installer->run("
+  CREATE INDEX export_run_by_id
+  ON export_run(id);
+");
 
 
 // NOTE: this is taken almost directly from the DJJob/jobs.sql
