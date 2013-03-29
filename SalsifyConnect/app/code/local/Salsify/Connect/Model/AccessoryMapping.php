@@ -108,7 +108,6 @@ class Salsify_Connect_Model_AccessoryMapping
                                 target_sku
                               )
               VALUES ' . implode(',', $sql);
-    self::_log("QUERY: " . $query);
 
 
     // FIXME need unique constraints on the mapping table so that I'm not
