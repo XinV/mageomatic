@@ -146,7 +146,7 @@ $installer->getConnection()->createTable($table);
 // If this becomes important we could always index the checksum of the external
 // ID just for lookup purposes.
 $installer->run("
-  CREATE INDEX accessory_mapping_by_skus
+  CREATE INDEX salsify_connect_accessory_mapping_by_skus
   ON salsify_connect_accessory_mapping(trigger_sku, target_sku);
 ");
 
@@ -190,15 +190,15 @@ function stub_import_export_table($installer, $table_id, $label) {
 $table = stub_import_export_table($installer, 'import_run', 'Import');
 $installer->getConnection()->createTable($table);
 $installer->run("
-  CREATE INDEX import_run_by_id
-  ON import_run(id);
+  CREATE INDEX salsify_connect_import_run_by_id
+  ON salsify_connect_import_run(id);
 ");
 
 $table = stub_import_export_table($installer, 'export_run', 'Export');
 $installer->getConnection()->createTable($table);
 $installer->run("
-  CREATE INDEX export_run_by_id
-  ON export_run(id);
+  CREATE INDEX salsify_connect_export_run_by_id
+  ON salsify_connect_export_run(id);
 ");
 
 
