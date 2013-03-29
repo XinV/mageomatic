@@ -51,7 +51,7 @@ class Salsify_Connect_Model_AccessoryMapping
   public static function getOrCreateMappings(
     $trigger_sku, $target_sku, $default_category, $relation_type
   ) {
-    $mappings = self::_get_mappings_collection_for_trigger_target($trigger_sku, $target_sku);
+    $mappings = self::_get_mappings_collection_for_trigger_target($trigger_sku, $target_sku, $relation_type);
     $mapping = $mappings->getFirstItem();
     if ($mapping && $mapping->getId()) {
       return $mappings;
