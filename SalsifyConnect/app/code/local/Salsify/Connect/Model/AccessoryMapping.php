@@ -76,6 +76,9 @@ class Salsify_Connect_Model_AccessoryMapping
       return 0;
     }
 
+    $db = Mage::getSingleton('core/resource')
+              ->getConnection('core_write');
+
     // thanks http://stackoverflow.com/questions/779986/insert-multiple-rows-via-a-php-array-into-mysql
     $sql = array(); 
     foreach($accessories as $relationship) {
@@ -85,15 +88,15 @@ class Salsify_Connect_Model_AccessoryMapping
         $relationship['magento_relation_type'] = self::CROSS_SELL;
       }
       $sql[] = '("'
-             . mysql_real_escape_string($relationship['salsify_category_id'])
+             . $db->quote($relationship['salsify_category_id'])
              . '", '
-             . mysql_real_escape_string($relationship['salsify_category_value'])
+             . $db->quote($relationship['salsify_category_value'])
              . '", '
              . $relationship['magento_relation_type']
              . '", '
-             . mysql_real_escape_string($relationship['trigger_sku'])
+             . $db->quote($relationship['trigger_sku'])
              . '", '
-             . mysql_real_escape_string($relationship['target_sku'])
+             . $db->quote($relationship['target_sku'])
              . ')';
     }
 
@@ -103,8 +106,6 @@ class Salsify_Connect_Model_AccessoryMapping
     try {
       $count = count($sql);
       self::_log("Inserting " . $count . " rows into salsify_connect_accessory_mapping...");
-      $db = Mage::getSingleton('core/resource')
-                ->getConnection('core_write');
       $db->query('INSERT INTO salsify_connect_accessory_mapping (
                                 salsify_category_id,
                                 salsify_category_value,
