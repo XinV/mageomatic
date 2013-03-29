@@ -156,7 +156,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array_push($roles['products'], 'id');
 
       // we use sku to relate products together
-      // see getAttributeForAccessoryIds
+      // see getAttributeForAccessoryIds()
       $roles['accessories'] = array();
       array_push($roles['accessories'], 'target_product_id');
     }

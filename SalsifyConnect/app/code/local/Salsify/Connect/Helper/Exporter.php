@@ -388,8 +388,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $url = $image->getUrl();
       $mapping = $image_mapper::get_mapping_by_sku_and_image($sku, $image);
       if ($mapping) {
-        // FIXME this is temporary for demo purposes and should be removed before
-        //       greater distribution.
+        // FIXME this is temporary for demo purposes and should be removed
+        //       before greater distribution.
         $da["url"] = $mapping->getUrl();
       } else {
         $da["url"] = $url;
