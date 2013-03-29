@@ -19,7 +19,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       case self::STATUS_ERROR:
         return "Error: Failed";
       case self::STATUS_NOT_STARTED:
-        return "Export not started";
+        return "Import not started";
       case self::STATUS_SALSIFY_PREPARING:
         return "Salsify is preparing the data.";
       case self::STATUS_DOWNLOADING:

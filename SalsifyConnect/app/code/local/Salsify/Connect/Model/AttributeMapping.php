@@ -265,32 +265,33 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns an array of key => value for attributes that must be present for
   // a product to be imported into the system, along with some reasonable
   // defaults to use.
+  //
+  // FIXME query the system to get the full list of required attributes beyond
+  //       those required by Magento.
   public static function getRequiredProductAttributesWithDefaults() {
     return array(
       'sku' => null,
       '_type' => 'simple',
       '_attribute_set' => 'Default',
       '_product_websites' => 'base',
+
       'price' => 0.01,
       'qty' => 0,
 
       'short_description' => 'Imported from Salsify',
       'description' => 'Imported from Salsify',
 
-      // TODO i read that this should be '1' if not used. currently using 0.
-      //      wondering if having '0' is a problem?
-      // source: http://www.mag-manager.com/useful-articles/tipstricks/how-should-the-sample-of-csv-file-for-magento-import-look-like
+      // usually 0 if not used by Magento for shipping/fulfillment.
       'weight' => 0,
 
-      // TODO what does the status value mean?
-      //      default should be something like "ENABLED". is there somewhere to
-      //      get this?
-      'status' => 1, // TODO good default?
+      // 1 => Enabled
+      'status' => 1,
 
-      // TODO what does visibility '4' mean?
+      // 4 => Catalog, Search (e.g. visible everywhere)
       'visibility' => 4,
 
-      // TODO system default that we should be using?
+      // 2 => 'Taxable Goods'
+      // TODO: should this be 'None' or 'Shipping'?
       'tax_class_id' => 2,
     );
   }
@@ -500,11 +501,10 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     );
 
 
-    // TODO apply_to multiple types by default? right now Salsify itself only
-    //      really supports the simple type. also, if we leave this out it
-    //      might automatically apply to everything, which is maybe what we
-    //      want by default.
-    $attribute_data['apply_to'] = array('simple'); //array('grouped') see http://www.magentocommerce.com/wiki/modules_reference/english/mage_adminhtml/catalog_product/producttype
+    // by default have the new attribute show up for all product types.
+    $attribute_data['apply_to'] = array('simple');
+    $attribute_data['apply_to'] = array('simple','grouped','configurable',
+                                        'virtual','bundle','downloadable');
 
     // without this it will not show up in the UI. the group is the tab group
     // when looking at the details of an object.

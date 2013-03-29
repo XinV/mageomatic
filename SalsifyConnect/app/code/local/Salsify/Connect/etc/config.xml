@@ -55,6 +55,9 @@
           <image_mapping>
             <table>salsify_connect_image_mapping</table>
           </image_mapping>
+          <image_mapping>
+            <table>salsify_connect_accessorycategory_mapping</table>
+          </image_mapping>
         </entities>
       </salsify_connect_resource>
     </models>

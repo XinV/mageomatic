@@ -1,5 +1,9 @@
 <?php
 
+// FIXME create indexes on the tables that make sense, particularly on the
+//       mapping tables
+
+
 // NOTE: to UNDO this install:
 // DROP each of the tables created
 // DELETE from core_resource where code = 'salsify_connect_setup';
@@ -66,11 +70,9 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'identity' => true,
     ), 'Salsify Connect Image Mapping ID')
   ->addColumn('sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-    'unsigned' => true,
     'nullable' => false,
     ), 'ID of product related to the image in Magento')
   ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-    'unsigned' => true,
     'nullable' => false,
     ), 'ID of image in Magento')
   ->addColumn('url', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
@@ -85,6 +87,29 @@ $table = $installer->getConnection()->newTable($installer->getTable(
 $installer->getConnection()->createTable($table);
 
 
+// this table contains the mappings between category labels in Salsify and
+// cross-sells, up-sells, and product relations in salsify.
+$table = $installer->getConnection()->newTable($installer->getTable(
+  'salsify_connect/accessorycategory_mapping'))
+  ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    'primary' => true,
+    'identity' => true,
+    ), 'Salsify Connect Accessory Category Mapping ID')
+  ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'ID of Accessory Category in Salsify')
+  ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    ), 'ID of Accessory Type in Magento (enum)')
+$installer->getConnection()->createTable($table);
+
+
+// currently the import_run and export_run tables are nearly identical, and this
+// is required by their superclass model SyncRun. this creates the basic raw
+// table reuqired by SyncRun and shared by ImportRun and ExportRun.
 function stub_import_export_table($installer, $table_id, $label) {
   $table = $installer->getConnection()->newTable($installer->getTable(
     'salsify_connect/' . $table_id))

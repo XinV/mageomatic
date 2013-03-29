@@ -363,17 +363,17 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
 
-  // adds values for all the properties required by Magento so that the product
-  // can be imported.
+  // Magento requires that products that are imported in bulk through its
+  // ImportExport API have values for all required properties. There are some
+  // that come with the system by default.
   //
-  // if we're just updating the existing products in the system we get the values
-  // from the existing product.
-  //
-  // TODO query the system to get the full list of required attributes beyond
-  //      those required by Magento.
+  // If the product already exists then we copy over the values from it so that
+  // we don't accidentally overwrite a Magento value with some Mageomatic
+  // default.
   //
   // TODO get more sophisticated mapping of keys from Salsify properties to
-  //      Magento properties.
+  //      Magento properties (e.g. does a Salsify property correspond to
+  //      "weight" or "price" or somethign else?)
   private function _prepare_product_add_required_values($product) {
     $existing_product = Mage::getModel('catalog/product')
                             ->loadByAttribute('sku', $product['sku']);
@@ -388,6 +388,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $mapper = $this->_get_attribute_mapper();
     $required_attributes  = $mapper::getRequiredProductAttributesWithDefaults();
     foreach ($required_attributes as $code => $default) {
+      // default is to go with what's coming from Salsify, so that Salsify
+      // overrules what is happening here.
       if (!array_key_exists($code, $product)) {
         if ($existing_product) {
           $product[$code] = $existing_product->getData($code);
@@ -397,7 +399,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       }
     }
 
-    // FIXME what about magento-owned properties???
+    // FIXME Magento-owned properties are being updated. I think we need to go
+    //       through every single property in the system if there is an existing
+    //       product and copy over its values...HOWEVER
     //       the issue I came up against is that the import api expects different
     //       values for some of them than you get from the product interface.
     //       for example 'msrp_enabled' is an integer, but the import interface
