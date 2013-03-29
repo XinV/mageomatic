@@ -58,6 +58,9 @@
           <accessorycategory_mapping>
             <table>salsify_connect_accessorycategory_mapping</table>
           </accessorycategory_mapping>
+          <accessory_mapping>
+            <table>salsify_connect_accessory_mapping</table>
+          </accessory_mapping>
         </entities>
       </salsify_connect_resource>
     </models>

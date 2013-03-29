@@ -110,6 +110,44 @@ $table = $installer->getConnection()->newTable($installer->getTable(
 $installer->getConnection()->createTable($table);
 
 
+// for specific product relationships (sku-to-sku) this keeps track of the
+// salsify category ID for the relation if it was originally imported from
+// salsify.
+//
+// TODO this SHOULD be totally unnecessary if all product relations are being
+//      managed in Salsify, or if we simply aren't moving them back and forth
+//      over the wire.
+$table = $installer->getConnection()->newTable($installer->getTable(
+  'salsify_connect/accessory_mapping'))
+  ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    'primary' => true,
+    'identity' => true,
+    ), 'Salsify Connect Accessory Mapping ID')
+  ->addColumn('salsify_category_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'ID of Accessory Category in Salsify')
+  ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'ID of Accessory Category Value in Salsify')
+  ->addColumn('trigger_sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Trigger Product SKU')
+  ->addColumn('target_sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Target Product SKU')
+$installer->getConnection()->createTable($table);
+// the first index is for import, the second for export
+$installer->run("
+  CREATE INDEX accessory_mapping_by_category_and_skus
+  ON salsify_connect_accessory_mapping(salsify_category_value, trigger_sku, target_sku);
+
+  CREATE INDEX accessory_mapping_by_skus
+  ON salsify_connect_accessory_mapping(trigger_sku, target_sku);
+");
+
+
 // currently the import_run and export_run tables are nearly identical, and this
 // is required by their superclass model SyncRun. this creates the basic raw
 // table reuqired by SyncRun and shared by ImportRun and ExportRun.
