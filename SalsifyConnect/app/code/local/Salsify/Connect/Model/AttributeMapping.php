@@ -501,16 +501,17 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     );
 
 
-    // by default have the new attribute show up for all product types.
-    $attribute_data['apply_to'] = array('simple');
+    // by default have the new attribute show up and apply to all product types
+    // in Magento.
     $attribute_data['apply_to'] = array('simple','grouped','configurable',
                                         'virtual','bundle','downloadable');
 
-    // without this it will not show up in the UI. the group is the tab group
-    // when looking at the details of an object.
-    if ($attribute_type == self::CATEGORY) {
+
+    // without the following the new attribute will not show up in the UI.
+    // the group is the tab group when looking at the details of an object.
+    if ($attribute_type === self::CATEGORY) {
       $group = 'General Information';
-    } elseif ($attribute_type == self::PRODUCT) {
+    } elseif ($attribute_type === self::PRODUCT) {
       $group = 'General';
     }
     $attribute_data['group'] = $group;
