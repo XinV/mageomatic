@@ -136,7 +136,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'Trigger Product SKU')
   ->addColumn('target_sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
-    ), 'Target Product SKU')
+    ), 'Target Product SKU');
 $installer->getConnection()->createTable($table);
 // the first index is for import, the second for export
 $installer->run("
