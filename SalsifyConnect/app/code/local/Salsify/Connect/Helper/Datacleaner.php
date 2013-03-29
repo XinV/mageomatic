@@ -147,6 +147,7 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
            ->_drop_table($db, 'salsify_connect_attribute_mapping')
            ->_drop_table($db, 'salsify_connect_image_mapping')
            ->_drop_table($db, 'salsify_connect_accessorycategory_mapping')
+           ->_drop_table($db, 'salsify_connect_accessory_mapping')
            ->_drop_table($db, 'salsify_connect_import_run')
            ->_drop_table($db, 'salsify_connect_export_run')
            ->_drop_table($db, 'salsify_connect_configuration');
