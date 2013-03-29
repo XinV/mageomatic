@@ -91,9 +91,10 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function testAction() {
     $this->_start_render('salsify_connect_menu/exports');
 
-    // $salsify = Mage::helper('salsify_connect');
-    // $export_file = $salsify->export_data();
-    // $this->_render_html('Exported data: ' . $export_file);
+    $salsify = Mage::helper('salsify_connect');
+    $export_file = $salsify->export_data();
+    $this->_render_html('Exported data: ' . $export_file);
+
 
     // $categories = Mage::getModel('catalog/category')
     //                   ->getCollection();
@@ -124,18 +125,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     // } else {
     //   $this->_render_html("Matching mapping found...<br/>");
     // }
-
-
-    $collection = Mage::getModel('salsify_connect/imagemapping')
-                      ->getCollection()
-                      ->addFieldToFilter('sku', array('eq' => 'NOTASKU'));
-    if (empty($collection)) {
-      $this->_render_html("YES");
-    } else {
-      foreach ($collection as $co) {
-        $this->_render_html($co->getSku() . "<br/>");
-      }
-    }
 
     $this->_end_render();
   }

@@ -79,7 +79,6 @@ class Salsify_Connect_Model_AccessoryMapping
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_write');
 
-    // thanks http://stackoverflow.com/questions/779986/insert-multiple-rows-via-a-php-array-into-mysql
     $sql = array(); 
     foreach($accessories as $relationship) {
       if (!array_key_exists('magento_relation_type', $relationship)) {
@@ -87,6 +86,7 @@ class Salsify_Connect_Model_AccessoryMapping
         // TODO make this configurable
         $relationship['magento_relation_type'] = self::CROSS_SELL;
       }
+
       $sql[] = '('
              . $db->quote($relationship['salsify_category_id'])
              . ', '
@@ -110,8 +110,10 @@ class Salsify_Connect_Model_AccessoryMapping
               VALUES ' . implode(',', $sql);
     self::_log("QUERY: " . $query);
 
+
     // FIXME need unique constraints on the mapping table so that I'm not
     //       re-inserting the same ones over an over...
+
 
     try {
       $count = count($sql);
