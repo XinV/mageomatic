@@ -58,7 +58,7 @@ class Salsify_Connect_Model_AccessoryMapping
     }
 
     // no mappings, need to create a new one.
-    $mapping = Mage::Mage::getModel('salsify_connect/accessorymapping');
+    $mapping = Mage::getModel('salsify_connect/accessorymapping');
     $mapping->setTriggerSku($trigger_sku);
     $mapping->setTargetSku($target_sku);
     $mapping->setSalsifyCategoryId($default_category);
