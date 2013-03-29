@@ -33,4 +33,19 @@ class Salsify_Connect_Model_AccessorycategoryMapping
   }
 
 
+  // FIXME need to add the magento relationship type here if possible. a single
+  //       product relationship could, for example, have both a relation in
+  //       cross-sell and one in up-sell.
+  private static function _get_mappings_collection_for_trigger_target($trigger_sku, $target_sku) {
+    return Mage::getModel('salsify_connect/imagemapping')
+               ->getCollection()
+               ->addFieldToFilter('trigger_sku', array('eq' => $trigger_sku))
+               ->addFieldToFilter('target_sku', array('eq' => $target_sku));
+  }
+
+
+  // FIXME need to be able to return MULTIPLE mappings
+  public static function getOrCreateMappings($trigger_sku, $target_sku, $default_category, $default_label) {
+    
+  }
 }

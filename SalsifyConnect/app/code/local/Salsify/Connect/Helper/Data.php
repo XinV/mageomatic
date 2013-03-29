@@ -152,8 +152,22 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
   // returns an instance of the attribute mapping model, which is the primary
   // interface between this loader and the Magento attribute database structure.
+  private $_attribute_mapper;
   public function get_attribute_mapper() {
-    return Mage::getModel('salsify_connect/attributemapping');
+    if (!$this->_attribute_mapper) {
+      $this->_attribute_mapper = Mage::getModel('salsify_connect/attributemapping');
+    }
+    return $this->_attribute_mapper;
+  }
+
+
+  // returns an instance of the accessory mapping model.
+  private $_accessory_mapper;
+  public function get_accessory_mapper() {
+    if (!$this->_accessory_mapper) {
+      $this->_accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
+    }
+    return $this->_accessory_mapper;
   }
 
 
