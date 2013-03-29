@@ -131,10 +131,10 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of Accessory Category Value in Salsify')
-  ->addColumn('trigger_sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+  ->addColumn('trigger_sku', Varien_Db_Ddl_Table::TYPE_VARCHAR, 64, array(
     'nullable' => false,
     ), 'Trigger Product SKU')
-  ->addColumn('target_sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+  ->addColumn('target_sku', Varien_Db_Ddl_Table::TYPE_VARCHAR, 64, array(
     'nullable' => false,
     ), 'Target Product SKU');
 $installer->getConnection()->createTable($table);

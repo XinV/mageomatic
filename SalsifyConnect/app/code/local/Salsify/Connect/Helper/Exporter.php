@@ -4,6 +4,8 @@
  * Writes out Magento data to a Salsify format.
  *
  * TODO enable partial exports (just products, etc.).
+ *
+ * TODO sku can only be 64 characters long at most...
  */
 class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
