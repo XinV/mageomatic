@@ -103,7 +103,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of Accessory Category Value in Salsify')
-  ->addColumn('magento_relation_type', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+  ->addColumn('magento_relation_type', Varien_Db_Ddl_Table::TYPE_SMALLINT, null, array(
     'unsigned' => true,
     'nullable' => false,
     ), 'Product Relation Type in Magento (enum)');
@@ -117,8 +117,6 @@ $installer->getConnection()->createTable($table);
 // TODO this SHOULD be totally unnecessary if all product relations are being
 //      managed in Salsify, or if we simply aren't moving them back and forth
 //      over the wire.
-//
-// FIXME missing a column for the Magento relationship type...
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/accessory_mapping'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
@@ -133,6 +131,11 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of Accessory Category Value in Salsify')
+  ->addColumn('magento_relation_type', Varien_Db_Ddl_Table::TYPE_SMALLINT, null, array(
+    'unsigned' => true,
+    'nullable' => false,
+    ), 'Product Relation Type in Magento (enum)')
+  // 64 is the length of a sku in Magento's internal tables
   ->addColumn('trigger_sku', Varien_Db_Ddl_Table::TYPE_VARCHAR, 64, array(
     'nullable' => false,
     ), 'Trigger Product SKU')
@@ -149,7 +152,7 @@ $installer->getConnection()->createTable($table);
 // ID just for lookup purposes.
 $installer->run("
   CREATE INDEX salsify_connect_accessory_mapping_by_skus
-  ON salsify_connect_accessory_mapping(trigger_sku, target_sku);
+  ON salsify_connect_accessory_mapping(trigger_sku, target_sku, magento_relation_type);
 ");
 
 

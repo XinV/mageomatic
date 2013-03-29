@@ -422,25 +422,51 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $id_attribute = $mapper::getAttributeForAccessoryIds();
     $default_category = $mapper::getDefaultAccessoryAttribute();
 
+    $accessory_mapper = $this->_salsify->get_accessory_mapper();
+
     $cross_sell_ids = $product->getCrossSellProductIds();
-    $cross_sell_json = $this->_get_accessories_json_for_ids($sku, $default_category, 'cross-sell', $id_attribute, $cross_sell_ids);
+    $cross_sell_json = $this->_get_accessories_json_for_ids(
+      $sku,
+      $default_category,
+      $accessory_mapper::CROSS_SELL,
+      $id_attribute,
+      $cross_sell_ids
+    );
     $accessories = array_merge($accessories, $cross_sell_json);
 
     $up_sell_ids = $product->getUpSellProductIds();
-    $up_sell_json = $this->_get_accessories_json_for_ids($sku, $default_category, 'up-sell', $id_attribute, $up_sell_ids);
+    $up_sell_json = $this->_get_accessories_json_for_ids(
+      $sku,
+      $default_category,
+      $accessory_mapper::UP_SELL,
+      $id_attribute,
+      $up_sell_ids
+    );
     $accessories = array_merge($accessories, $up_sell_json);
 
     $related_ids = $product->getRelatedProductIds();
-    $related_json = $this->_get_accessories_json_for_ids($sku, $default_category, 'related product', $id_attribute, $related_ids);
+    $related_json = $this->_get_accessories_json_for_ids(
+      $sku,
+      $default_category,
+      $accessory_mapper::RELATED_PRODUCT,
+      $id_attribute,
+      $related_ids
+    );
     $accessories = array_merge($accessories, $related_json);
 
     return $accessories;
   }
 
 
-  // default_category and default_label are used if there already isn't a mapping
+  // default_category and relation_type are used if there already isn't a mapping
   // for the relation that has come from salsify.
-  private function _get_accessories_json_for_ids($sku, $default_category, $default_label, $id_attribute, $related_product_ids) {
+  private function _get_accessories_json_for_ids(
+    $sku,
+    $default_category,
+    $relation_type,
+    $id_attribute,
+    $related_product_ids
+  ) {
     $accessories = array();
     if (!$related_product_ids || empty($related_product_ids)) {
       return $accessories;
@@ -450,19 +476,26 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // which works for us here since that's all we need.
     $related_products = Mage::getModel('catalog/product')
                             ->getCollection()
-                            ->addAttributeToFilter('entity_id', array('in' => $related_product_ids));
+                            ->addAttributeToFilter('entity_id',
+                                                   array('in' => $related_product_ids));
 
     $accessory_mapper = $this->_salsify->get_accessory_mapper();
 
     if ($related_products) {
       foreach ($related_products as $rp) {
-        // FIXME need to be able to get MULTIPLE mappings with different labels
-        //       for a source trigger and target
-        $mapping = $accessory_mapper::getOrCreateMappings($sku, $rp->getSku(), $default_category, $default_label);
-        array_push($accessories, array(
-          $id_attribute => $rp->getSku(),
-          $mapping->getSalsifyCategoryId() => $mapping->getSalsifyCategoryValue(),
-        ));
+        $target_sku = $rp->getSku();
+
+        // a single relationship in Magento may have originated from several in
+        // Salsify.
+        $mappings = $accessory_mapper::getOrCreateMappings(
+          $sku, $rp->getSku(), $default_category, $relation_type
+        );
+        foreach($mappings as $mapping) {
+          array_push($accessories, array(
+            $id_attribute => $target_sku,
+            $mapping->getSalsifyCategoryId() => $mapping->getSalsifyCategoryValue(),
+          ));
+        }
       }
     }
 

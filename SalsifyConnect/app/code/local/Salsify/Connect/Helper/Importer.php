@@ -36,9 +36,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   private $_salsify_id_category_attribute_code;
   private $_salsify_id_product_attribute_code;
 
-  // list of attribute IDs for relationships. our primary reason for keeping
+  // list of attribute IDs for relationships. one reason for keeping
   // these around is to ignore them when loading products, since no product
-  // will ever be assigned to one of these.
+  // will ever be assigned to one of these. another is to be able to load the
+  // accessory mappings for the full round-trip story.
   private $_relationship_attributes;
 
   // holds the target product attribute
@@ -60,6 +61,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // TODO verify that this is, in fact, true
   const BATCH_SIZE = 1000;
   private $_batch;
+  private $_batch_accessories;
 
   // current product that we're building up from parsing
   private $_product;
@@ -284,7 +286,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       if ($key === 'accessories') {
         // process accessory relationships for the product
         if ($this->_target_product_attribute) {
-          $accessory_skus = $this->_prepare_product_accessories($value);
+          $accessory_skus = $this->_prepare_product_accessories($product['sku'], $value);
           if (!empty($accessory_skus)) {
             $product['_links_crosssell_sku'] = array_pop($accessory_skus);
             foreach ($accessory_skus as $accessory_sku) {
@@ -339,7 +341,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
 
   // see https://github.com/avstudnitz/AvS_FastSimpleImport/issues/30
-  // for why this is necessary
+  // for why this is necessary. it may be unnecessary for future versions of
+  // AvS_FastSimpleImport that shield us from these problems.
   private function _row_for_extra_product_value($key, $value) {
     return array($key             => $value,
                  'sku'            => null,
@@ -348,17 +351,30 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
 
-  // accessories is as per the salsify import format in terms of nesting.
-  //
-  // TODO right now we're just doing cross-sells, but we should have a
-  //      mapping from the specific accessory categories to cross/up/etc.
-  //      sells in Magento.
-  private function _prepare_product_accessories($accessories) {
+  // accessories is as per the salsify import format.
+  private function _prepare_product_accessories($trigger_sku, $accessories) {
     $accessory_skus = array();
     foreach ($accessories as $accessory) {
-      $sku = $accessory[$this->_target_product_attribute];
-      array_push($accessory_skus, $sku);
+      // need to figure out the category and value
+      foreach($accessory as $key => $value) {
+        if ($key === $this->_target_product_attribute) {
+          $target_sku = $value;
+        } elseif (in_array($key, $this->_relationship_attributes)) {
+          $category = $key;
+          $category_value = $value;
+        }
+      }
+
+      array_push($accessory_skus, $target_sku);
+
+      array_push($this->_batch_accessories, array(
+        'salsify_category_id'    => $category,
+        'salsify_category_value' => $category_value,
+        'trigger_sku'            => $trigger_sku,
+        'target_sku'             => $target_sku,
+      ));
     }
+
     return $accessory_skus;
   }
 
@@ -523,6 +539,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         $this->_log("Starting to parse products.");
         $this->_in_products = true;
         $this->_batch = array();
+        $this->_batch_accessories = array();
         $this->_digital_assets = array();
       }
     }
@@ -579,8 +596,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return null;
     }
 
-    $this->_log("Flushing product batch of size: " . count($this->_batch));
 
+    // first save the products in the bulk API
+    $this->_log("Flushing product batch of size: " . count($this->_batch));
     try {
       Mage::getSingleton('fastsimpleimport/import')
           ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
@@ -592,6 +610,21 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       $this->_batch = array();
     } catch (Exception $e) {
       $error_msg = 'ERROR: could not flush batch: ' . $e->getMessage();
+      $this->_log($error_msg);
+      $this->_log('BACKTRACE:' . $e->getTraceAsString());
+      throw new Exception($error_msg);
+    }
+
+
+    // next flush the accessory mappings via our own bulk API
+    try {
+      $accessory_mapper = Mage::getSingleton('salsify_connect/accessorymapping');
+      $count = $accessory_mapper::bulkLoadMappings($this->_batch_accessories);
+      $this->_log("Successfully loaded " . $count . " new accessory mappings.");
+      unset($this->_batch_accessories);
+      $this->_batch_accessories = array();
+    } catch (Exception $e) {
+      $error_msg = 'ERROR: could not flush batch of accessory mappings: ' . $e->getMessage();
       $this->_log($error_msg);
       $this->_log('BACKTRACE:' . $e->getTraceAsString());
       throw new Exception($error_msg);
