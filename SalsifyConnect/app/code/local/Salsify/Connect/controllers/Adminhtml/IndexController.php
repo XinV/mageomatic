@@ -132,7 +132,9 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
     if (empty($collection)) {
       $this->_render_html("YES");
     } else {
-      $this->_render_html("NO: " . var_export($collection,true));
+      foreach ($collection as $co) {
+        $this->_render_html($co->getSku() . "<br/>");
+      }
     }
 
     $this->_end_render();
