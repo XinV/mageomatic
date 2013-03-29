@@ -100,21 +100,24 @@ class Salsify_Connect_Model_AccessoryMapping
              . ')';
     }
 
-    // FIXME need unique constraints on the mapping table so that I'm not
-    //       re-inserting the same ones over an over...
-
-    try {
-      $count = count($sql);
-      self::_log("Inserting " . $count . " rows into salsify_connect_accessory_mapping...");
-      $db->query('INSERT INTO salsify_connect_accessory_mapping (
+    $query = 'INSERT INTO salsify_connect_accessory_mapping (
                                 salsify_category_id,
                                 salsify_category_value,
                                 magento_relation_type,
                                 trigger_sku,
                                 target_sku
                               )
-                  VALUES ' . implode(',', $sql));
-      self::_log("Inserting " . count($sql) . " rows into salsify_connect_accessory_mapping...");
+              VALUES ' . implode(',', $sql);
+    self::_log("QUERY: " . $query);
+
+    // FIXME need unique constraints on the mapping table so that I'm not
+    //       re-inserting the same ones over an over...
+
+    try {
+      $count = count($sql);
+      self::_log("Inserting " . $count . " rows into salsify_connect_accessory_mapping...");
+      $db->query($query);
+      self::_log("Done inserting " . $count . " rows into salsify_connect_accessory_mapping...");
       return $count;
     } catch (Exception $e) {
       // FIXME do something
