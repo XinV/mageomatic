@@ -125,13 +125,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'primary' => true,
     'identity' => true,
     ), 'Salsify Connect Accessory Mapping ID')
-  // need to set a specific length here in order to index by it. hopefully 2048
-  // is PLENTY long enough for external IDs for any accessory category coming
-  // from Salsify...
-  //
-  // FIXME need to enforce this length in the mapping class so that we give good
-  //       errors in the log in the event that this happens
-  ->addColumn('salsify_category_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 2048, array(
+  ->addColumn('salsify_category_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of Accessory Category in Salsify')
   ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
@@ -144,11 +138,14 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'nullable' => false,
     ), 'Target Product SKU');
 $installer->getConnection()->createTable($table);
-// the first index is for import, the second for export
+// primarly for export
+// tried to create an index:
+//   CREATE INDEX accessory_mapping_by_category_and_skus
+//   ON salsify_connect_accessory_mapping(salsify_category_value, trigger_sku, target_sku);
+// but couldn't. mysql won't index text fields of longer than varchar > 256...
+// If this becomes important we could always index the checksum of the external
+// ID just for lookup purposes.
 $installer->run("
-  CREATE INDEX accessory_mapping_by_category_and_skus
-  ON salsify_connect_accessory_mapping(salsify_category_value, trigger_sku, target_sku);
-
   CREATE INDEX accessory_mapping_by_skus
   ON salsify_connect_accessory_mapping(trigger_sku, target_sku);
 ");
