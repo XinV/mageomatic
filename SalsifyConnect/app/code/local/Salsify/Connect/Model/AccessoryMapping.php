@@ -87,15 +87,15 @@ class Salsify_Connect_Model_AccessoryMapping
         // TODO make this configurable
         $relationship['magento_relation_type'] = self::CROSS_SELL;
       }
-      $sql[] = '("'
+      $sql[] = '('
              . $db->quote($relationship['salsify_category_id'])
-             . '", '
+             . ', '
              . $db->quote($relationship['salsify_category_value'])
-             . '", '
+             . ', '
              . $relationship['magento_relation_type']
-             . '", '
+             . ', '
              . $db->quote($relationship['trigger_sku'])
-             . '", '
+             . ', '
              . $db->quote($relationship['target_sku'])
              . ')';
     }
