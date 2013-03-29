@@ -272,7 +272,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       '_attribute_set' => 'Default',
       '_product_websites' => 'base',
       'price' => 0.01,
-      'qty' => 1,
+      'qty' => 0,
 
       'short_description' => 'Imported from Salsify',
       'description' => 'Imported from Salsify',

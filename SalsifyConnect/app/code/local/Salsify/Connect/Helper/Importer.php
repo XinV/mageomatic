@@ -388,10 +388,12 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $mapper = $this->_get_attribute_mapper();
     $required_attributes  = $mapper::getRequiredProductAttributesWithDefaults();
     foreach ($required_attributes as $code => $default) {
-      if ($existing_product) {
-        $product[$code] = $existing_product->getData($code);
-      } else {
-        $product[$code] = $default;
+      if (!array_key_exists($code, $product)) {
+        if ($existing_product) {
+          $product[$code] = $existing_product->getData($code);
+        } else {
+          $product[$code] = $default;
+        }
       }
     }
 
