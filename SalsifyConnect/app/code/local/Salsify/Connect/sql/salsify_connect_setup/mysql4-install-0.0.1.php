@@ -100,7 +100,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('salsify_category_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of Accessory Category in Salsify')
-  ->addColumn('salsify_category_value'), Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+  ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of Accessory Category Value in Salsify')
   ->addColumn('magento_relation_type', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
