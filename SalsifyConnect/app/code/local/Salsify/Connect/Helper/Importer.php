@@ -397,9 +397,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       }
     }
 
-    self::_log("PRODUCT: " .var_export($product,true));
-
-    // FIXME this isn't working right now...
+    // FIXME what about magento-owned properties???
+    //       the issue I came up against is that the import api expects different
+    //       values for some of them than you get from the product interface.
+    //       for example 'msrp_enabled' is an integer, but the import interface
+    //       expects an enum of a few specific strings.
 
     return $product;
   }
