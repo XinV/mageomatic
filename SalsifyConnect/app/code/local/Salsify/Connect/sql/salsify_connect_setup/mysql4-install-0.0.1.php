@@ -125,7 +125,13 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'primary' => true,
     'identity' => true,
     ), 'Salsify Connect Accessory Mapping ID')
-  ->addColumn('salsify_category_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+  // need to set a specific length here in order to index by it. hopefully 2048
+  // is PLENTY long enough for external IDs for any accessory category coming
+  // from Salsify...
+  //
+  // FIXME need to enforce this length in the mapping class so that we give good
+  //       errors in the log in the event that this happens
+  ->addColumn('salsify_category_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 2048, array(
     'nullable' => false,
     ), 'ID of Accessory Category in Salsify')
   ->addColumn('salsify_category_value', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
