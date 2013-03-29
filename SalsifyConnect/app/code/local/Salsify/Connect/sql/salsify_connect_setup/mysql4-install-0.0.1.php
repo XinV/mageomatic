@@ -103,7 +103,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     'unsigned' => true,
     'nullable' => false,
-    ), 'ID of Accessory Type in Magento (enum)')
+    ), 'ID of Accessory Type in Magento (enum)');
 $installer->getConnection()->createTable($table);
 
 
