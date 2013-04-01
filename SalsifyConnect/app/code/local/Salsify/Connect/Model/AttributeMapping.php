@@ -272,6 +272,19 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // a product to be imported into the system, along with some reasonable
   // defaults to use.
   public static function getRequiredProductAttributesWithDefaults() {
+    $codes_to_ignore = array(
+      'created_at',
+      'links_purchased_separately',
+      'links_title',
+      'price_type',
+      'price_view',
+      'samples_title',
+      'shipment_type',
+      'sku_type',
+      'updated_at',
+      'weight_type',
+    );
+
     $product_entity_type_id = self::_getEntityTypeId(self::PRODUCT);
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_read');
@@ -279,6 +292,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
               FROM eav_attribute
               WHERE is_required = true
               AND entity_type_id = '" . $product_entity_type_id . "'
+              AND attribute_code NOT IN (" . implode(',', $codes_to_ignore) . ")
               ";
     $results = $db->fetchAll($query);
 
