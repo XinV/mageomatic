@@ -277,7 +277,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
               ->getConnection('core_read');
     $query = "SELECT attribute_code, default_value
               FROM eav_attribute
-              WHERE is_required = true";
+              WHERE is_required = true
+              AND entity_type_id = '" . $product_entity_type_id . "'
+              ";
     $results = $db->fetchAll($query);
 
     $required_attributes = array();
