@@ -97,7 +97,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
 
     $accessorycategorymapper = Mage::getModel('salsify_connect/accessorycategorymapping');
-    $accessorycategorymapper->getSalsifyAttributeIds();
+    $accessorycategorymapper->getSalsifyAttributeValues();
 
 
     // $categories = Mage::getModel('catalog/category')

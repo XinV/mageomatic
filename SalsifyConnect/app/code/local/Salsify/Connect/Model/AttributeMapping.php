@@ -701,14 +701,23 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns the array of these attributes in an array matching the salsify json
   // document format.
   public static function getAccessoryAttributes() {
-    // FIXME missing the attributes from the AccessorycategoryMapping
-
-    return array(
+    $accessory_attributes = array(
       array(
         "id" => self::getDefaultAccessoryAttribute(),
         "roles" => array("global" => array("accessory_label"))
       )
     );
+
+    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
+    $ids = $accessorycategory_mapper::getSalsifyAttributeIds();
+    foreach ($ids as $id) {
+      $accessory_attributes[] = array(
+        "id" => $id,
+        "roles" => array("global" => array("accessory_label"))
+      );
+    }
+
+    return $accessory_attributes;
   }
 
 
@@ -717,6 +726,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // values that are used in accessory relationships.
   public static function getAccessoryAttributeValues() {
     $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
+
+    // FIXME need to return the mappings that's we got from an import
 
     return array(
       array(

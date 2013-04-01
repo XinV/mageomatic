@@ -63,12 +63,18 @@ class Salsify_Connect_Model_AccessorycategoryMapping
     $query = "SELECT salsify_category_id
               FROM salsify_connect_accessorycategory_mapping
               GROUP BY salsify_category_id";
-    $ids = $db->fetchCol($query);
-    foreach ($ids as $id) {
-      self::_log("ATTRIBUTE ID FROM MAPPING: " . var_export($id,true));
-    }
-    // FIXME finish this
-    return $ids;
+    return $db->fetchCol($query);
+  }
+
+
+  // FIXME
+  public static function getSalsifyAttributeValues() {
+    $db = Mage::getSingleton('core/resource')
+              ->getConnection('core_read');
+    $query = "SELECT salsify_category_id, salsify_category_value
+              FROM salsify_connect_accessorycategory_mapping
+              GROUP BY salsify_category_id, salsify_category_value";
+    return $db->fetchAll($query);
   }
 
 
