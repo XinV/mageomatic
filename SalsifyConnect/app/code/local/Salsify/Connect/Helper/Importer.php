@@ -379,6 +379,17 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
 
+  // cached
+  private $_required_attributes;
+  private static function _get_required_attributes() {
+    if (!$this->_required_attributes) {
+      $mapper = $this->_get_attribute_mapper();
+      $this->_required_attributes = $mapper::getRequiredProductAttributesWithDefaults();
+    }
+    return $this->_required_attributes;
+  }
+
+
   // Magento requires that products that are imported in bulk through its
   // ImportExport API have values for all required properties. There are some
   // that come with the system by default.
@@ -401,8 +412,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
                               ->load($existing_product->getId());
     }
 
-    $mapper = $this->_get_attribute_mapper();
-    $required_attributes  = $mapper::getRequiredProductAttributesWithDefaults();
+    $required_attributes = $this->_get_required_attributes();
     foreach ($required_attributes as $code => $default) {
       // default is to go with what's coming from Salsify, so that Salsify
       // overrules what is happening here.

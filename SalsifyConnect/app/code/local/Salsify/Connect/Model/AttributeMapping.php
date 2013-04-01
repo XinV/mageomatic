@@ -271,7 +271,13 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns an array of key => value for attributes that must be present for
   // a product to be imported into the system, along with some reasonable
   // defaults to use.
+  //
+  // this is a fair amount of work, so we suggest that users of this class cache
+  // the results of this method, which shouldn't change from call to call.
   public static function getRequiredProductAttributesWithDefaults() {
+    // these are attributes that are marked as "required" by magento but that
+    // cannot really be used during an import.
+    // this set was built up by hand.
     $codes_to_ignore = array(
       "'created_at'",
       "'links_purchased_separately'",
@@ -296,6 +302,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
               ";
     $results = $db->fetchAll($query);
 
+    // make sure that we're setting a value that is reasonable for each of the
+    // attributes so that the import has the greatest chance of going through.
     $required_attributes = array();
     foreach ($results as $result) {
       $value = $result['default_value'];
@@ -317,7 +325,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
           $value = '';
         }
       } elseif ($type == 'static') {
-        // FIXME
+        // this should basically not happen
+        $value = '';
       }
       $required_attributes[$result['attribute_code']] = $value;
     }
@@ -355,10 +364,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
         $required_attributes[$code] = $value;
       }
     }
-
-    // FIXME
-    self::_log("ENTITY TYPE ID: " . $product_entity_type_id);
-    self::_log("REQUIRED ATTRIBUTES: " . var_export($required_attributes,true));
 
     return $required_attributes;
   }
