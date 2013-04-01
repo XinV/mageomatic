@@ -87,17 +87,39 @@ class Salsify_Connect_Model_AccessoryMapping
         $relationship['magento_relation_type'] = self::CROSS_SELL;
       }
 
-      $sql[] = '('
-             . $db->quote($relationship['salsify_category_id'])
-             . ', '
-             . $db->quote($relationship['salsify_category_value'])
-             . ', '
-             . $relationship['magento_relation_type']
-             . ', '
-             . $db->quote($relationship['trigger_sku'])
-             . ', '
-             . $db->quote($relationship['target_sku'])
-             . ')';
+      $salsify_category_id = $relationship['salsify_category_id'];
+      $salsify_category_value = $relationship['salsify_category_value'];
+      $magento_relation_type = $relationship['magento_relation_type'];
+      $trigger_sku = $relationship['trigger_sku'];
+      $target_sku  = $relationship['target_sku'];
+
+      // OPTIMIZE we should be able to exclude all the ones at once instead of
+      //          doing this one-at-a-time
+      $mappings = _get_mappings_collection_for_trigger_target($trigger_sku,
+                                                              $target_sku,
+                                                              $magento_relation_type);
+      $mappings->addFieldToFilter('salsify_category_id', array('eq' => $salsify_category_id))
+               ->addFieldToFilter('salsify_category_value', array('eq' => $salsify_category_value));
+      $mapping_exists = false;
+      foreach($mappings as $mapping) {
+        // unfortunately empty() doesn't work on varien collections...
+        $mapping_exists = true;
+        break;
+      }
+
+      if ($!mapping_exists) {
+        $sql[] = '('
+               . $db->quote($salsify_category_id)
+               . ', '
+               . $db->quote($salsify_category_value)
+               . ', '
+               . $magento_relation_type
+               . ', '
+               . $db->quote($trigger_sku)
+               . ', '
+               . $db->quote($target_sku)
+               . ')';
+      }
     }
 
     $query = 'INSERT INTO salsify_connect_accessory_mapping (
@@ -108,11 +130,6 @@ class Salsify_Connect_Model_AccessoryMapping
                                 target_sku
                               )
               VALUES ' . implode(',', $sql);
-
-
-    // FIXME need unique constraints on the mapping table so that I'm not
-    //       re-inserting the same ones over an over...
-
 
     try {
       $count = count($sql);
