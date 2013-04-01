@@ -108,7 +108,6 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
 
     // note at this point the file has been uploaded to salsify AND loaded.
 
-    $this->_set_status(self::STATUS_DONE);
-    $this->save();
+    $this->_set_done();
   }
 }

@@ -32,15 +32,19 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
     }
   }
 
+  protected function _set_done() {
+    $this->_set_status(self::STATUS_DONE);
+    $this->save();
+
+    // TODO once we move to a singleton model release the lock and also probably
+    //      remove all jobs from the queue since there should only be one at a
+    //      time in there
+  }
+
 
   // sets the status of this sync to error. records the error message in
   // 'status_message' for display in the UI. (re)throws an exception to stall
   // further progress of the import.
-  //
-  // FIXME must remove myself from the job queue if this happens. have had issues
-  //       with zombie jobs sitting around that make it hard for furthe processes
-  //       to continue, though that's much more likely to happen in development
-  //       when there will be things like syntax errors.
   public function set_error($e) {
     if (!$e) {
       $e = new Exception("ERROR NOT GIVEN");

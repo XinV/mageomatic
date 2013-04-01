@@ -87,8 +87,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       $image_mapper::load_digital_assets($importer->get_digital_assets());
 
       // DONE!
-      $this->_set_status(self::STATUS_DONE);
-      $this->save();
+      $this->_set_done();
     } catch (Exception $e) {
       $this->set_error($e);
     }

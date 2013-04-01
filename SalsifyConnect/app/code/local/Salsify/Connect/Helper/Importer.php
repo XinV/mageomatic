@@ -254,8 +254,13 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     }
     unset($this->_product);
 
-    // TODO unfortunately this does not work with accessory relationships (see
-    //      note above by _batch declaration)
+    // Unfortunately this does not work with accessory relationships (see
+    // note above by _batch declaration). The Magento ImportExport system does
+    // do batching of its own within an import, so the major downside to not
+    // being able to contribute ourselves is that we're going to be holding the
+    // ENTIRE import in memory. If that becomes a problem it might be easier to
+    // temporarily write out the relations somewhere else and then do this
+    // batching, which would work.
     // if (count($this->_batch) > self::BATCH_SIZE) {
     //   $this->_flush_batch();
     // }
@@ -390,17 +395,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
 
-  // cached
-  private $_magento_owned_attributes;
-  private function _get_magento_owned_attributes() {
-    if (!$this->_magento_owned_attributes) {
-      $mapper = $this->_get_attribute_mapper();
-      $this->_magento_owned_attributes = $mapper::getMagentoOwnedAttributeCodes();
-    }
-    return $this->_magento_owned_attributes;
-  }
-
-
   // Magento requires that products that are imported in bulk through its
   // ImportExport API have values for all required properties. There are some
   // that come with the system by default.
@@ -437,21 +431,11 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     }
 
 
-    // we don't want to overwrite values from an existing product, which seems
-    // to happen by default with the import interface, which is F'd up.
-    // if ($existing_product) {
-    //   $magento_owned_attributes = $this->_get_magento_owned_attributes();
-      // foreach ($magento_owned_attributes as $code) {
-      // }
-    // }
+    // note that the product may have values other than the ones above, but they
+    // are not overridden since we're using append. for the required attributes
+    // we have to have them in the import array otherwise the importexport API
+    // craps out on us looking for them.
 
-    // FIXME Magento-owned properties are being updated. I think we need to go
-    //       through every single property in the system if there is an existing
-    //       product and copy over its values...HOWEVER
-    //       the issue I came up against is that the import api expects different
-    //       values for some of them than you get from the product interface.
-    //       for example 'msrp_enabled' is an integer, but the import interface
-    //       expects an enum of a few specific strings.
 
     return $product;
   }
@@ -589,11 +573,14 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         if (array_key_exists($key, $this->_categories)) {
           $this->_add_category_to_product($key, $value);
         } elseif (array_key_exists($key, $this->_attributes)) {
-          $code = $this->_get_attribute_code($this->_attributes[$key]);
+          $attribute = $this->_attributes[$key];
+          $code = $this->_get_attribute_code($attribute);
           $mapper = $this->_get_attribute_mapper();
 
           // make sure to skip attributes that are owned by Magento
           if (!$mapper::isAttributeMagentoOwned($code)) {
+            // FIXME need datatype
+            $this->_log("ATTRIBUTE: " . var_export($attribute,true));
             $this->_product[$code] = $value;
           }
         } else {

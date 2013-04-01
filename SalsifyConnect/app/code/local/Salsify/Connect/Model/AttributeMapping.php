@@ -11,7 +11,7 @@
  *
  * TODO: keep track of attributes created here in its own table instead of
  *       relying on the existing attribute_code starting with salsify_
- *       convention.
+ *       convention (this is primarily for Datacleaner).
  *
  * TODO: if a multiple properites map to a single property (in either direction)
  *       this does not work.
@@ -70,10 +70,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // $roles is an array that follows the structure of roles from a Salsify json
   //        document. so there are nested arrays for 'products' roles, 'global'
   //        roles, etc.
-  //
-  // TODO have a more broad mapping mapping strategy from salsify attributes
-  //      to Magento roles.
-  public static function getCodeForId($id, $roles) {
+  public static function getCodeForId($id, $roles, $type = self::PRODUCT) {
     // try to look up in the DB to see if the mapping already exists
     $mapping = Mage::getModel('salsify_connect/attributemapping')
                    ->loadBySalsifyId($id);
@@ -100,9 +97,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       }
     }
 
-    // TODO: we can't save these mappings yet since we can't handle multiple
-    //       attributes mapping to a single attributes (in this case external ID
-    //       for Salsify).
+    // note: we can't save these mappings yet since we can't handle multiple
+    // attributes mapping to a single attributes (in this case external ID for
+    // Salsify).
     if ($id === self::SALSIFY_PRODUCT_ID) {
       return self::SALSIFY_PRODUCT_ID;
     } elseif ($id === self::SALSIFY_CATEGORY_ID) {
@@ -110,7 +107,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     }
 
     // doesn't seem to exist. create a mapping and persist for the future.
-    $code = self::_create_attribute_code_from_salsify_id($id);
+    $code = self::_create_attribute_code_from_salsify_id($id, $type);
     $mapping = self::_create_mapping($id, $code);
 
     return $code;
@@ -148,6 +145,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns an array as per Salsify json format with roles for the attribute
   // with the given code.
   // "roles":{"products":["id"],"accessories":["target_product_id"]}
+  //
+  // note that we don't have to do the accessory category stuff here since it's
+  // dealt with in AccessorycategoryMapping
   public static function getRolesForMagentoCode($code) {
     $roles = array();
 
@@ -165,12 +165,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       $roles['products'] = array();
       array_push($roles['products'], 'name');
     }
-
-    // TODO not correct. we need a separate category for accessories
-    // if ($code === self::getCategoryAssignemntMagentoCode()) {
-    //   $roles['global'] = array();
-    //   array_push($roles['global'], 'accessory_label');
-    // }
 
     if (empty($roles)) {
       return null;
@@ -268,6 +262,35 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  // casts the value appropriately based on the magento backend type for a given
+  // attribute
+  public static function castValueByBackendType($value, $type) {
+    if ($type == 'int') {
+      if ($value) {
+        $value = (int)$value;
+      } else {
+        $value = 0;
+      }
+    } elseif ($value == 'decimal') {
+      if ($value) {
+        $value = (float)$value;
+      } else {
+        $value = 0.0;
+      }
+    } elseif ($type == 'varchar' || $type == 'string') {
+      if (!$value) {
+        $value = '';
+      }
+    } elseif ($type == 'static') {
+      // this should basically not happen. these seem to be internal attributes
+      // owned by magento and mostly are in the 'do not bother' list above.
+      $value = '';
+    }
+
+    return $value;
+  }
+
+
   // returns an array of key => value for attributes that must be present for
   // a product to be imported into the system, along with some reasonable
   // defaults to use.
@@ -299,7 +322,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
               WHERE is_required = true
               AND entity_type_id = '" . $product_entity_type_id . "'
               AND attribute_code NOT IN (" . implode(',', $codes_to_ignore) . ")
-              ";
+             ";
     $results = $db->fetchAll($query);
 
     // make sure that we're setting a value that is reasonable for each of the
@@ -308,27 +331,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     foreach ($results as $result) {
       $value = $result['default_value'];
       $type = $result['backend_type'];
-      if ($type == 'int') {
-        if ($value) {
-          $value = (int)$value;
-        } else {
-          $value = 0;
-        }
-      } elseif ($value == 'decimal') {
-        if ($value) {
-          $value = (float)$value;
-        } else {
-          $value = 0.0;
-        }
-      } elseif ($type == 'varchar' || $type == 'string') {
-        if (!$value) {
-          $value = '';
-        }
-      } elseif ($type == 'static') {
-        // this should basically not happen. these seem to be internal attributes
-        // owned by magento and mostly are in the 'do not bother' list above.
-        $value = '';
-      }
+      $value = self::castValueByBackendType($value, $type);
       $required_attributes[$result['attribute_code']] = $value;
     }
 
@@ -378,20 +381,25 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // non-ascii characters with nothing at all, and cuts the result to only 30
   // characters in length.
   //
-  // Without further intervention, the result might intersect with built-in
-  // Magento properties (e.g. sku -> sku), so we add a leading _s_ just in case.
+  // If the ID happens to match a code that's already in the system, we give
+  // that a shot.
   //
   // NOTE: do NOT start attribute codes with '_'. Magento treats _'s as special.
   //       the devious thing is that it will allow the creation of the attribute
   //       itself, but then FAIL on importing products that use a attribute
   //       codes that start with _. :::sigh:::
-  //
-  // TODO: once we have a more robust mapping mechanism from Salsify to Magento
-  //       properties we shouldn't require the _s_ prefix.
-  private static function _create_attribute_code_from_salsify_id($id) {
+  private static function _create_attribute_code_from_salsify_id($id, $type) {
     $code = strtolower($id);
     $code = preg_replace('/\s+/', '_', $code);
     $code = preg_replace('/[^_a-zA-Z0-9]+/', '', $code);
+
+    // if we have an ID that happens to match a magento ID (description,
+    // short_description, weight, etc. being the most common)
+    $attribute = _loadAttributeByMagentoCode($type, $code);
+    if ($attribute) {
+      return $code;
+    }
+
     $code = substr(self::SALSIFY_ATTRIBUTE_PREFIX . $code, 0, 30);
     return $code;
   }
