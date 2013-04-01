@@ -577,7 +577,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'used_for_sort_by' => 0,
       // # position?
 
-      // TODO is type even required here?
       'type' => $attribute_datatype,
       'backend_type' => $attribute_datatype,
 
@@ -629,10 +628,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     try {
       $model->save();
     } catch (Exception $e) {
-      // this will happen for certain Magento reserved attributes that we export
-      // to salsify and then reimport here.
-      // TODO get a list of reserved attributes somewhere to avoid having to
-      //      get to this point every time...
+      // this shouldn't happen since, in theory, we *should* be loading an
+      // existing attribute before trying to create it.
       self::_log('ERROR: could not create attribute for Salsify ID ' . $id . ': ' . $e->getMessage());
       return null;
     }
