@@ -95,9 +95,8 @@ class Salsify_Connect_Model_AccessoryMapping
 
       // OPTIMIZE we should be able to exclude all the ones at once instead of
       //          doing this one-at-a-time
-      $mappings = _get_mappings_collection_for_trigger_target($trigger_sku,
-                                                              $target_sku,
-                                                              $magento_relation_type);
+      $mappings = self::_get_mappings_collection_for_trigger_target(
+                             $trigger_sku, $target_sku, $magento_relation_type);
       $mappings->addFieldToFilter('salsify_category_id', array('eq' => $salsify_category_id))
                ->addFieldToFilter('salsify_category_value', array('eq' => $salsify_category_value));
       $mapping_exists = false;
