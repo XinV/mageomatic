@@ -1,8 +1,6 @@
 <?php
 
-// FIXME create indexes on the tables that make sense, particularly on the
-//       mapping tables
-
+// OPTIMIZE more table indexes
 
 // NOTE: to UNDO this install:
 // DROP each of the tables created

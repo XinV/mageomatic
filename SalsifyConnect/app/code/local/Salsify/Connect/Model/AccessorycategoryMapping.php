@@ -72,7 +72,8 @@ class Salsify_Connect_Model_AccessorycategoryMapping
   }
 
 
-  // FIXME
+  // Returns a list of all the Salsify attribute values that we've seen which
+  // are accessory categories.
   public static function getSalsifyAttributeValues() {
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_read');

@@ -142,12 +142,16 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
     $salsify = Mage::helper('salsify_connect');
 
     foreach ($digital_assets as $sku => $das) {
-      $id = Mage::getModel('catalog/product')
-                ->loadByAttribute('sku', $sku)
-                ->getId();
+      $prod =  Mage::getModel('catalog/product')
+                   ->loadByAttribute('sku', $sku);
+      if (!$prod || !$prod->getId()) {
+        self::_log("WARNING: could not find product with sku " . $sku . " so could not load images.");
+        continue;
+      }
+
       // this second load is necessary to have access to the media gallery
       $product = Mage::getModel('catalog/product')
-                     ->load($id);
+                     ->load($prod->getId());
 
       foreach ($das as $da) {
         $url = $da['url'];

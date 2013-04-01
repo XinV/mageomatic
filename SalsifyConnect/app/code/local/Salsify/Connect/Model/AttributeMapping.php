@@ -212,6 +212,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // like that).
   //
   // TODO this should be configurable somewhere
+  // TODO what about attributes that are created in Magento but not part of the
+  //      'core' attribute set?
   public static function getMagentoOwnedAttributeCodes() {
     return array(
       '_store',
@@ -250,6 +252,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'enable_googlecheckout',
       'special_from_date',
 
+      // TODO we ARE pushing out price, but these are more marketing campaign-
+      //      focused. unclear what we gain by having them in Salsify unless
+      //      they are used in rules...
       'group_price',
       'group_price_changed',
       'tier_price',
@@ -266,11 +271,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns an array of key => value for attributes that must be present for
   // a product to be imported into the system, along with some reasonable
   // defaults to use.
-  //
-  // FIXME query the system to get the full list of required attributes beyond
-  //       those required by Magento.
   public static function getRequiredProductAttributesWithDefaults() {
-    return array(
+    $required_attributes = array(
       'sku' => null,
       '_type' => 'simple',
       '_attribute_set' => 'Default',
@@ -295,6 +297,13 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       // TODO: should this be 'None' or 'Shipping'?
       'tax_class_id' => 2,
     );
+
+    // FIXME query the system to get the full list of required attributes beyond
+    //       those required by Magento.
+    // $required_attributes = 
+    
+
+    return $required_attributes;
   }
 
 
