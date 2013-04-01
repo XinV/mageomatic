@@ -727,9 +727,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   public static function getAccessoryAttributeValues() {
     $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
 
-    // FIXME need to return the mappings that's we got from an import
-
-    return array(
+    $attribute_values = array(
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
         "name" => "Cross-sell",
@@ -746,6 +744,18 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
         "attribute_id" => self::getDefaultAccessoryAttribute()
       )
     );
+
+    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
+    $values = $accessorycategorymapper->getSalsifyAttributeValues();
+    foreach ($values as $value) {
+      $attribute_values[] = array(
+        "id" => $value['salsify_category_value'],
+        // we can skip the name since presumably Salsify already had this
+        "attribute_id" => $value['salsify_category_id']
+      );
+    }
+
+    return $attribute_values;
   }
 
 
