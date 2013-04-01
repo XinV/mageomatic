@@ -395,7 +395,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
     // if we have an ID that happens to match a magento ID (description,
     // short_description, weight, etc. being the most common)
-    $attribute = _loadAttributeByMagentoCode($type, $code);
+    $attribute = self::_loadAttributeByMagentoCode($type, $code);
     if ($attribute) {
       return $code;
     }
