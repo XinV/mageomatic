@@ -273,16 +273,16 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // defaults to use.
   public static function getRequiredProductAttributesWithDefaults() {
     $codes_to_ignore = array(
-      'created_at',
-      'links_purchased_separately',
-      'links_title',
-      'price_type',
-      'price_view',
-      'samples_title',
-      'shipment_type',
-      'sku_type',
-      'updated_at',
-      'weight_type',
+      "'created_at'",
+      "'links_purchased_separately'",
+      "'links_title'",
+      "'price_type'",
+      "'price_view'",
+      "'samples_title'",
+      "'shipment_type'",
+      "'sku_type'",
+      "'updated_at'",
+      "'weight_type'",
     );
 
     $product_entity_type_id = self::_getEntityTypeId(self::PRODUCT);
