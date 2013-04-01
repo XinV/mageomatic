@@ -23,13 +23,13 @@ class Salsify_Connect_Model_AccessoryMapping
   const RELATED_PRODUCT = 3;
 
 
-  public static function getAccessoryLabelForMagentoType($relation_type) {
+  public static function getAccessoryLabelIdForMagentoType($relation_type) {
     if ($relation_type === self::CROSS_SELL) {
-      return 'cross-sell';
+      return 'MAGENTO - cross-sell';
     } elseif ($relation_type === self::UP_SELL) {
-      return 'up-sell';
+      return 'MAGENTO - up-sell';
     } else {
-      return 'related product';
+      return 'MAGENTO - related product';
     }
   }
 
@@ -84,7 +84,7 @@ class Salsify_Connect_Model_AccessoryMapping
     $mapping->setTargetSku($target_sku);
     $mapping->setSalsifyCategoryId($default_category);
     $mapping->setMagentoRelationType($relation_type);
-    $mapping->setSalsifyCategoryValue(self::getAccessoryLabelForMagentoType($relation_type));
+    $mapping->setSalsifyCategoryValue(self::getAccessoryLabelIdForMagentoType($relation_type));
     $mapping->save();
 
     return self::_get_mappings_collection_for_trigger_target($trigger_sku, $target_sku, $relation_type);
@@ -155,7 +155,7 @@ class Salsify_Connect_Model_AccessoryMapping
 
     $count = count($sql);
     self::_log("Inserting " . $count . " rows into salsify_connect_accessory_mapping...");
-    $db->query($query);
+    $db->query($query); // will throw exception if failed
     self::_log("Done inserting " . $count . " rows into salsify_connect_accessory_mapping...");
     return $count;
   }

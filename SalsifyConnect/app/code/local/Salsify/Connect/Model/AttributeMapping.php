@@ -220,6 +220,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'entity_id',
       'entity_type_id',
       'created_at',
+      'updated_at',
 
       '_attribute_set',
       'attribute_set_id',
@@ -257,7 +258,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'stock_item',
       'is_in_stock',
       'is_salable',
-      'Tax Class',
+      'tax_class_id',
     );
   }
 
@@ -713,19 +714,21 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // consistent with the Salsify json document format, the set of attribute
   // values that are used in accessory relationships.
   public static function getAccessoryAttributeValues() {
+    $accessory_mapper = Mage::helper('salsify_connect/accessorymapping');
+
     return array(
       array(
-        "id" => "cross-sell",
+        "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
         "name" => "Cross-sell",
         "attribute_id" => self::getDefaultAccessoryAttribute()
       ),
       array(
-        "id" => "up-sell",
+        "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL),
         "name" => "Up-sell",
         "attribute_id" => self::getDefaultAccessoryAttribute()
       ),
       array(
-        "id" => "related product",
+        "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT),
         "name" => "Related Product",
         "attribute_id" => self::getDefaultAccessoryAttribute()
       )

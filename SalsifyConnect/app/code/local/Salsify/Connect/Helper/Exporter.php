@@ -411,8 +411,6 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
   // returns a nicely, Salsify JSON document-formatted version of the product's
   // accessory relationships.
-  //
-  // FIXME get 'cross-sell' etc. from accessory mapper
   private function _get_accessories_json($product) {
     $accessories = array();
 
