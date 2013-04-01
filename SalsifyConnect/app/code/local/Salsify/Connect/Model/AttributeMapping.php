@@ -401,6 +401,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       //      we even have to be conservative with varchar for length...
       $backend_type = $attribute->getBackendType();
       if ($backend_type == 'text') { // || $backend_type == 'varchar') {
+        self::_log("USING MAGENTO ATTRIBUTE CODE: " . $code);
         return $code;
       }
     }

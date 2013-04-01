@@ -614,7 +614,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
 
     // FIXME
-    $this->_log("BATCH: " . var_export($this->_batch,true));
+    // $this->_log("BATCH: " . var_export($this->_batch,true));
 
 
     // first save the products in the bulk API
