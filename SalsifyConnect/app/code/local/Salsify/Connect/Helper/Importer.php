@@ -381,7 +381,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
   // cached
   private $_required_attributes;
-  private static function _get_required_attributes() {
+  private function _get_required_attributes() {
     if (!$this->_required_attributes) {
       $mapper = $this->_get_attribute_mapper();
       $this->_required_attributes = $mapper::getRequiredProductAttributesWithDefaults();
