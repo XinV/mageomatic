@@ -283,6 +283,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       "'sku_type'",
       "'updated_at'",
       "'weight_type'",
+
+      "'name'",
     );
 
     $product_entity_type_id = self::_getEntityTypeId(self::PRODUCT);
