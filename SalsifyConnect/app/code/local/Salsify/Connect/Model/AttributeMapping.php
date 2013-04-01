@@ -320,7 +320,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     }
 
     // FIXME
-    self::_log("ENTITY TYPE ID: " . $entity_type_id);
+    self::_log("ENTITY TYPE ID: " . $product_entity_type_id);
     self::_log("REQUIRED ATTRIBUTES: " . var_export($required_attributes,true));
 
     return $required_attributes;
