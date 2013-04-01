@@ -56,14 +56,19 @@ class Salsify_Connect_Model_AccessorycategoryMapping
   }
 
 
-  // returns all the Salsify attribute IDs seen
-  public static function getSalsifyAttributeIds() {
+  // returns the Salsify attribute ID
+  public static function getSalsifyAttributeId() {
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_read');
     $query = "SELECT salsify_category_id
               FROM salsify_connect_accessorycategory_mapping
-              GROUP BY salsify_category_id";
-    return $db->fetchCol($query);
+              GROUP BY salsify_category_id
+              LIMIT 1";
+    $results = $db->fetchCol($query);
+    if (empty($results)) {
+      return null;
+    }
+    return $results[0];
   }
 
 
@@ -71,10 +76,10 @@ class Salsify_Connect_Model_AccessorycategoryMapping
   public static function getSalsifyAttributeValues() {
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_read');
-    $query = "SELECT salsify_category_id, salsify_category_value
+    $query = "SELECT salsify_category_value
               FROM salsify_connect_accessorycategory_mapping
-              GROUP BY salsify_category_id, salsify_category_value";
-    return $db->fetchAll($query);
+              GROUP BY salsify_category_value";
+    return $db->fetchCol($query);
   }
 
 

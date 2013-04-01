@@ -167,10 +167,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     // need to do the accessory attributes separately because they don't exist
     // in magento as attributes, so we'd get errors trying to load them up and
     // examine their metadata.
-    $accessory_attributes = $mapper::getAccessoryAttributes();
-    foreach ($accessory_attributes as $attr) {
-      $this->_write_object($attr);
-    }
+    $accessory_attribute = $mapper::getAccessoryAttribute();
+    $this->_write_object($accessory_attribute);
   }
 
   private function _write_attribute($mapper, $attribute) {

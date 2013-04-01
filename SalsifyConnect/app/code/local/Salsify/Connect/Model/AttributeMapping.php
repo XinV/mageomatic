@@ -695,29 +695,28 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   }
 
 
+  private static function _get_accessory_attribute_id() {
+    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
+    $id = $accessorycategory_mapper::getSalsifyAttributeId();
+    if (!$id) {
+      $id = self::getDefaultAccessoryAttribute();
+    }
+    return $id;
+  }
+
+
   // returns attributes that are for accessories (e.g. cross-sells, up-sells,
   // and related products).
   //
   // returns the array of these attributes in an array matching the salsify json
   // document format.
-  public static function getAccessoryAttributes() {
-    $accessory_attributes = array(
+  public static function getAccessoryAttribute() {
+    return array(
       array(
-        "id" => self::getDefaultAccessoryAttribute(),
+        "id" => self::_get_accessory_attribute_id(),
         "roles" => array("global" => array("accessory_label"))
       )
     );
-
-    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
-    $ids = $accessorycategory_mapper::getSalsifyAttributeIds();
-    foreach ($ids as $id) {
-      $accessory_attributes[] = array(
-        "id" => $id,
-        "roles" => array("global" => array("accessory_label"))
-      );
-    }
-
-    return $accessory_attributes;
   }
 
 
@@ -727,21 +726,23 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   public static function getAccessoryAttributeValues() {
     $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
 
+    $attribute_id = self::_get_accessory_attribute_id();
+
     $attribute_values = array(
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
         "name" => "Cross-sell",
-        "attribute_id" => self::getDefaultAccessoryAttribute()
+        "attribute_id" => $attribute_id
       ),
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL),
         "name" => "Up-sell",
-        "attribute_id" => self::getDefaultAccessoryAttribute()
+        "attribute_id" => $attribute_id
       ),
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT),
         "name" => "Related Product",
-        "attribute_id" => self::getDefaultAccessoryAttribute()
+        "attribute_id" => $attribute_id
       )
     );
 
@@ -749,9 +750,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     $values = $accessorycategory_mapper::getSalsifyAttributeValues();
     foreach ($values as $value) {
       $attribute_values[] = array(
-        "id" => $value['salsify_category_value'],
+        "id" => $value,
         // we can skip the name since presumably Salsify already had this
-        "attribute_id" => $value['salsify_category_id']
+        "attribute_id" => $attribute_id
       );
     }
 
