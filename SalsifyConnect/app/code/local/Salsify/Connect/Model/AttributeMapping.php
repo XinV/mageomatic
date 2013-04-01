@@ -325,7 +325,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
           $value = '';
         }
       } elseif ($type == 'static') {
-        // this should basically not happen
+        // this should basically not happen. these seem to be internal attributes
+        // owned by magento and mostly are in the 'do not bother' list above.
         $value = '';
       }
       $required_attributes[$result['attribute_code']] = $value;

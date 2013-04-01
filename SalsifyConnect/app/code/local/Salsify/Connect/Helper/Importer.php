@@ -390,6 +390,17 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   }
 
 
+  // cached
+  private $_magento_owned_attributes;
+  private function _get_magento_owned_attributes() {
+    if (!$this->_magento_owned_attributes) {
+      $mapper = $this->_get_attribute_mapper();
+      $this->_magento_owned_attributes = $mapper::getMagentoOwnedAttributeCodes();
+    }
+    return $this->_magento_owned_attributes;
+  }
+
+
   // Magento requires that products that are imported in bulk through its
   // ImportExport API have values for all required properties. There are some
   // that come with the system by default.
@@ -424,6 +435,15 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         }
       }
     }
+
+
+    // we don't want to overwrite values from an existing product, which seems
+    // to happen by default with the import interface, which is F'd up.
+    // if ($existing_product) {
+    //   $magento_owned_attributes = $this->_get_magento_owned_attributes();
+      // foreach ($magento_owned_attributes as $code) {
+      // }
+    // }
 
     // FIXME Magento-owned properties are being updated. I think we need to go
     //       through every single property in the system if there is an existing
@@ -611,7 +631,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $this->_log("Flushing product batch of size: " . count($this->_batch));
     try {
       Mage::getSingleton('fastsimpleimport/import')
-          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_REPLACE)
+          ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_APPEND)
           ->setContinueAfterErrors(true)
           ->processProductImport($this->_batch);
 
