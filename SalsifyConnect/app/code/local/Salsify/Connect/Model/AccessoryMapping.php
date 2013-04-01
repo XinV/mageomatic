@@ -45,6 +45,27 @@ class Salsify_Connect_Model_AccessoryMapping
   }
 
 
+  // returns a mapping that matches the full set of criteria, or null if it does
+  //         not exist.
+  private static function _get_mapping(
+    $salsify_category_id,
+    $salsify_category_value,
+    $trigger_sku,
+    $target_sku,
+    $relation_type
+  ) {
+    $mappings = self::_get_mappings_collection_for_trigger_target(
+                                     $trigger_sku, $target_sku, $relation_type);
+    $mappings->addFieldToFilter('salsify_category_id', array('eq' => $salsify_category_id))
+             ->addFieldToFilter('salsify_category_value', array('eq' => $salsify_category_value));
+    $mapping = $mappings->getFirstItem();
+    if (!$mapping || !$mapping->getId()) {
+      return null;
+    }
+    return $mapping;
+  }
+
+
   // returns ALL the mappings that match the given trigger and target skus.
   // if no mappings are found then it creates a new mapping and returns the new
   // collection (which will have only a single member).
@@ -71,6 +92,9 @@ class Salsify_Connect_Model_AccessoryMapping
 
 
   // This takes an array whose items contain all the information for a mapping.
+  //
+  // throws (or rather doesn't bother to catch) exceptions that occur when doing
+  //        DB operations.
   public static function bulkLoadMappings($accessories) {
     if (empty($accessories)) {
       return 0;
@@ -95,18 +119,13 @@ class Salsify_Connect_Model_AccessoryMapping
 
       // OPTIMIZE we should be able to exclude all the ones at once instead of
       //          doing this one-at-a-time
-      $mappings = self::_get_mappings_collection_for_trigger_target(
-                             $trigger_sku, $target_sku, $magento_relation_type);
-      $mappings->addFieldToFilter('salsify_category_id', array('eq' => $salsify_category_id))
-               ->addFieldToFilter('salsify_category_value', array('eq' => $salsify_category_value));
-      $mapping_exists = false;
-      foreach($mappings as $mapping) {
-        // unfortunately empty() doesn't work on varien collections...
-        $mapping_exists = true;
-        break;
-      }
+      $mapping = self::_get_mapping($salsify_category_id,
+                                    $salsify_category_value,
+                                    $trigger_sku,
+                                    $target_sku,
+                                    $magento_relation_type);
 
-      if (!$mapping_exists) {
+      if (!$mapping) {
         $sql[] = '('
                . $db->quote($salsify_category_id)
                . ', '
@@ -130,14 +149,10 @@ class Salsify_Connect_Model_AccessoryMapping
                               )
               VALUES ' . implode(',', $sql);
 
-    try {
-      $count = count($sql);
-      self::_log("Inserting " . $count . " rows into salsify_connect_accessory_mapping...");
-      $db->query($query);
-      self::_log("Done inserting " . $count . " rows into salsify_connect_accessory_mapping...");
-      return $count;
-    } catch (Exception $e) {
-      // FIXME do something
-    }
+    $count = count($sql);
+    self::_log("Inserting " . $count . " rows into salsify_connect_accessory_mapping...");
+    $db->query($query);
+    self::_log("Done inserting " . $count . " rows into salsify_connect_accessory_mapping...");
+    return $count;
   }
 }
