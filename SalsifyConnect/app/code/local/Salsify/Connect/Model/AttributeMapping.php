@@ -395,16 +395,15 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
     // if we have an ID that happens to match a magento ID (description,
     // short_description, weight, etc. being the most common)
-    $attribute = self::_loadAttributeByMagentoCode($type, $code);
-    if ($attribute) {
-      // TODO need some way to reliably convert other values...
-      //      we even have to be conservative with varchar for length...
-      $backend_type = $attribute->getBackendType();
-      if ($backend_type == 'text') { // || $backend_type == 'varchar') {
-        self::_log("USING MAGENTO ATTRIBUTE CODE: " . $code);
-        return $code;
-      }
-    }
+    // $attribute = self::_loadAttributeByMagentoCode($type, $code);
+    // if ($attribute) {
+    // TODO need some way to reliably convert other values...
+    //      we even have to be conservative with varchar for length...
+    //   $backend_type = $attribute->getBackendType();
+    //   if ($backend_type == 'text') { // || $backend_type == 'varchar') {
+    //     return $code;
+    //   }
+    // }
 
     $code = substr(self::SALSIFY_ATTRIBUTE_PREFIX . $code, 0, 30);
     return $code;
