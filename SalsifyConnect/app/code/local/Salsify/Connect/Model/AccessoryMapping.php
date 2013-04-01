@@ -140,6 +140,10 @@ class Salsify_Connect_Model_AccessoryMapping
       }
     }
 
+    if (empty($sql)) {
+      return 0;
+    }
+
     $query = 'INSERT INTO salsify_connect_accessory_mapping (
                                 salsify_category_id,
                                 salsify_category_value,
