@@ -714,7 +714,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // consistent with the Salsify json document format, the set of attribute
   // values that are used in accessory relationships.
   public static function getAccessoryAttributeValues() {
-    $accessory_mapper = Mage::helper('salsify_connect/accessorymapping');
+    $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
 
     return array(
       array(
