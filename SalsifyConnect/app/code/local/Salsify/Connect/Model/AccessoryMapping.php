@@ -107,7 +107,7 @@ class Salsify_Connect_Model_AccessoryMapping
         break;
       }
 
-      if ($!mapping_exists) {
+      if (!$mapping_exists) {
         $sql[] = '('
                . $db->quote($salsify_category_id)
                . ', '
