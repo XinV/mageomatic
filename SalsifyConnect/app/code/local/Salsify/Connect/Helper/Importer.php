@@ -844,6 +844,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $prepped_categories = array();
     foreach ($categories as $category) {
       if (in_array($category['attribute_id'], $this->_relationship_attributes)) {
+        // FIXME must create a mapping
+        $this->_log("ATTRIBUTE CATEGORY: " . var_export($category,true));
+
         // don't bother loading categories for accessory attributes
         // TODO can a single category hierarchy be used for both products AND
         //      accessory relationships? if so, it might be foolish of us to

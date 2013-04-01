@@ -33,5 +33,16 @@ class Salsify_Connect_Model_AccessorycategoryMapping
   }
 
 
-  // FIXME need to actually do something with this mapping
+  private static function _get_accessory_mapper() {
+    return Mage::getModel('salsify_connect/accessorymapping');
+  }
+
+
+  public static function getOrCreateMapping(
+    $salsify_category_id,
+    $salsify_category_value,
+    $magento_relation_type
+  ) {
+    $mapper = self::_get_accessory_mapper();
+  }
 }
