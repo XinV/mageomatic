@@ -579,7 +579,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
           // make sure to skip attributes that are owned by Magento
           if (!$mapper::isAttributeMagentoOwned($code)) {
-            $value = $mapper::castValueByBackendType($value, $attribute['__backend_type']);
+            // $value = $mapper::castValueByBackendType($value, $attribute['__backend_type']);
             $this->_product[$code] = $value;
           }
         } else {
