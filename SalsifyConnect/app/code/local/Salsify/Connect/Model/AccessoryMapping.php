@@ -113,9 +113,9 @@ class Salsify_Connect_Model_AccessoryMapping
 
       $salsify_category_id = $relationship['salsify_category_id'];
       $salsify_category_value = $relationship['salsify_category_value'];
-      $magento_relation_type = $relationship['magento_relation_type'];
       $trigger_sku = $relationship['trigger_sku'];
       $target_sku  = $relationship['target_sku'];
+      $magento_relation_type = $relationship['magento_relation_type'];
 
       // OPTIMIZE we should be able to exclude all the ones at once instead of
       //          doing this one-at-a-time
