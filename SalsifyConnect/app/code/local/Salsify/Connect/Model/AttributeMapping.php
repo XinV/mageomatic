@@ -272,7 +272,20 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // a product to be imported into the system, along with some reasonable
   // defaults to use.
   public static function getRequiredProductAttributesWithDefaults() {
-    $required_attributes = array(
+    $product_entity_type_id = self::_getEntityTypeId(self::PRODUCT);
+    $db = Mage::getSingleton('core/resource')
+              ->getConnection('core_read');
+    $query = "SELECT attribute_code, default_value
+              FROM eav_attribute
+              WHERE is_required = true";
+    $results = $db->fetchAll($query);
+
+    $required_attributes = array();
+    foreach ($results as $result) {
+      $required_attributes[$result['attribute_code']] = $result['default_value'];
+    }
+
+    $defaults = array(
       'sku' => null,
       '_type' => 'simple',
       '_attribute_set' => 'Default',
@@ -298,10 +311,13 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'tax_class_id' => 2,
     );
 
-    // FIXME query the system to get the full list of required attributes beyond
-    //       those required by Magento.
-    // $required_attributes = 
-    
+    foreach ($defaults as $code => $value) {
+      if (!array_key_exists($code, $required_attributes) ||
+          !$required_attributes[$code])
+      {
+        $required_attributes[$code] = $value;
+      }
+    }
 
     return $required_attributes;
   }
