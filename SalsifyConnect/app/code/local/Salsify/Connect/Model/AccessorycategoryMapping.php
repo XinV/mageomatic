@@ -38,11 +38,59 @@ class Salsify_Connect_Model_AccessorycategoryMapping
   }
 
 
+  private static function _get_mapping(
+    $salsify_category_id,
+    $salsify_category_value,
+    $magento_relation_type
+  ) {
+    $mappings = Mage::getModel('salsify_connect/accessorycategorymapping')
+                    ->getCollection()
+                    ->addFieldToFilter('salsify_category_id', array('eq' => $salsify_category_id))
+                    ->addFieldToFilter('salsify_category_value', array('eq' => $salsify_category_value))
+                    ->addFieldToFilter('magento_relation_type', array('eq' => $magento_relation_type));
+    $mapping = $mappings->getFirstItem();
+    if (!$mapping || !$mapping->getId()) {
+      return null;
+    }
+    return $mapping;
+  }
+
+
+  // returns all the Salsify attribute IDs seen
+  public static function getSalsifyAttributeIds() {
+    $db = Mage::getSingleton('core/resource')
+              ->getConnection('core_read');
+    $query = "SELECT salsify_category_id
+              FROM salsify_connect_accessorycategory_mapping
+              GROUP BY salsify_category_id";
+    $ids = $db->fetchCol($query);
+    foreach ($ids as $id) {
+      self::_log("ATTRIBUTE ID FROM MAPPING: " . var_export($id,true));
+    }
+    // FIXME finish this
+    return $ids;
+  }
+
+
   public static function getOrCreateMapping(
     $salsify_category_id,
     $salsify_category_value,
     $magento_relation_type
   ) {
     $mapper = self::_get_accessory_mapper();
+    if (!$magento_relation_type) {
+      $magento_relation_type = $mapper::CROSS_SELL;
+    }
+    $mapping = self::_get_mapping($salsify_category_id, $salsify_category_value, $magento_relation_type);
+    
+    if (!$mapping) {
+      $mapping = Mage::getModel('salsify_connect/accessorycategorymapping');
+      $mapping->setSalsifyCategoryId($salsify_category_id);
+      $mapping->setSalsifyCategoryValue($salsify_category_value);
+      $mapping->setMagentoRelationType($magento_relation_type);
+      $mapping->save();
+    }
+
+    return $mapping;
   }
 }

@@ -701,6 +701,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // returns the array of these attributes in an array matching the salsify json
   // document format.
   public static function getAccessoryAttributes() {
+    // FIXME missing the attributes from the AccessorycategoryMapping
+
     return array(
       array(
         "id" => self::getDefaultAccessoryAttribute(),
