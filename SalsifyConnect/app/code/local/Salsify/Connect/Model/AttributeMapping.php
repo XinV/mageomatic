@@ -283,14 +283,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       "'sku_type'",
       "'updated_at'",
       "'weight_type'",
-
-      "'name'",
     );
 
     $product_entity_type_id = self::_getEntityTypeId(self::PRODUCT);
     $db = Mage::getSingleton('core/resource')
               ->getConnection('core_read');
-    $query = "SELECT attribute_code, default_value
+    $query = "SELECT attribute_code, default_value, backend_type
               FROM eav_attribute
               WHERE is_required = true
               AND entity_type_id = '" . $product_entity_type_id . "'
@@ -300,7 +298,28 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
     $required_attributes = array();
     foreach ($results as $result) {
-      $required_attributes[$result['attribute_code']] = $result['default_value'];
+      $value = $result['default_value'];
+      $type = $result['backend_type'];
+      if ($type == 'int') {
+        if ($value) {
+          $value = (int)$value;
+        } else {
+          $value = 0;
+        }
+      } elseif ($value == 'decimal') {
+        if ($value) {
+          $value = (float)$value;
+        } else {
+          $value = 0.0;
+        }
+      } elseif ($type == 'varchar' || $type == 'string') {
+        if (!$value) {
+          $value = '';
+        }
+      } elseif ($type == 'static') {
+        // FIXME
+      }
+      $required_attributes[$result['attribute_code']] = $value;
     }
 
     $defaults = array(
