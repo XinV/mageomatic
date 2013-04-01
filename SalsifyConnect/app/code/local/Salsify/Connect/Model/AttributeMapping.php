@@ -319,6 +319,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       }
     }
 
+    // FIXME
+    self::_log("REQUIRED ATTRIBUTES: " . var_export($required_attributes,true));
+
     return $required_attributes;
   }
 
