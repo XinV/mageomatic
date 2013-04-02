@@ -94,14 +94,17 @@ class Salsify_Connect_Model_AccessorycategoryMapping
       // check to see if we're one of our own internal attribute values that we
       // might be exporting for the first time. we want to make sure we're
       // setting the correct default category mapping for it.
-      $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
-      if ($salsify_category_id == $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL)) {
-        $magento_relation_type = $accessory_mapper::UP_SELL;
-      } elseif ($salsify_category_id == $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT)) {
-        $magento_relation_type = $accessory_mapper::RELATED_PRODUCT;
-      } else {
+
+      // FIXME deal with this
+      // $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
+      // if ($salsify_category_id == $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL)) {
+      //   $magento_relation_type = $accessory_mapper::UP_SELL;
+      // } elseif ($salsify_category_id == $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT)) {
+      //   $magento_relation_type = $accessory_mapper::RELATED_PRODUCT;
+      // } else {
+      // default to cross-sell if not specified
         $magento_relation_type = $accessory_mapper::CROSS_SELL;
-      }
+      // }
     }
     $mapping = self::_get_mapping($salsify_category_id, $salsify_category_value, $magento_relation_type);
     

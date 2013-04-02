@@ -808,6 +808,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // consistent with the Salsify json document format, the set of attribute
   // values that are used in accessory relationships.
   public static function getAccessoryAttributeValues() {
+    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
     $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
 
     $attribute_id = self::_get_accessory_attribute_id();
@@ -816,21 +817,31 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
         "name" => "Cross-sell",
-        "attribute_id" => $attribute_id
+        "attribute_id" => $attribute_id,
+        "type" => $accessory_mapper::CROSS_SELL
       ),
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL),
         "name" => "Up-sell",
-        "attribute_id" => $attribute_id
+        "attribute_id" => $attribute_id,
+        "type" => $accessory_mapper::UP_SELL
       ),
       array(
         "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT),
         "name" => "Related Product",
-        "attribute_id" => $attribute_id
+        "attribute_id" => $attribute_id,
+        "type" => $accessory_mapper::RELATED_PRODUCT
       )
     );
 
-    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
+    foreach ($attribute_values as $attrv) {
+      // make sure the mappings exist
+      $accessorycategorymapping::getOrCreateMapping($attrv['attribute_id'],
+                                                    $attrv['id'],
+                                                    $attrv['type']);
+      unset($attrv['type']);
+    }
+
     $values = $accessorycategory_mapper::getSalsifyAttributeValues();
     foreach ($values as $value) {
       $attribute_values[] = array(
