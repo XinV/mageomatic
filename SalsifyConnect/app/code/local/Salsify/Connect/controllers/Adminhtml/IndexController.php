@@ -103,8 +103,9 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       $product = Mage::getModel('catalog/product')->load($id);
 
       $url = $product->getUrlPath();
-      $this->_render_html('<a href="'.$url. '">'.$url.'</a>');
+      $this->_render_html('<a href="/'.$url. '">'.$url.'</a><br/>');
     }
+
 
     // $accessorycategorymapper = Mage::getModel('salsify_connect/accessorycategorymapping');
     // $values = $accessorycategorymapper->getSalsifyAttributeValues();
