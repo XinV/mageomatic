@@ -102,7 +102,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
       $id = $product->getId();
       $product = Mage::getModel('catalog/product')->load($id);
 
-      $url = $product->getUrl();
+      $url = $product->getUrlPath();
       $this->_render_html('<a href="'.$url. '">'.$url.'</a>');
     }
 
