@@ -28,21 +28,6 @@
           <action>salsify/adminhtml_index/exports</action>
         </manage_exports>
 
-       <!-- FIXME remove when done -- >
-        <test module="salsify_connect">
-          <title>TEST</title>
-          <sort_order>99</sort_order>
-          <action>salsify/adminhtml_index/test</action>
-        </test>
-
-        <! -- FIXME link to this ONLY from the manage salsify page -- >
-        <cleaner module="salsify_connect">
-          <title>DELETE SALSIFY DATA</title>
-          <sort_order>100</sort_order>
-          <action>salsify/adminhtml_index/cleaner</action>
-        </cleaner>
-       -->
-
       </children>
     </salsify_connect_menu>
   </menu>
