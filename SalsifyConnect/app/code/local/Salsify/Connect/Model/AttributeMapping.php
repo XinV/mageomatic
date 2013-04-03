@@ -839,9 +839,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       $accessorycategory_mapper::getOrCreateMapping($attrv['attribute_id'],
                                                     $attrv['id'],
                                                     $attrv['type']);
-      unset($attrv['type']);
     }
 
+    $attribute_values = array();
     $values = $accessorycategory_mapper::getSalsifyAttributeValues();
     foreach ($values as $value) {
       $attribute_values[] = array(
