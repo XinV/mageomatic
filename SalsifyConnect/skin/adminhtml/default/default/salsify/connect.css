@@ -27,3 +27,8 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele {
 form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input {
   min-width: 30em;
 }
+
+#get-salsify {
+  width: 100%;
+  border-top: 1px dashed black;
+}
