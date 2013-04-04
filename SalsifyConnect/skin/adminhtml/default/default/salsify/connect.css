@@ -30,7 +30,6 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input 
 
 #get-salsify {
   width: 100%;
-  border-top: 1px solid black;
   padding: 1em;
   margin-top: 2em;
 }
