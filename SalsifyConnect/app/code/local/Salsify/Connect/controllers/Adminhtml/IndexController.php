@@ -91,22 +91,22 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   public function testAction() {
     $this->_start_render('salsify_connect_menu/exports');
 
-    // $salsify = Mage::helper('salsify_connect');
-    // $export_file = $salsify->export_data();
-    // $this->_render_html('Exported data: ' . $export_file);
+    $salsify = Mage::helper('salsify_connect');
+    $export_file = $salsify->export_data();
+    $this->_render_html('Exported data: ' . $export_file);
 
 
-    $products = Mage::getModel('catalog/product')
-                    ->getCollection();
-    $this->_render_html("<ul>");
-    foreach($products as $product) {
-      $id = $product->getId();
-      $product = Mage::getModel('catalog/product')->load($id);
+    // $products = Mage::getModel('catalog/product')
+    //                 ->getCollection();
+    // $this->_render_html("<ul>");
+    // foreach($products as $product) {
+    //   $id = $product->getId();
+    //   $product = Mage::getModel('catalog/product')->load($id);
 
-      $url = $product->getUrlPath();
-      $this->_render_html('<li><a href="/'.$url. '">'.$url.'</a></li>');
-    }
-    $this->_render_html("</ul>");
+    //   $url = $product->getUrlPath();
+    //   $this->_render_html('<li><a href="/'.$url. '">'.$url.'</a></li>');
+    // }
+    // $this->_render_html("</ul>");
 
     // $accessorycategorymapper = Mage::getModel('salsify_connect/accessorycategorymapping');
     // $values = $accessorycategorymapper->getSalsifyAttributeValues();
