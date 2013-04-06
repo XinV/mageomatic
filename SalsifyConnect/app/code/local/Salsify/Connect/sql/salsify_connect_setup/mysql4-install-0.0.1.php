@@ -70,13 +70,17 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of product related to the image in Magento')
-  ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+  ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
-    ), 'ID of image in Magento (made up by plugin based on path)')
+    ), 'Salsify ID for the image')
   ->addColumn('url', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => true,
     'default'  => NULL,
-    ), 'Source URL of the image')
+    ), 'URL of the image')
+  ->addColumn('source_url', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    'default'  => NULL,
+    ), 'Source URL of the image (Saved for Salsify)')
   ->addColumn('checksum', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => true,
     'default'  => NULL,

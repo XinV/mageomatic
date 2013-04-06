@@ -38,10 +38,10 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
 
   // returns the ImageMapping model instance if it exists for the given sku and
-  // source (e.g. external) url, null otherwise.
-  private static function _get_mapping_by_sku_and_url($sku, $url) {
+  // image id.
+  private static function _get_mapping_by_sku_and_id($sku, $id) {
     $mappings = self::_get_mappings_collection_for_sku($sku);
-    $mappings = $mappings->addFieldToFilter('url', array('eq' => $url));
+    $mappings = $mappings->addFieldToFilter('id', array('eq' => $id);
     return self::_get_mapping_from_mappings($mappings);
   }
 
@@ -154,14 +154,14 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
                      ->load($prod->getId());
 
       foreach ($das as $da) {
-        $url = $da['url'];
-
-        $existing_mapping = self::_get_mapping_by_sku_and_url($sku, $url);
+        $id = $da['id'];
+        $existing_mapping = self::_get_mapping_by_sku_and_id($sku, $id);
         if ($existing_mapping) {
           // we already have that image. skipping...
           continue;
         }
 
+        $url = $da['url'];
         $filename = self::_get_local_filename_for_image($sku, $da);
         if (!$filename) {
           // very rare
@@ -233,9 +233,10 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         // $image_name = substr($_image->getUrl(), strrpos($_image->getUrl(), '/') + 1);
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
+        $image_mapping->setSalsifyId($id);
         $image_mapping->setUrl($url);
+        $image_mapping->setSourceUrl($da['source_url']);
         $image_mapping->setChecksum($checksum);
-        $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $last_image['file']));
         $image_mapping->save();
 
         // fix the gallery up
@@ -252,6 +253,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
   // see larger comment above
   // thanks http://stackoverflow.com/questions/9049088/how-to-compare-a-products-images-in-magento
+  // FIXME not required anymore
   public static function get_image_mapping_id_from_url($sku, $url) {
     // sku ends up being redundant here, but worth keeping around just in case
     // magento decides to change how it's randomly-generated file names change
