@@ -34,6 +34,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
   // cached from AttributeMapper for convenience
   private $_salsify_id_category_attribute_code;
+  private $_salsify_attribute_id_code;
   private $_salsify_id_product_attribute_code;
 
   // list of attribute IDs for relationships. one reason for keeping
@@ -664,6 +665,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $mapper::createSalsifyIdAttributes();
 
     $this->_salsify_id_category_attribute_code = $mapper::SALSIFY_CATEGORY_ID;
+    $this->_salsify_attribute_id_code = $mapper::SALSIFY_CATEGORY_ATTRIBUTE_ID;
     $this->_salsify_id_product_attribute_code = $mapper::SALSIFY_PRODUCT_ID;
 
     $this->_log("done ensuring that Salsify ID attributes exist in Magento.");
@@ -771,8 +773,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $this->_log("Done parsing category data. Ensuring they are in database.");
 
     $categories_for_import = $this->_prepare_categories_for_import();
-    // FIXME remove
-    $this->_log("CATEGORIES: " . var_export($categories_for_import,true));
     if (!empty($categories_for_import)) {
       $import = Mage::getModel('fastsimpleimport/import');
       try {
@@ -989,6 +989,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       // 'meta_description' => $category['name'],
 
       $this->_salsify_id_category_attribute_code => $category['id'],
+      $this->_salsify_attribute_id_code => $category['attribute_code'],
     );
   }
 

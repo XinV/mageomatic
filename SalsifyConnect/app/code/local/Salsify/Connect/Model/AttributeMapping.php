@@ -28,10 +28,12 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
   // attribute_codes for attributes that store the Salsify IDs within Magento
   // for various object types.
-  const SALSIFY_CATEGORY_ID      = 'salsify_category_id';
-  const SALSIFY_CATEGORY_ID_NAME = 'Salsify Category ID';
-  const SALSIFY_PRODUCT_ID       = 'salsify_product_id';
-  const SALSIFY_PRODUCT_ID_NAME  = 'Salsify Product ID';
+  const SALSIFY_CATEGORY_ID                = 'salsify_category_id';
+  const SALSIFY_CATEGORY_ID_NAME           = 'Salsify Category ID';
+  const SALSIFY_CATEGORY_ATTRIBUTE_ID      = 'salsify_attribute_id';
+  const SALSIFY_CATEGORY_ATTRIBUTE_ID_NAME = "Salsify Attribute ID";
+  const SALSIFY_PRODUCT_ID                 = 'salsify_product_id';
+  const SALSIFY_PRODUCT_ID_NAME            = 'Salsify Product ID';
 
   public static function getSalsifyProductIdAttributeCode() {
     return self::SALSIFY_PRODUCT_ID;
@@ -104,6 +106,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       return self::SALSIFY_PRODUCT_ID;
     } elseif ($id === self::SALSIFY_CATEGORY_ID) {
       return self::SALSIFY_CATEGORY_ID;
+    } elseif ($id === self::SALSIFY_CATEGORY_ATTRIBUTE_ID) {
+      return self::SALSIFY_CATEGORY_ATTRIBUTE_ID;
     }
 
     // doesn't seem to exist. create a mapping and persist for the future.
@@ -134,6 +138,8 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     // } else
     if ($code === self::SALSIFY_CATEGORY_ID) {
       return 'id';
+    } elseif ($code === self::SALSIFY_CATEGORY_ATTRIBUTE_ID) {
+      return 'attribute_id';
     }
 
     // no existing mapping exists. create one for posterity
@@ -694,6 +700,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     //      possibly: http://stackoverflow.com/questions/6384120/magento-read-only-and-hidden-product-attributes
 
     self::loadOrCreateCategoryAttributeBySalsifyId(self::SALSIFY_CATEGORY_ID, self::SALSIFY_CATEGORY_ID_NAME, null);
+    self::loadOrCreateCategoryAttributeBySalsifyId(self::SALSIFY_CATEGORY_ATTRIBUTE_ID, self::SALSIFY_CATEGORY_ATTRIBUTE_ID_NAME, null);
 
     self::loadOrCreateProductAttributeBySalsifyId(self::SALSIFY_PRODUCT_ID, self::SALSIFY_PRODUCT_ID_NAME, null);
   }
@@ -725,6 +732,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       $code = $attribute['code'];
       if ((strcasecmp(substr($code, 0, strlen(self::SALSIFY_ATTRIBUTE_PREFIX)), self::SALSIFY_ATTRIBUTE_PREFIX) === 0) ||
           (strcasecmp($code, self::SALSIFY_CATEGORY_ID) === 0) ||
+          (strcasecmp($code, self::SALSIFY_CATEGORY_ATTRIBUTE_ID) === 0) ||
           (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0))
       {
         Mage::getModel('eav/entity_attribute')
