@@ -104,17 +104,10 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
                       ->getCollection();
     
     foreach($categories as $category) {
-      if ($category->getParentId() === '0') {
-        // failsafe on the root, which i've deleted a few times...
-        continue;
-      }
-
       $id = Mage::getResourceModel('catalog/category')
                 ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
-      // this messed things up for some reason...
-      // if ($category->getId() != 1) {
       if ($id) {
-        self::_log("PATH OF THING: " . $category->getPath());
+        self::_log("ID OF THING: " . $id);
         $category->delete();
         $this->_total_categories++;
       }
