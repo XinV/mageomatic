@@ -13,6 +13,10 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
+  protected static function _log_current_time($msg = "TIMING") {
+    self::_log($msg . ": " . self::_current_time());
+  }
+
 
   // cached handle
   private $_salsify_api;
@@ -25,8 +29,11 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
   // sets the status and status message of the sync.
   protected function _set_status($code) {
+    $status_string = $this->get_status_string();
+    self::_log_current_time("NEW STATUS " . $status_string);
+
     $this->setStatus($code);
-    $this->setStatusMessage($this->get_status_string());
+    $this->setStatusMessage($status_string);
     if ($code === self::STATUS_DONE) {
       $this->_set_end_time();
     }
@@ -62,7 +69,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
   // silly that this is required
   // thanks: http://magentocookbook.wordpress.com/2010/02/15/magento-date-time/
-  private function _current_time() {
+  private static function _current_time() {
     $now = Mage::getModel('core/date')->timestamp(time());
     return date('m/d/y h:i:s', $now);
   }
@@ -70,13 +77,13 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_start_time() {
-    $this->setStartTime($this->_current_time());
+    $this->setStartTime(self::_current_time());
     return $this;
   }
 
   // sets the start time to the current time. MySQL friendly datetime format.
   protected function _set_end_time() {
-    $this->setEndTime($this->_current_time());
+    $this->setEndTime(self::_current_time());
     return $this;
   }
 
@@ -85,7 +92,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
     if (!$this->getId()) {
       $this->_set_status(self::STATUS_NOT_STARTED);
       // start time is updated with actual start time if there are not failures
-      $this->setStartTime($this->_current_time());
+      $this->setStartTime(self::_current_time());
     }
 
     $this->_ensure_complete_salsify_configuration();
