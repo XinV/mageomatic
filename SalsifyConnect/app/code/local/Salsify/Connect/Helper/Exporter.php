@@ -399,7 +399,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       }
 
       // FIXME remove
-      self::log("IMAGE: " . var_export($da,true));
+      self::_log("IMAGE: " . var_export($da,true));
 
       // TODO we do have some of this other information, especially the ID which
       //      we should be saving to avoid unnecessary duplicate round-trips.
