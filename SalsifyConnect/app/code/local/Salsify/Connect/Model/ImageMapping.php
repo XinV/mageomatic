@@ -39,9 +39,9 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
   // returns the ImageMapping model instance if it exists for the given sku and
   // image id.
-  private static function _get_mapping_by_sku_and_id($sku, $id) {
+  private static function _get_mapping_by_sku_and_salsify_id($sku, $id) {
     $mappings = self::_get_mappings_collection_for_sku($sku);
-    $mappings = $mappings->addFieldToFilter('id', array('eq' => $id));
+    $mappings = $mappings->addFieldToFilter('salsify_id', array('eq' => $id));
     return self::_get_mapping_from_mappings($mappings);
   }
 
@@ -155,7 +155,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
       foreach ($das as $da) {
         $id = $da['id'];
-        $existing_mapping = self::_get_mapping_by_sku_and_id($sku, $id);
+        $existing_mapping = self::_get_mapping_by_sku_and_salsify_id($sku, $id);
         if ($existing_mapping) {
           // we already have that image. skipping...
           continue;
