@@ -107,7 +107,6 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
       $id = Mage::getResourceModel('catalog/category')
                 ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
       if ($id) {
-        self::_log("ID OF THING: " . $id);
         $category->delete();
         $this->_total_categories++;
       }

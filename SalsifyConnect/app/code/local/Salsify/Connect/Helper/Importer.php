@@ -773,6 +773,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $this->_log("Done parsing category data. Ensuring they are in database.");
 
     $categories_for_import = $this->_prepare_categories_for_import();
+    // FIXME remove
+    self::_log("CATEGORIES: " . var_export($categories_for_import,true));
     if (!empty($categories_for_import)) {
       $import = Mage::getModel('fastsimpleimport/import');
       try {
