@@ -29,15 +29,15 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
 
   // sets the status and status message of the sync.
   protected function _set_status($code) {
+    $this->setStatus($code);
     $status_string = $this->get_status_string();
+    $this->setStatusMessage($status_string);
 
-    if ($code != self::STATUS_NOT_STARTED) {
+    if ($code !== self::STATUS_NOT_STARTED) {
       // for performance recording
       self::_log_current_time("NEW STATUS " . $status_string);
     }
-
-    $this->setStatus($code);
-    $this->setStatusMessage($status_string);
+    
     if ($code === self::STATUS_DONE) {
       $this->_set_end_time();
     }
