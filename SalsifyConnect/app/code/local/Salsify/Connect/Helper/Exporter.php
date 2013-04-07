@@ -44,6 +44,12 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
   }
 
 
+  private function _ensure_salsify_attributes() {
+    $mapper = $this->_salsify->get_attribute_mapper();
+    $mapper::createSalsifyIdAttributes();
+  }
+
+
   // handy helper function that writes the given content out to the exporter's
   // output stream and adds a newline.
   private function _write($content) {
@@ -62,6 +68,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $this->_salsify = Mage::helper('salsify_connect');
       $this->_attribute_map = array();
       $this->_init_skip_list();
+      $this->_ensure_salsify_attributes();
       $this->_category_mapping = array();
 
       $this->_output_stream = $export_stream;
@@ -221,11 +228,15 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $categories = Mage::getModel('catalog/category')
                       ->getCollection();
     
-    $category_attribute = $this->_salsify
-                               ->get_attribute_mapper()
-                               ->getCategoryAssignemntMagentoCode();
+    $default_category_attribute = $this->_salsify
+                                       ->get_attribute_mapper()
+                                       ->getCategoryAssignemntMagentoCode();
 
     foreach($categories as $category) {
+      $category_attribute = $category->getSalsifyAttributeId();
+      if (!$category_attribute) {
+        $category_attribute = $default_category_attribute;
+      }
       $this->_write_category($category, $category_attribute);
     }
 
@@ -281,7 +292,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $salsify_id = Mage::getResourceModel('catalog/category')
                       ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
     if (!$salsify_id) {
-      // no salsify_id yet exists. need to create one.
+      // no salsify_id yet exists. need to ` one.
       $salsify_id = 'magento_' . $category->getPath();
       $category->setSalsifyCategoryId($salsify_id);
       $category->save();
