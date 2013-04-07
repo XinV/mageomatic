@@ -105,6 +105,7 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
     
     $root_id = Mage::app()->getStore()->getRootCategoryId();
     foreach($categories as $category) {
+      $category = $category->load($category->getId());
       if ($category->getId() == $root_id) {
         continue;
       } elseif ($category->getName() === 'Default Category') {
