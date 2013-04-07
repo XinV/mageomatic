@@ -387,23 +387,20 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
       $url = $image->getUrl();
       $da["url"] = $url;
+
       $mapping = $image_mapper::get_mapping_by_sku_and_image($sku, $image);
       if ($mapping) {
-        // FIXME this is temporary for demo purposes and should be removed
-        //       before greater distribution.
         $da["id"] = $mapping->getSalsifyId();
         $da["source_url"] = $mapping->getSourceUrl();
       } else {
-        // FIXME need to create a mapping
-        $da["id"] = get_image_mapping_id_from_url($sku, $url);
+        $image_mapper->init_by_sku_and_image($sku, $image);
+        $da["id"] = $image_mapper->getMagentoId();
       }
-
-      // FIXME remove
-      self::_log("IMAGE: " . var_export($image,true));
 
       // TODO we do have some of this other information, especially the ID which
       //      we should be saving to avoid unnecessary duplicate round-trips.
-      // "id": "3635065-FRONT-VIEW",
+      // NOTE can't get this info from the $image object. it will have to be a
+      //      combo of product and image.
       // "is_primary_image": "true"
 
       array_push($digital_assets, $da);
