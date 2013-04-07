@@ -350,13 +350,20 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
 
 
     // write out category assignments
-    $category_attribute = $this->_salsify
-                               ->get_attribute_mapper()
-                               ->getCategoryAssignemntMagentoCode();
+    $default_category_attribute = $this->_salsify
+                                       ->get_attribute_mapper()
+                                       ->getCategoryAssignemntMagentoCode();
     $category_collection = $product->getCategoryCollection();
     $salsify_categories_for_product = array();
     foreach ($category_collection as $category) {
       $catid = $category->getId();
+
+      $category_attribute =  Mage::getResourceModel('catalog/category')
+                                 ->getAttributeRawValue($catid, 'salsify_attribute_id', 0);
+      if (!$category_attribute) {
+        $category_attribute = $default_category_attribute;
+      }
+      
       if (!array_key_exists($catid, $this->_category_mapping)) {
         self::_log("WARNING: category assignment in product " . $id . " does not exist in mapping. cat id: " . $catid);
       } else {
