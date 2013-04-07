@@ -104,7 +104,7 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
                       ->getCollection();
     
     foreach($categories as $category) {
-      if ($category->getLevel() === '0') {
+      if ($category->getLevel() === '1') {
         // failsafe on the root, which i've deleted a few times...
         continue;
       }
