@@ -85,7 +85,7 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
       $importer = $salsify->get_importer();
       $image_mapper = Mage::getModel('salsify_connect/imagemapping');
       $image_mapper::load_digital_assets($importer->get_digital_assets());
-
+self::_log("HERE");
       // DONE!
       $this->_set_done();
     } catch (Exception $e) {
