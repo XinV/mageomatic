@@ -233,7 +233,8 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
                                        ->getCategoryAssignemntMagentoCode();
 
     foreach($categories as $category) {
-      $category_attribute = $category->getSalsifyAttributeId();
+      $category_attribute =  Mage::getResourceModel('catalog/category')
+                                 ->getAttributeRawValue($category->getId(), 'salsify_attribute_id', 0);
       if (!$category_attribute) {
         $category_attribute = $default_category_attribute;
       }
