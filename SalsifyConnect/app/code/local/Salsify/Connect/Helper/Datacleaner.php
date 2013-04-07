@@ -114,6 +114,7 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
       // this messed things up for some reason...
       // if ($category->getId() != 1) {
       if ($id) {
+        self::_log("PATH OF THING: " . $category->getPath());
         $category->delete();
         $this->_total_categories++;
       }
