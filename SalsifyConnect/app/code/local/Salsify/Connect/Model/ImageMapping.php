@@ -261,7 +261,6 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
     $id = get_image_mapping_id_from_url($sku, $url);
     $checksum = md5_file($image->getPath());
 
-    $this = Mage::getModel('salsify_connect/imagemapping');
     $this->setSku($sku);
     $this->setMagentoId($id);
     $this->setSalsifyId($id);
