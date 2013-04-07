@@ -258,7 +258,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   // initializes and saves this mapping from the source data given.
   public function init_by_sku_and_image($sku, $image) {
     $url = $image->getUrl();
-    $id = get_image_mapping_id_from_url($sku, $url);
+    $id = self::get_image_mapping_id_from_url($sku, $url);
     $checksum = md5_file($image->getPath());
 
     $this->setSku($sku);
