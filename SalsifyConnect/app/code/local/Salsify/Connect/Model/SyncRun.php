@@ -31,7 +31,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   protected function _set_status($code) {
     $status_string = $this->get_status_string();
 
-    if ($code != SELF::STATUS_NOT_STARTED) {
+    if ($code != self::STATUS_NOT_STARTED) {
       // for performance recording
       self::_log_current_time("NEW STATUS " . $status_string);
     }
