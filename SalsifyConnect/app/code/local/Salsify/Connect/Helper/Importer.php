@@ -989,7 +989,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       // 'meta_description' => $category['name'],
 
       $this->_salsify_id_category_attribute_code => $category['id'],
-      $this->_salsify_attribute_id_code => $category['attribute_code'],
+      $this->_salsify_attribute_id_code => $category['attribute_id'],
     );
   }
 
