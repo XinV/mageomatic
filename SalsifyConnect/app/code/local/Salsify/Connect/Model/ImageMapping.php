@@ -41,7 +41,7 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   // image id.
   private static function _get_mapping_by_sku_and_id($sku, $id) {
     $mappings = self::_get_mappings_collection_for_sku($sku);
-    $mappings = $mappings->addFieldToFilter('id', array('eq' => $id);
+    $mappings = $mappings->addFieldToFilter('id', array('eq' => $id));
     return self::_get_mapping_from_mappings($mappings);
   }
 
