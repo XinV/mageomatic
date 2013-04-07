@@ -107,9 +107,10 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
     foreach($categories as $category) {
       if ($category->getId() == $root_id) {
         continue;
+      } elseif ($category->getName() === 'Default Category') {
+        // can't delete this bugger
+        continue;
       }
-      self::_log("ROOT ID: " . $root_id);
-      self::_log("ID: " . $category->getId());
 
       $id = Mage::getResourceModel('catalog/category')
                 ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
