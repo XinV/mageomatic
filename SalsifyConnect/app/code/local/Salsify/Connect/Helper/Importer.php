@@ -1058,6 +1058,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
     $dbcategory->setName($category['name']);
     $dbcategory->setSalsifyCategoryId($category['id']);
+    $dbcategory->setSalsifyAttributeId($category['attribute_id']);
     $dbcategory->setDescription('Created during Salsify import.');
 
     // TODO what are the other options? is this a reasonable default that I
