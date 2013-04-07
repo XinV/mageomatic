@@ -108,6 +108,8 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
       if ($category->getId() == $root_id) {
         continue;
       }
+      self::_log("ROOT ID: " . $root_id);
+      self::_log("ID: " . $category->getId());
 
       $id = Mage::getResourceModel('catalog/category')
                 ->getAttributeRawValue($category->getId(), 'salsify_category_id', 0);
