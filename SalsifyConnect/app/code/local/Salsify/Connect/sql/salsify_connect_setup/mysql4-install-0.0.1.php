@@ -70,6 +70,9 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('sku', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'ID of product related to the image in Magento')
+  ->addColumn('magento_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+    'nullable' => false,
+    ), 'Magento ID for the image')
   ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
     'nullable' => false,
     ), 'Salsify ID for the image')

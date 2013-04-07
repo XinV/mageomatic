@@ -386,14 +386,20 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
       $da["name"] = $image->getLabel();
 
       $url = $image->getUrl();
+      $da["url"] = $url;
       $mapping = $image_mapper::get_mapping_by_sku_and_image($sku, $image);
       if ($mapping) {
         // FIXME this is temporary for demo purposes and should be removed
         //       before greater distribution.
-        $da["url"] = $mapping->getUrl();
+        $da["id"] = $mapping->getSalsifyId();
+        $da["source_url"] = $mapping->getSourceUrl();
       } else {
-        $da["url"] = $url;
+        // FIXME need to create a mapping
+        $da["id"] = get_image_mapping_id_from_url($sku, $url);
       }
+
+      // FIXME remove
+      self::log("IMAGE: " . var_export($da,true));
 
       // TODO we do have some of this other information, especially the ID which
       //      we should be saving to avoid unnecessary duplicate round-trips.

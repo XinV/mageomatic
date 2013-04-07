@@ -231,8 +231,12 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
         // http://stackoverflow.com/questions/9049088/how-to-compare-a-products-images-in-magento
         // In particular (just in case it goes away for some reason):
         // $image_name = substr($_image->getUrl(), strrpos($_image->getUrl(), '/') + 1);
+        //
+        // note: need both salsify ID and Magento ID since we need to be able to
+        //       fetch a mapping from an image object.
         $image_mapping = Mage::getModel('salsify_connect/imagemapping');
         $image_mapping->setSku($sku);
+        $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $last_image['file']));
         $image_mapping->setSalsifyId($id);
         $image_mapping->setUrl($url);
         $image_mapping->setSourceUrl($da['source_url']);
@@ -253,7 +257,6 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
 
   // see larger comment above
   // thanks http://stackoverflow.com/questions/9049088/how-to-compare-a-products-images-in-magento
-  // FIXME not required anymore
   public static function get_image_mapping_id_from_url($sku, $url) {
     // sku ends up being redundant here, but worth keeping around just in case
     // magento decides to change how it's randomly-generated file names change
