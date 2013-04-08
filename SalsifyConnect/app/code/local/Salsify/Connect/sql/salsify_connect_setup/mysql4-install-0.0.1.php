@@ -38,7 +38,7 @@ $installer->getConnection()->createTable($table);
 // create this table to recall the mapping between attribute codes and salsify
 // IDs for attributes for both imports and exports.
 //
-// TODO: add unique pairs (e.g. each code/ID pair should only show up once)
+// TODO add unique pair constraint (e.g. each code/ID pair should only show up once)
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/attribute_mapping'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
@@ -55,6 +55,10 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'Salsify attribute ID')
   ->setComment('Salsify_Connect salsify_connect/attribute_mapping table');
 $installer->getConnection()->createTable($table);
+$installer->run("
+  ALTER TABLE salsify_connect_attribute_mapping
+  ADD UNIQUE index(code, salsify_id);
+");
 
 
 // in order to avoid re-importing the same images over and over again, we need

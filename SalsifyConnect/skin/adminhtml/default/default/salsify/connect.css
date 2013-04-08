@@ -37,6 +37,10 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input 
   font-style: italic;
 }
 
+#salsify-connect-menu {
+  /* makes the background for the active menu line up nicely with the column border */
+  margin-right: 2px;
+}
 #salsify-connect-menu a {
   text-decoration: none;
   font-size: 1.1em;

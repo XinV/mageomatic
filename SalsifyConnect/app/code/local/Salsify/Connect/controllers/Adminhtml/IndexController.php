@@ -87,7 +87,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
   }
 
 
-  // TODO remove this when there is no longer a need.
+  // this is useful for testing new features. commented out for production
+  // FIXME comment out
   public function testAction() {
     $this->_start_render('salsify_connect_menu/exports');
 
@@ -206,7 +207,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
   // json interface.
   // creates a new import.
-  // TODO need to give better error messages and show them in the client
   public function createimportAction() {
     self::_log("creating import run...");
 
@@ -221,7 +221,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
   // json interface.
   // creates a new export
-  // TODO need to give better error messages and show them in the client
   public function createexportAction() {
     self::_log("creating export run...");
 
@@ -247,8 +246,8 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
 
   /**
-   * Causes all Salsify data to be cleared from the system.
-   * TODO remove this when we send the plugin out to people.
+   * Causes all Salsify (and other) data to be cleared from the system.
+   * FIXME comment out before release
    */
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
