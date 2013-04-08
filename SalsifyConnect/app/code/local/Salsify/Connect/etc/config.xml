@@ -7,9 +7,6 @@
   a block of XML needs an identifier tends to be pretty safe.
   -->
 
-
-  <!-- TODO need to add dependencies for ApiImport -->
-
   <modules>
     <Salsify_Connect>
       <version>0.0.1</version>
@@ -20,8 +17,12 @@
   <global>
     <helpers>
       <salsify_connect>
-        <!-- interestingly, this is translated to a directory, as in:
-             Salsify/Connect/Helper -->
+        <!--
+        this is translated to a directory, as in: Salsify/Connect/Helper
+        which is very common throughout this file. In fact, if you change
+        something but don't see any results from the change, the first place
+        to look is matching filenames.
+        -->
         <class>Salsify_Connect_Helper</class>
       </salsify_connect>
     </helpers>
@@ -75,7 +76,10 @@
       </salsify_connect_setup>
     </resources>
 
-    <!-- TODO finish the eventing system -->
+    <!--
+    eventing system scaffolding for partial updates so that only the changed
+    products since the last update need be sent to Salsify.
+
     <events>
       <catalog_product_save_after>
         <observers>
@@ -87,6 +91,7 @@
         </observers>
       </catalog_product_save_after>
     </events>
+    -->
 
     <blocks>
       <salsify_connect>

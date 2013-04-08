@@ -3,7 +3,9 @@
 /**
  * Main controller for all Salsify admin actions.
  */
-class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controller_action {
+class Salsify_Connect_Adminhtml_IndexController
+      extends Mage_Adminhtml_Controller_action
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);

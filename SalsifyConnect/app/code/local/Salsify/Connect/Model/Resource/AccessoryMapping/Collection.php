@@ -1,5 +1,4 @@
 <?php
-
 class Salsify_Connect_Model_Resource_AccessoryMapping_Collection
       extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {

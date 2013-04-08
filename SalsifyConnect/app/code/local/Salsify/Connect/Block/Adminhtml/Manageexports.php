@@ -2,7 +2,9 @@
 /**
  * Simply holds the grid that will display all the export runs.
  */
-class Salsify_Connect_Block_Adminhtml_Manageexports extends Mage_Adminhtml_Block_Widget_Grid_Container {
+class Salsify_Connect_Block_Adminhtml_Manageexports
+      extends Mage_Adminhtml_Block_Widget_Grid_Container
+{
 
   public function __construct() {
     // see comments in Manageimports for a more detail description of what's

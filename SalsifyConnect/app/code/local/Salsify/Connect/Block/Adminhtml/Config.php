@@ -1,7 +1,9 @@
 <?php
 
 // Block to provide a form to configure the Salsify connection.
-class Salsify_Connect_Block_Adminhtml_Config extends Mage_Core_Block_Template {
+class Salsify_Connect_Block_Adminhtml_Config
+      extends Mage_Core_Block_Template
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);

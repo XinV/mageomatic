@@ -2,9 +2,32 @@
 require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 /**
- * Parser of Salsify data. Also loads into the Magento database.
+ * Parses the Salsify JSON data format and loads the resulting data into
+ * Magento, creating the necessary attributes, categories, and whatever else is
+ * needed.
+ *
+ * Currently this works as append-only. For example, if an image or property
+ * is deleted in Salsify and not present in the JSON (or even a full product),
+ * this will NOT delete the value in Magento. It will replace old values with
+ * new values, and insert new values, but there is currently no capability to
+ * support delete.
+ *
+ * The major reason for this is that there are so many attributes in Magento
+ * that are controlled by Magento (see AttributeMapping for more details on that
+ * specifically). The real nub here is that some of those attributes require
+ * different values using Magento's ImportExport API than are stored internally,
+ * so one cannot simply copy them into an array and then re-import them during
+ * a replace operation.
+ *
+ * NOTE this assumes that the accessory category hierarchy and product category
+ *      hierarchy(s) are necessarily distinct.
+ *
+ * TODO respect Salsify JSON header info (truncate, upsert, etc.).
  */
-class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implements \JsonStreamingParser\Listener {
+class Salsify_Connect_Helper_Importer
+      extends Mage_Core_Helper_Abstract
+      implements \JsonStreamingParser\Listener
+{
 
   private function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
@@ -59,7 +82,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // NOTE: currently we're not batch loading anything because we want to bulk
   //       load relations, and if a product that is the target of a relation
   //       isn't in a batch the relation will fail to load.
-  // TODO verify that this is, in fact, true
   const BATCH_SIZE = 1000;
   private $_batch;
   private $_batch_accessories;
@@ -83,7 +105,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   const ITEM_NESTING_LEVEL = 4;
 
   // keeps track of current parsing state.
-  // TODO parser header info
   private $_in_attributes;
   private $_in_attribute_values;
   private $_in_products;
@@ -183,7 +204,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   private function _start_attribute() {
     $this->_attribute = array();
     if ($this->_in_attributes) {
-      // TODO is this always true?
       $this->_attribute['type'] = self::PRODUCT;
     } elseif ($this->_in_attribute_values) {
       $this->_attribute['type'] = self::CATEGORY;
@@ -410,10 +430,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   // If the product already exists then we copy over the values from it so that
   // we don't accidentally overwrite a Magento value with some Mageomatic
   // default.
-  //
-  // TODO get more sophisticated mapping of keys from Salsify properties to
-  //      Magento properties (e.g. does a Salsify property correspond to
-  //      "weight" or "price" or somethign else?)
   private function _prepare_product_add_required_values($product) {
     $existing_product = Mage::getModel('catalog/product')
                             ->loadByAttribute('sku', $product['sku']);
@@ -542,9 +558,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         $this->_relationship_attributes = array();
 
         // create the attributes to store the salsify ID for all object types.
-        //
-        // TODO set the salsify_id for ALL objects coming into the system
-        //      currently missing: attributes
         $this->_create_salsify_id_attributes_if_needed();
 
       } elseif ($key === 'attribute_values') {
@@ -790,7 +803,7 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       }
     }
 
-    // TODO this is a problem with the bulk import API. Currently it does not
+    // NOTE this is a problem with the bulk import API. Currently it does not
     //      update the children_count in the database tables, which means that
     //      the categories are not expandable in the product detail pages. this
     //      fix is from the bug filing:
@@ -833,13 +846,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
   //   import API doesn't seem to be able to create new roots.
   // * The array will be sorted by depth. Required by import (parents must be
   //   created before their children).
-  //
-  // TODO should be we be creating new roots per attribute? Right now the data
-  //      we're getting takes care of rooting itself, so that feels like it
-  //      would create an additional, unnatural attribute type.
-  //      The biggest argument to add another level, however, is that the PATH
-  //      (and therefore URL) does not include the root, and maybe it should?
-  //      This greatly depends on the data, however.
   private function _prepare_categories_for_import() {
     $categories = array();
     $cleaned_categories = array();
@@ -881,9 +887,8 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
         }
 
         // don't bother loading categories for accessory attributes
-        // TODO can a single category hierarchy be used for both products AND
-        //      accessory relationships? if so, it might be foolish of us to
-        //      not load them here...
+        // NOTE if a single category hierarchy be used for both products AND
+        //      accessory relationships this will be problematic...
         continue;
       }
 
@@ -934,8 +939,6 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return $category;
     }
 
-    // TODO figure out how to encode front-slashes so that the import API will
-    //      allow them in the path.
     $category['name'] = preg_replace('/\//', '|', $category['name']);
 
     $id = $category['id'];
@@ -1052,13 +1055,10 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
 
   // returns the newly created Magento Category model instance if successful,
   // or null if there was some problem in creating the category.
-  //
-  // TODO can't update existing categories (i.e. re-parent)
   private function _create_category($category) {
     $dbcategory = new Mage_Catalog_Model_Category();
 
-    // TODO we're currently ignoring this. I *think* doing so sets the default
-    //      store. Either way at some point we need to support multi-store.
+    // multi-store
     // $category->setStoreId(0);
 
     $dbcategory->setName($category['name']);
@@ -1090,9 +1090,9 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
     $dbcategory->setUrlKey($this->_get_url_key($category));
     $dbcategory->setPath($parent_dbcategory->getPath());
 
-    // TODO this broke things. I wouldn't care except that there is a column in
-    //      the database for this value which seems to be set for the demo data.
-    //
+    // NOTE this broke things. Doesn't stop anything from working but when we
+    //      support more sophisticated mappings we'll have to revisit this, so
+    //      I'm keeping this non-working code around.
     // $attribute_set_id = $parent_category->getResource()
     //                                     ->getEntityType()
     //                                     ->getDefaultAttributeSetId();

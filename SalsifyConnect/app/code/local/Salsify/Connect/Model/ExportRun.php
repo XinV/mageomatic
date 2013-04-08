@@ -9,17 +9,19 @@
  *
  * This can be executed as a background job (see perform()).
  */
-class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
+class Salsify_Connect_Model_ExportRun
+      extends Salsify_Connect_Model_SyncRun
+{
 
   private $_export_file;
 
 
+  // see parent for more statuses.
   const STATUS_EXPORTING             = 1;
   const STATUS_EXPORTING_DONE        = 2;
   const STATUS_UPLOADING_TO_SALSIFY  = 3;
 
-  // returns a nice message that can be used in the UI or stored in the DB in
-  // the status_message field.  
+  // overrides abstract parent method.
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
@@ -46,10 +48,8 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
   }
 
 
-  // called by DJWorker
+  // performs the entire export
   public function perform() {
-    self::_log("background export job started.");
-
     if (!$this->getId()) {
       throw new Exception("ExportRun was never initialized prior to being run.");
     }
@@ -63,7 +63,7 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
     $this->upload_to_salsify();
 
     // done.
-    return true;
+    $this->_set_done();
   }
 
 
@@ -106,8 +106,6 @@ class Salsify_Connect_Model_ExportRun extends Salsify_Connect_Model_SyncRun {
       $this->set_error("Error: Export of file to Salsify failed: " . $file);
     }
 
-    // note at this point the file has been uploaded to salsify AND loaded.
-
-    $this->_set_done();
+    // at this point the file has been uploaded to salsify AND loaded.
   }
 }

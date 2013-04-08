@@ -4,7 +4,9 @@
  *
  * These grids are largely identical.
  */
-abstract class Salsify_Connect_Block_Adminhtml_Syncgrid extends Mage_Adminhtml_Block_Widget_Grid {
+abstract class Salsify_Connect_Block_Adminhtml_Syncgrid
+         extends Mage_Adminhtml_Block_Widget_Grid
+{
 
   public function __construct() {
     parent::__construct();

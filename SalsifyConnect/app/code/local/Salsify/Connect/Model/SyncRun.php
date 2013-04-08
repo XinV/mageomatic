@@ -1,13 +1,17 @@
 <?php
 
 /**
- * Contains functionality shared by both Export and Import runs.
+ * Contains functionality shared by both Export and Import runs. However, in the
+ * future when we move to a sync model from discreet import and export events
+ * this class will be the primary mover of data.
  *
  * Subclass models must contain 'status', 'status_message',
  * 'start_time', and 'end_time' columns
  * of types integer, text, datetime, and datetime respectively.
  */
-abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
+abstract class Salsify_Connect_Model_SyncRun
+         extends Mage_Core_Model_Abstract
+{
 
   protected static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
@@ -22,12 +26,16 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   private $_salsify_api;
 
 
+  // used by subclasses, which are also expected to create new values.
   const STATUS_ERROR       = -1;
   const STATUS_NOT_STARTED = 0;
   const STATUS_DONE        = 1000;
+  // returns a string that describes the current status of the run.
   abstract function get_status_string();
 
   // sets the status and status message of the sync.
+  // subclasses should not setStatus() directly but should instead call this
+  // method.
   protected function _set_status($code) {
     $this->setStatus($code);
     $status_string = $this->get_status_string();
@@ -47,7 +55,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
     $this->_set_status(self::STATUS_DONE);
     $this->save();
 
-    // TODO once we move to a singleton model release the lock and also probably
+    // NOTE once we move to a singleton model release the lock and also probably
     //      remove all jobs from the queue since there should only be one at a
     //      time in there
   }
@@ -118,6 +126,7 @@ abstract class Salsify_Connect_Model_SyncRun extends Mage_Core_Model_Abstract {
   }
 
 
+  // returns the cached handle of the salsify API.
   protected function _get_salsify_api() {
     if (!$this->_salsify_api) {
       $this->_salsify_api = Mage::helper('salsify_connect/salsifyapi');

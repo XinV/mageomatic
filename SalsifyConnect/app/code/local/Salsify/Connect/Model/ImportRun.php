@@ -7,13 +7,17 @@
  * A bunch of information is kept in the database, while temporary data is
  * kept on the filesystem in var/salsify/.
  */
-class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
+class Salsify_Connect_Model_ImportRun
+      extends Salsify_Connect_Model_SyncRun
+{
 
+  // parent class has other statuses.
   const STATUS_SALSIFY_PREPARING      = 1;
   const STATUS_DOWNLOADING            = 2;
   const STATUS_LOADING                = 3;
   const STATUS_LOADING_DIGITAL_ASSETS = 4;
 
+  // overrides abstract parent method.
   public function get_status_string() {
     switch ($this->getStatus()) {
       case self::STATUS_ERROR:
@@ -42,10 +46,8 @@ class Salsify_Connect_Model_ImportRun extends Salsify_Connect_Model_SyncRun {
   }
 
 
-  // called by DJJob worker
+  // does the entire import
   public function perform() {
-    self::_log("background import job started.");
-
     if (!$this->getId()) {
       $this->set_error("must initialize ImportRun before running in a background job.");
     }

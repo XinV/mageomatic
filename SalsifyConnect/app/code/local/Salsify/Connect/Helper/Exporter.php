@@ -3,7 +3,9 @@
 /**
  * Writes out Magento data to a Salsify format.
  */
-class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
+class Salsify_Connect_Helper_Exporter
+      extends Mage_Core_Helper_Abstract
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
@@ -194,7 +196,7 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
     $name = $attribute->getFrontendLabel();
     if (!$name) {
       $category_attribute_code = $mapper::getCategoryAssignemntMagentoCode();
-      // TODO if we find any other special cases we should move this to the mapper
+      // if we find any other special cases we should move this to the mapper
       if ($code === $category_attribute_code) {
         $name = 'Category';
       } else {
@@ -412,10 +414,9 @@ class Salsify_Connect_Helper_Exporter extends Mage_Core_Helper_Abstract {
         $da["id"] = $image_mapper->getMagentoId();
       }
 
-      // TODO we do have some of this other information, especially the ID which
-      //      we should be saving to avoid unnecessary duplicate round-trips.
       // NOTE can't get this info from the $image object. it will have to be a
-      //      combo of product and image.
+      //      combo of product and image. will tackle it when we deal with image
+      //      role support in general.
       // "is_primary_image": "true"
 
       array_push($digital_assets, $da);

@@ -5,7 +5,9 @@
  * which images in the Salsify CDN. This enables us to avoid re-downloading
  * images that we already have, discovering new images in Salsify, etc.
  */
-class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
+class Salsify_Connect_Model_ImageMapping
+      extends Mage_Core_Model_Abstract
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
@@ -125,13 +127,6 @@ class Salsify_Connect_Model_ImageMapping extends Mage_Core_Model_Abstract {
   //   "name":"2087913-5311.jpg","is_primary_image":"true"},...]
   //
   // Thanks: http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image
-  //
-  // TODO deal with image updates (e.g. get image from salsify, it changes in
-  //      salsify, recognize and update the local image).
-  //
-  // TODO get images for different digital asset roles (thumbnail vs. image,
-  //      etc.) from salsify. right now at least we're setting the primary
-  //      image correctly.
   public static function load_digital_assets($digital_assets) {
     if (!$digital_assets || empty($digital_assets)) {
       self::_log("no digital assets passed in to process.");

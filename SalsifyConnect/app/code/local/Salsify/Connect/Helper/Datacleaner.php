@@ -3,7 +3,10 @@
 /**
  * Deletes all local Salsify data.
  */
-class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
+class Salsify_Connect_Helper_Datacleaner
+      extends Mage_Core_Helper_Abstract
+{
+
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
@@ -145,8 +148,6 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
       $db = Mage::getSingleton('core/resource')
                 ->getConnection('core_write');
 
-      // TODO this could be pretty awkward if someone is already using DJJob
-      //      with some other Magento Connect plugin...
       $this->_drop_table($db, 'jobs')
            ->_drop_table($db, 'salsify_connect_attribute_mapping')
            ->_drop_table($db, 'salsify_connect_image_mapping')

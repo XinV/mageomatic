@@ -1,4 +1,5 @@
 <?php
+// FIXME these will be moved to the lib directory of the module itself
 require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
 
 set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
@@ -10,7 +11,9 @@ require_once('DJJob.php');
  * and saving to the database. In a real way, this "helper" is the heart of the
  * Salsify Connect module.
  */
-class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
+class Salsify_Connect_Helper_Data
+      extends Mage_Core_Helper_Abstract
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
@@ -38,9 +41,7 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
   }
 
 
-  /**
-   * Ensures that the Salsify temp directory exists in var/ and returns it.
-   */
+  // Ensures that the Salsify temp directory exists in var/ and returns it.
   private function _get_temp_directory() {
     // thanks http://stackoverflow.com/questions/8708718/whats-the-best-place-to-put-additional-non-xml-files-within-the-module-file-str/8709462#8709462
     $dir = Mage::getBaseDir('var') . DS . 'salsify';
@@ -55,8 +56,8 @@ class Salsify_Connect_Helper_Data extends Mage_Core_Helper_Abstract {
 
 
   /**
-   * Returns the name of a temp file that does not exist and so can be used for
-   * storing data.
+   * @return the name of a temp file that does not exist and so can be used for
+   *         storing data.
    */
   public function get_temp_file($prefix, $extension) {
     $dir = $this->_get_temp_directory();

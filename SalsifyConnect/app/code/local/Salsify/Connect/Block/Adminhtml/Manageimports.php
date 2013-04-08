@@ -2,7 +2,9 @@
 /**
  * Simply holds the grid that will display all the import runs.
  */
-class Salsify_Connect_Block_Adminhtml_Manageimports extends Mage_Adminhtml_Block_Widget_Grid_Container {
+class Salsify_Connect_Block_Adminhtml_Manageimports
+      extends Mage_Adminhtml_Block_Widget_Grid_Container
+{
 
   public function __construct() {
     // module name

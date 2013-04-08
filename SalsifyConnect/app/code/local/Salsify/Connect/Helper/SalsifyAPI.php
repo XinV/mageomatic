@@ -1,15 +1,21 @@
 <?php
+// FIXME this will be included in the module
 require_once BP.DS.'lib'.DS.'MultipartUploader'.DS.'Uploader.php';
 
 
 /**
- * Helper class that takes care of communicating with Salsify.
+ * This class is the gateway to Salsify. It should be the only class that knows
+ * anything about Salsify's API (though other classes know about the Salsify
+ * JSON file format).
  */
-class Salsify_Connect_Helper_SalsifyAPI extends Mage_Core_Helper_Abstract {
+class Salsify_Connect_Helper_SalsifyAPI
+      extends Mage_Core_Helper_Abstract
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
+
 
   // Salsify auth token
   private $_api_key;

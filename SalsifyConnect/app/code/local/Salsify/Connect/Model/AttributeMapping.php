@@ -9,14 +9,13 @@
  * convenience since most of it relies on the mapping and constants related to
  * the mapping.
  *
- * TODO: keep track of attributes created here in its own table instead of
- *       relying on the existing attribute_code starting with salsify_
- *       convention (this is primarily for Datacleaner).
- *
- * TODO: if a multiple properites map to a single property (in either direction)
- *       this does not work.
+ * NOTE if a multiple properites map to a single property (in either direction)
+ *      this does not work.
+ * TODO throw an error if this is detected.
  */
-class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
+class Salsify_Connect_Model_AttributeMapping
+      extends Mage_Core_Model_Abstract
+{
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
@@ -128,11 +127,11 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       return $mapping->getSalsifyId();
     }
 
-    // TODO: we're skipping export of this right now...but do we actually need
-    //       this property at all given that the Salsify external ID is mapping
-    //       to the SKU? or will that NOT actually be the case at some point?
-    //       if it's not then we're no longer talking about a 1-1 mapping between
-    //       products in salsify and magento...
+    // TODO we're skipping export of this right now...but do we actually need
+    //      this property at all given that the Salsify external ID is mapping
+    //      to the SKU? or will that NOT actually be the case at some point?
+    //      if it's not then we're no longer talking about a 1-1 mapping between
+    //      products in salsify and magento...
     // if ($code === self::SALSIFY_PRODUCT_ID) {
     //   return self::getIdForCode('sku');
     // } else
@@ -187,7 +186,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
 
 
   // this is the property that products use to refer to categories in magento
-  // TODO need to create a mapping for products to this during ingest
   public static function getCategoryAssignemntMagentoCode() {
     return 'category_ids';
   }
@@ -204,16 +202,16 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   // come back as part of the product attribute list that should be owned by
   // magento.
   //
+  // in the future this should be configurable somehow by the user, especially
+  // since there will no doubt be attriubtes created by the user (and therefore
+  // unknowable by us in advance) that should not be exported to Salsify.
+  //
   // right now we're not even exporting these to Salsify; they live in Magento
   // and are only visible in Magento. we'd have to think about how we want to
   // handle properties like this in general in terms of Salsify behavior (maybe
   // Salsify can get the properties but not export them, or Magento ignores
   // values for these properties if they come as part of an import, or something
   // like that).
-  //
-  // TODO this should be configurable somewhere
-  // TODO what about attributes that are created in Magento but not part of the
-  //      'core' attribute set?
   public static function getMagentoOwnedAttributeCodes() {
     return array(
       '_store',
@@ -252,9 +250,9 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'enable_googlecheckout',
       'special_from_date',
 
-      // TODO we ARE pushing out price, but these are more marketing campaign-
+      // NOTE we ARE pushing out price, but these are more marketing campaign-
       //      focused. unclear what we gain by having them in Salsify unless
-      //      they are used in rules...
+      //      they are used in rules. Either way, avoiding for now.
       'group_price',
       'group_price_changed',
       'tier_price',
@@ -365,7 +363,7 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
       'visibility' => 4,
 
       // 2 => 'Taxable Goods'
-      // TODO: should this be 'None' or 'Shipping'?
+      // TODO should this be 'None' or 'Shipping'?
       'tax_class_id' => 2,
     );
 
@@ -401,12 +399,11 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
     $code = preg_replace('/\s+/', '_', $code);
     $code = preg_replace('/[^_a-zA-Z0-9]+/', '', $code);
 
+    // TODO why doesn't this work?
     // if we have an ID that happens to match a magento ID (description,
     // short_description, weight, etc. being the most common)
     // $attribute = self::_loadAttributeByMagentoCode($type, $code);
     // if ($attribute) {
-    // TODO need some way to reliably convert other values...
-    //      we even have to be conservative with varchar for length...
     //   $backend_type = $attribute->getBackendType();
     //   if ($backend_type == 'text') { // || $backend_type == 'varchar') {
     //     return $code;
@@ -523,8 +520,6 @@ class Salsify_Connect_Model_AttributeMapping extends Mage_Core_Model_Abstract {
   //
   // More docs:
   // http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
-  //
-  // TODO: support multi-store (see 'is_global' below)
   private static function _createAttribute($attribute_type, $id, $name, $roles) {
     $code = self::getCodeForId($id, $roles);
 

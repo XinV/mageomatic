@@ -63,7 +63,12 @@
               </configuration>
 
               <manage_imports>
-                <!-- Note the title is not redundant, enve though it looks the same as in the menu listings above. This is how the ACL text will be displayed on System > Permissions > Roles > Role > Role Resources -->
+                <!--
+                Note the title is not redundant, enve though it looks the same
+                as in the menu listings above. This is how the ACL text will
+                be displayed on System > Permissions > Roles > Role > Role
+                Resources.
+                -->
                 <title>Manage Imports from Salsify</title>
               </manage_imports>
 

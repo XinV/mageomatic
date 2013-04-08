@@ -7,13 +7,15 @@
 class Salsify_Connect_Model_AccessoryMapping
       extends Mage_Core_Model_Abstract
 {
-  // required by Magento
-  protected function _construct() {
-    $this->_init('salsify_connect/accessorymapping');
-  }
 
   private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
+  }
+
+
+  // required by Magento
+  protected function _construct() {
+    $this->_init('salsify_connect/accessorymapping');
   }
 
 
@@ -107,7 +109,6 @@ class Salsify_Connect_Model_AccessoryMapping
     foreach($accessories as $relationship) {
       if (!array_key_exists('magento_relation_type', $relationship)) {
         // default to cross-sell
-        // TODO make this configurable
         $relationship['magento_relation_type'] = self::CROSS_SELL;
       }
 
