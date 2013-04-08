@@ -78,7 +78,8 @@ class Salsify_Connect_Helper_Datacleaner extends Mage_Core_Helper_Abstract {
       $items = $mediaApi->items($id);
       foreach($items as $item) {
         $file = $item['file'];
-        $mediaApi->remove($id, $file);
+        // causes the product to be re-saved which slows everything down...
+        // $mediaApi->remove($id, $file);
         $file = Mage::getBaseDir('media').DS.'catalog'.DS.'product'.$file;
         try {
           unlink($file);
