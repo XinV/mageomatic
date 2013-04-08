@@ -36,6 +36,7 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
          // ->_addBreadcrumb($this->__('My Menu Item'), $this->__('My Menu Item'));
 
     $active_action_id = substr($menu_id, strrpos($menu_id, '/'));
+    echo $active_action_id;
 
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
