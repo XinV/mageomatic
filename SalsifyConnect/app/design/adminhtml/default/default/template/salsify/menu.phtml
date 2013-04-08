@@ -5,10 +5,8 @@
 <?php
 $items = $this->getMenuItems();
 foreach ($items as $item) { ?>
-  <li><a <?php
-    if ($item['active']) {
+  <li if ($item['active']) {
       echo 'class="active"';
-    }
-  ?> href="<?php echo $item['url']; ?>"><?php echo $item['title']; ?></a></li>
+    }><a href="<?php echo $item['url']; ?>"><?php echo $item['title']; ?></a></li>
 <?php } ?>
 </ul>
