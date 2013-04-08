@@ -37,8 +37,6 @@ $installer->getConnection()->createTable($table);
 // unfortunately you can't have attributes about attributes, so we needed to
 // create this table to recall the mapping between attribute codes and salsify
 // IDs for attributes for both imports and exports.
-//
-// TODO add unique pair constraint (e.g. each code/ID pair should only show up once)
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/attribute_mapping'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
@@ -47,7 +45,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     'primary' => true,
     'identity' => true,
     ), 'Salsify Connect Attribute Mapping ID')
-  ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+  ->addColumn('code', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
     'nullable' => false,
     ), 'Magento attribute code')
   ->addColumn('salsify_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
@@ -55,10 +53,11 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'Salsify attribute ID')
   ->setComment('Salsify_Connect salsify_connect/attribute_mapping table');
 $installer->getConnection()->createTable($table);
-$installer->run("
-  ALTER TABLE salsify_connect_attribute_mapping
-  ADD UNIQUE index(code, salsify_id);
-");
+// MySQL doesn't support this on varchar lengths > 255, including text
+// $installer->run("
+//   ALTER TABLE salsify_connect_attribute_mapping
+//   ADD UNIQUE index(code, salsify_id);
+// ");
 
 
 // in order to avoid re-importing the same images over and over again, we need
@@ -123,7 +122,7 @@ $installer->getConnection()->createTable($table);
 // salsify category ID for the relation if it was originally imported from
 // salsify.
 //
-// TODO this SHOULD be totally unnecessary if all product relations are being
+// NOTE this would be totally unnecessary if all product relations are being
 //      managed in Salsify, or if we simply aren't moving them back and forth
 //      over the wire.
 $table = $installer->getConnection()->newTable($installer->getTable(
@@ -156,7 +155,7 @@ $installer->getConnection()->createTable($table);
 // tried to create an index:
 //   CREATE INDEX accessory_mapping_by_category_and_skus
 //   ON salsify_connect_accessory_mapping(salsify_category_value, trigger_sku, target_sku);
-// but couldn't. mysql won't index text fields of longer than varchar > 256...
+// but couldn't. mysql won't index text fields of longer than varchar > 255...
 // If this becomes important we could always index the checksum of the external
 // ID just for lookup purposes.
 $installer->run("
