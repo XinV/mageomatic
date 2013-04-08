@@ -1,10 +1,14 @@
 <!-- TODO how does magento render a left hand menu? -->
 
 <h2>Salsify Connect</h2>
-<ul>
+<ul id="salsify-connect-menu">
 <?php
 $items = $this->getMenuItems();
 foreach ($items as $item) { ?>
-  <li><a href="<?php echo $item['url']; ?>"><?php echo $item['title']; ?></a></li>
+  <li><a <?php
+    if ($item['active']) {
+      echo 'class="active"';
+    }
+  ?> href="<?php echo $item['url']; ?>"><?php echo $item['title']; ?></a></li>
 <?php } ?>
 </ul>

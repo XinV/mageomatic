@@ -285,6 +285,13 @@ class Salsify_Connect_Helper_Importer extends Mage_Core_Helper_Abstract implemen
       return null;
     }
 
+    // SKU can only be 64 characters in Magento. We fail for now on this...
+    $sku = $product['sku'];
+    if (strlen($sku) > 64) {
+      $this->_log("ERROR: product SKU must be at most 64 characters long. Skipping product: " . $sku);
+      return null;
+    }
+
     $prepped_product = array();
     $extra_product_values = array();
 

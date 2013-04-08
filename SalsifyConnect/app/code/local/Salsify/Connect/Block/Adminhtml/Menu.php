@@ -25,16 +25,16 @@ class Salsify_Connect_Block_Adminhtml_Menu extends Mage_Core_Block_Template {
   }
 
 
-  public function setActions($actions) {
-    // TODO get the full list programatically instead of having it in both the
-    //      XML *and* here
-    // TODO set the active one
+  public function setActions($actions, $active_action_id) {
     foreach ($actions as $action) {
+      $action_id = $action['action'];
       array_push($this->_menu_items,
-                 array('title' => $action['label'],
-                       'url' => $this->_get_action_url($action['action'])
-                      )
-                );
+        array(
+          'title' => $action['label'],
+          'url' => $this->_get_action_url($action_id),
+          'active' => ($action_id === $active_action_id),
+        )
+      );
     }
   }
 

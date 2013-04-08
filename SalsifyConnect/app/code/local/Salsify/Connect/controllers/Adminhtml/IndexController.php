@@ -24,8 +24,6 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
 
 
   private function _start_render($menu_id) {
-    self::_log('rendering ' . $menu_id);
-
     $this->loadLayout();
     $layout = $this->getLayout();
 
@@ -37,12 +35,14 @@ class Salsify_Connect_Adminhtml_IndexController extends Mage_Adminhtml_Controlle
          // ->_addBreadcrumb('Salsify Connect', 'Salsify Connect')
          // ->_addBreadcrumb($this->__('My Menu Item'), $this->__('My Menu Item'));
 
+    $active_action_id = substr(strrpos($menu_id, '/'));
+
     $menu_block = $layout->createBlock('salsify_connect/adminhtml_menu');
     $menu_block->setActions(array(
       array('label' => 'Salsify Account Details', 'action' => 'configuration'),
       array('label' => 'Manage Imports from Salsify', 'action' => 'index'),
       array('label' => 'Manage Exports to Salsify', 'action' => 'exports')
-    ));
+    ), $active_action_id);
     $this->_addLeft($menu_block);
   }
 
