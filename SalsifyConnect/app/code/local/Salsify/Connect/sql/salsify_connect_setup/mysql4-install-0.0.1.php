@@ -150,6 +150,14 @@ $table = $installer->getConnection()->newTable($installer->getTable(
   ->addColumn('target_sku', Varien_Db_Ddl_Table::TYPE_VARCHAR, 64, array(
     'nullable' => false,
     ), 'Target Product SKU')
+
+  // primarly for export
+  // tried to create an index:
+  //   CREATE INDEX accessory_mapping_by_category_and_skus
+  //   ON salsify_connect_accessory_mapping(salsify_category_value, trigger_sku, target_sku);
+  // but couldn't. mysql won't index text fields of longer than varchar > 255...
+  // If this becomes important we could always index the checksum of the external
+  // ID just for lookup purposes.
   ->addIndex(
       $installer->getIdxName(
         $installer->getTable('salsify_connect/accessory_mapping'),
@@ -161,17 +169,6 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     )
   ->setComment('Salsify_Connect salsify_connect/accessory_mapping entity table');
 $installer->getConnection()->createTable($table);
-// primarly for export
-// tried to create an index:
-//   CREATE INDEX accessory_mapping_by_category_and_skus
-//   ON salsify_connect_accessory_mapping(salsify_category_value, trigger_sku, target_sku);
-// but couldn't. mysql won't index text fields of longer than varchar > 255...
-// If this becomes important we could always index the checksum of the external
-// ID just for lookup purposes.
-// $installer->run("
-//   CREATE INDEX salsify_connect_accessory_mapping_by_skus
-//   ON salsify_connect_accessory_mapping(trigger_sku, target_sku, magento_relation_type);
-// ");
 
 
 // currently the import_run and export_run tables are nearly identical, and this
