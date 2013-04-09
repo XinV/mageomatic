@@ -49,12 +49,14 @@ var salsify = (function (parent) {
     new Ajax.Request(syncUrl, {
       method: 'post',
       onSuccess: function(response) {
-        // console.log(response);
+        console.log(response);
 
         // next kickoff the background worker and, if successful, reload page
         createWorker(workerUrl);
 
         // reload the page now so that we can see the new export
+        // currently not doing this since the delayed jobs is fundamentally
+        // broken without a cron job. the server times out on long requests.
         // reloadPage();
       },
       onFailure: function(response) {
