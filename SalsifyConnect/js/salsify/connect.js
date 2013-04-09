@@ -18,10 +18,12 @@ var salsify = (function (parent) {
       loaderArea : false, // don't show the 'Please wait' dialog here
       onSuccess: function(response) {
         // note this is currently broken with the delayed jobs. we cannot just
-        // reload the page.
+        // reload the page immediately or the error won't have a chance to set
+        // if account info isn't set. so we wait. definitely hacky. another
+        // reason to kill DJJob
         setTimeout(function() {
           reloadPage();
-        }, 5000);
+        }, 1000);
       },
       onFailure: function(response) {
         reloadPage();
