@@ -213,12 +213,17 @@ class Salsify_Connect_Adminhtml_IndexController
   public function createimportAction() {
     self::_log("creating import run...");
 
-    $model = Mage::getModel('salsify_connect/importrun');
-    $model->save();
-    $model->setName('Import from Salsify #' . $model->getId())
-          ->enqueue();
+    $success = true;
+    try {
+      $model = Mage::getModel('salsify_connect/importrun');
+      $model->save();
+      $model->setName('Import from Salsify #' . $model->getId())
+            ->enqueue();
+    } catch (Exception $e) {
+      $success = false;
+    }
 
-    $this->_respond_with_json(array('success' => true));
+    $this->_respond_with_json(array('success' => $success));
   }
 
 
@@ -227,12 +232,17 @@ class Salsify_Connect_Adminhtml_IndexController
   public function createexportAction() {
     self::_log("creating export run...");
 
-    $model = Mage::getModel('salsify_connect/exportrun');
-    $model->save();
-    $model->setName('Export to Salsify #' . $model->getId())
-          ->enqueue();
+    $success = true;
+    try {
+      $model = Mage::getModel('salsify_connect/exportrun');
+      $model->save();
+      $model->setName('Export to Salsify #' . $model->getId())
+            ->enqueue();
+    } catch (Exception $e) {
+      $success = false;
+    }
 
-    $this->_respond_with_json(array('success' => true));
+    $this->_respond_with_json(array('success' => $success));
   }
 
 
