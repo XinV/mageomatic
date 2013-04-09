@@ -17,9 +17,9 @@ var salsify = (function (parent) {
       method: 'post',
       loaderArea : false, // don't show the 'Please wait' dialog here
       onSuccess: function(response) {
-        // note that this is unlikely to ever be called since the page will
-        // almost always be reloaded before this callback is given a chance.
-        reloadPage();
+        // note this is currently broken with the delayed jobs. we cannot just
+        // reload the page.
+        // reloadPage();
       },
       onFailure: function(response) {
         reloadPage();
