@@ -41,12 +41,14 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input 
   /* makes the background for the active menu line up nicely with the column border */
   margin-right: 2px;
 }
+#salsify-connect-menu li {
+  padding: 0.75em;
+}
+#salsify-connect-menu li.active {
+  background-color: rgb(255, 255, 200);
+  font-weight: bold;
+}
 #salsify-connect-menu a {
   text-decoration: none;
   font-size: 1.1em;
-  padding: 0.75em;
-}
-#salsify-connect-menu .active {
-  background-color: rgb(255, 255, 200);
-  font-weight: bold;
 }
