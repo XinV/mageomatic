@@ -9,7 +9,7 @@
 
   <modules>
     <Salsify_Connect>
-      <version>0.6</version>
+      <version>0.6.0</version>
     </Salsify_Connect>
   </modules>
 
