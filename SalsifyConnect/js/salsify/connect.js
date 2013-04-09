@@ -20,7 +20,7 @@ var salsify = (function (parent) {
         // console.log(response);
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
-        // reloadPage();
+        reloadPage();
       },
       onFailure: function(response) {
         // console.log(response);
@@ -51,10 +51,12 @@ var salsify = (function (parent) {
       onSuccess: function(response) {
         // console.log(response);
         var json = response.responseText.evalJSON();
-        console.log(json);
-
-        // next kickoff the background worker and, if successful, reload page
-        createWorker(workerUrl);
+        if (json.success) {
+          // next kickoff the background worker and, if successful, reload page
+          createWorker(workerUrl);
+        } else {
+          reloadPage();
+        }
 
         // reload the page now so that we can see the new export
         // currently not doing this since the delayed jobs is fundamentally
