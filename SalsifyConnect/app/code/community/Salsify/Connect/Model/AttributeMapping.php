@@ -159,11 +159,6 @@ class Salsify_Connect_Model_AttributeMapping
     if ($code === 'sku') {
       $roles['products'] = array();
       array_push($roles['products'], 'id');
-
-      // we use sku to relate products together
-      // see getAttributeForAccessoryIds()
-      $roles['accessories'] = array();
-      array_push($roles['accessories'], 'target_product_id');
     }
 
     if ($code === 'name') {
@@ -181,7 +176,7 @@ class Salsify_Connect_Model_AttributeMapping
 
   // attribute with target_product_id role
   public static function getAttributeForAccessoryIds() {
-    return 'sku';
+    return 'target_product_id';
   }
 
 

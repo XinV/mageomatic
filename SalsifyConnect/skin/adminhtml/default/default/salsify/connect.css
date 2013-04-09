@@ -39,7 +39,7 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input 
 
 #salsify-connect-menu {
   /* makes the background for the active menu line up nicely with the column border */
-  margin-right: 2px;
+  margin-right: 1px;
 }
 #salsify-connect-menu li {
   padding: 0.5em;
