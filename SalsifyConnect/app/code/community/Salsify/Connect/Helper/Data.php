@@ -1,8 +1,7 @@
 <?php
-// FIXME these will be moved to the lib directory of the module itself
-require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Parser.php';
+require_once BP.DS.'lib'.DS.'salsify'.DS.'JsonStreamingParser'.DS.'Parser.php';
 
-set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'DJJob');
+set_include_path(get_include_path().PS.Mage::getBaseDir('lib').DS.'salsify'.DS.'DJJob');
 require_once('DJJob.php');
 
 /**

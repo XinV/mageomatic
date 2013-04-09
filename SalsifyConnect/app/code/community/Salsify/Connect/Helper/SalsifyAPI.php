@@ -1,6 +1,5 @@
 <?php
-// FIXME this will be included in the module
-require_once BP.DS.'lib'.DS.'MultipartUploader'.DS.'Uploader.php';
+require_once BP.DS.'lib'.DS.'salsify'.DS.'MultipartUploader'.DS.'Uploader.php';
 
 
 /**
