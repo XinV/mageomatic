@@ -1,21 +1,22 @@
 <?php
 
-// OPTIMIZE more table indexes
-
 // NOTE: to UNDO this install:
-// DROP each of the tables created
-// DELETE from core_resource where code = 'salsify_connect_setup';
+//   DROP each of the tables created
+//   DELETE from core_resource where code = 'salsify_connect_setup';
 
 // improves readability
 $installer = $this;
 $installer->startSetup();
 
 
-// Create the initial Salsify data. Some notes on the table name here.
-// The following call to getTable('salsify_connect/configuration') will lookup
+// Some notes on the table name here. The following call to
+// getTable('salsify_connect/configuration') will lookup
 // the resource for salsify_connect in confix.xml and look for a corresponding
 // entity called configuration. The table name in the XML is
-// salsify_connect_configuration, so this is what is created.
+// salsify_connect_configuration, so this is what is created. If you have the
+// table without the config.xml entry the system will act as if the table does
+// not exist.
+
 $table = $installer->getConnection()->newTable($installer->getTable(
   'salsify_connect/configuration'))
   ->addColumn('id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
@@ -217,11 +218,11 @@ function stub_import_export_table($installer, $table_id, $label) {
 }
 
 $table = stub_import_export_table($installer, 'import_run', 'Import');
-// add extra columns here
+// add extra columns here that are ImportRun specific
 $installer->getConnection()->createTable($table);
 
 $table = stub_import_export_table($installer, 'export_run', 'Export');
-// add extra columns here
+// add extra columns here that are ExportRun specific
 $installer->getConnection()->createTable($table);
 
 

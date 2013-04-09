@@ -44,9 +44,9 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input 
 #salsify-connect-menu a {
   text-decoration: none;
   font-size: 1.1em;
-  padding: 0.5em;
+  padding: 0.75em;
 }
 #salsify-connect-menu .active {
-  background-color:#eee;
+  background-color: rgb(255, 255, 200);
   font-weight: bold;
 }
