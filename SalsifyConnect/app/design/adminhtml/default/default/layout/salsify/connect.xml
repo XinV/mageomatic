@@ -11,7 +11,7 @@
         <stylesheet>salsify/connect.css</stylesheet>
       </action>
       <action method="addJs">
-        <stylesheet>salsify/connect.js</stylesheet>
+        <stylesheet>connect.js</stylesheet>
       </action>
     </reference>
   </default>
