@@ -254,6 +254,12 @@ class Salsify_Connect_Adminhtml_IndexController
 
     $salsify = Mage::helper('salsify_connect');
     $salsify->start_worker();
+
+    // we need to get off delayed jobs. this gives the whole process time to
+    // fail if some configuration is incorrect so that we can display the right
+    // error message before refreshing the page.
+    sleep(5);
+
     $this->_respond_with_json(array('success' => true));
   }
 
