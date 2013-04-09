@@ -19,7 +19,9 @@ var salsify = (function (parent) {
       onSuccess: function(response) {
         // note this is currently broken with the delayed jobs. we cannot just
         // reload the page.
-        // reloadPage();
+        setTimeout(function() {
+          reloadPage();
+        }, 5000);
       },
       onFailure: function(response) {
         reloadPage();
