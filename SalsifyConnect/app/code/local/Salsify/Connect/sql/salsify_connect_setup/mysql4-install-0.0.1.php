@@ -195,8 +195,12 @@ function stub_import_export_table($installer, $table_id, $label) {
       'nullable' => true,
       'default'  => NULL,
       ), 'Salsify Connect ' . $label . ' Run End Time')
-    ->addIndex($installer->getIdxName(
-      $installer->getTable('salsify_connect/' . $table_id),
+    ->addIndex(
+      $installer->getIdxName(
+        $installer->getTable('salsify_connect/' . $table_id),
+        array('id'),
+        Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX
+      ),
       array('id'),
       array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX)
       )
