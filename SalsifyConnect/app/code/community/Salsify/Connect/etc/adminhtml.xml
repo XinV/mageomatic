@@ -29,13 +29,12 @@
         </manage_exports>
 
        <!-- DEVONLY useful for testing actions with UI -->
-       <!--
+       <!-- FIXME -->
         <test module="salsify_connect">
           <title>TEST</title>
           <sort_order>99</sort_order>
           <action>salsify/adminhtml_index/test</action>
         </test>
-        -->
 
         <!-- DEVONLY useful for cleaning Salsify data -->
         <!-- FIXME -->
