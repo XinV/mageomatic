@@ -149,7 +149,17 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'Trigger Product SKU')
   ->addColumn('target_sku', Varien_Db_Ddl_Table::TYPE_VARCHAR, 64, array(
     'nullable' => false,
-    ), 'Target Product SKU');
+    ), 'Target Product SKU')
+  ->addIndex(
+      $installer->getIdxName(
+        $installer->getTable('salsify_connect/' . $table_id),
+        array('trigger_sku','target_sku','magento_relation_type'),
+        Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX
+      ),
+      array('trigger_sku','target_sku','magento_relation_type'),
+      array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX)
+    )
+  ->setComment('Salsify_Connect salsify_connect/accessory_mapping entity table');
 $installer->getConnection()->createTable($table);
 // primarly for export
 // tried to create an index:
@@ -158,10 +168,10 @@ $installer->getConnection()->createTable($table);
 // but couldn't. mysql won't index text fields of longer than varchar > 255...
 // If this becomes important we could always index the checksum of the external
 // ID just for lookup purposes.
-$installer->run("
-  CREATE INDEX salsify_connect_accessory_mapping_by_skus
-  ON salsify_connect_accessory_mapping(trigger_sku, target_sku, magento_relation_type);
-");
+// $installer->run("
+//   CREATE INDEX salsify_connect_accessory_mapping_by_skus
+//   ON salsify_connect_accessory_mapping(trigger_sku, target_sku, magento_relation_type);
+// ");
 
 
 // currently the import_run and export_run tables are nearly identical, and this
@@ -212,18 +222,10 @@ function stub_import_export_table($installer, $table_id, $label) {
 $table = stub_import_export_table($installer, 'import_run', 'Import');
 // add extra columns here
 $installer->getConnection()->createTable($table);
-// $installer->run("
-//   CREATE INDEX salsify_connect_import_run_by_id
-//   ON salsify_connect_import_run(id);
-// ");
 
 $table = stub_import_export_table($installer, 'export_run', 'Export');
 // add extra columns here
 $installer->getConnection()->createTable($table);
-// $installer->run("
-//   CREATE INDEX salsify_connect_export_run_by_id
-//   ON salsify_connect_export_run(id);
-// ");
 
 
 // NOTE: this is taken almost directly from the DJJob/jobs.sql
