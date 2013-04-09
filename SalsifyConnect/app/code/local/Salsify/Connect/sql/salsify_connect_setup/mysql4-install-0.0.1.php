@@ -152,7 +152,7 @@ $table = $installer->getConnection()->newTable($installer->getTable(
     ), 'Target Product SKU')
   ->addIndex(
       $installer->getIdxName(
-        $installer->getTable('salsify_connect/' . $table_id),
+        $installer->getTable('salsify_connect/accessory_mapping'),
         array('trigger_sku','target_sku','magento_relation_type'),
         Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX
       ),
