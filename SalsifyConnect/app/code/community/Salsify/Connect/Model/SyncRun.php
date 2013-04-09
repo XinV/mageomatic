@@ -125,7 +125,7 @@ abstract class Salsify_Connect_Model_SyncRun
   // returns the cached handle of the salsify API.
   protected function _get_salsify_config() {
     if (!$this->_config) {
-      $this->_config = Mage::helper('salsify_connect/configuration')
+      $this->_config = Mage::getModel('salsify_connect/configuration')
                            ->getInstance();
     }
     return $this->_config;
