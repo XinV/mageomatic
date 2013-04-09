@@ -199,7 +199,7 @@ function stub_import_export_table($installer, $table_id, $label) {
       $installer->getTable('salsify_connect/' . $table_id),
       array('id'),
       array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX)
-      ),
+      )
     ->setComment('Salsify_Connect salsify_connect/' . $table_id . ' entity table');
 
   return $table;
