@@ -50,6 +50,7 @@ class Salsify_Connect_Model_ExportRun
 
   // performs the entire export
   public function perform() {
+    $this->_ensure_complete_salsify_configuration();
     if (!$this->getId()) {
       throw new Exception("ExportRun was never initialized prior to being run.");
     }

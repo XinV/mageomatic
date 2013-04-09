@@ -107,20 +107,26 @@ abstract class Salsify_Connect_Model_SyncRun
       $this->setStartTime(self::_current_time());
     }
 
-    $this->_ensure_complete_salsify_configuration();
+    $this->_get_salsify_config();
     $this->_get_salsify_api();
     return $this;
   }
 
 
   // ensures that the Salsify account confguration is complete.
-  private function _ensure_complete_salsify_configuration() {
+  protected function _ensure_complete_salsify_configuration() {
+    if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
+      $this->set_error("you must first configure your Salsify account information.");
+    }
+    return $this->_config;
+  }
+
+
+  // returns the cached handle of the salsify API.
+  protected function _get_salsify_config() {
     if (!$this->_config) {
-      $this->_config = Mage::getModel('salsify_connect/configuration')
+      $this->_config = Mage::helper('salsify_connect/configuration')
                            ->getInstance();
-      if (!$this->_config->getApiKey() || !$this->_config->getUrl()) {
-        $this->set_error("you must first configure your Salsify account information.");
-      }
     }
     return $this->_config;
   }

@@ -48,6 +48,7 @@ class Salsify_Connect_Model_ImportRun
 
   // does the entire import
   public function perform() {
+    $this->_ensure_complete_salsify_configuration();
     if (!$this->getId()) {
       $this->set_error("must initialize ImportRun before running in a background job.");
     }
