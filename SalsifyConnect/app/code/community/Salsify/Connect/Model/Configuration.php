@@ -4,6 +4,8 @@
  *
  * At the moment, this is a singleton, so does not support multi-store sites
  * if those sites have multiple Salsify accounts for data segmentation.
+ *
+ * TODO move to Mage::getSingleton for all references to this class
  */
 class Salsify_Connect_Model_Configuration
       extends Mage_Core_Model_Abstract
@@ -28,7 +30,6 @@ class Salsify_Connect_Model_Configuration
    * @return the singleton instance of the configuration, creating if necessary.
    */
   public function getInstance() {
-    // FIXME need to lock the table here so that multiple cannot be created
     $config = $this->getCollection()
                    ->getFirstItem();
 

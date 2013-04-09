@@ -28,14 +28,17 @@
           <action>salsify/adminhtml_index/exports</action>
         </manage_exports>
 
-       <!-- FIXME remove when done -->
+       <!-- DEVONLY useful for testing actions with UI -->
+       <!--
         <test module="salsify_connect">
           <title>TEST</title>
           <sort_order>99</sort_order>
           <action>salsify/adminhtml_index/test</action>
         </test>
+        -->
 
-        <!-- FIXME link to this ONLY from the manage salsify page -->
+        <!-- DEVONLY useful for cleaning Salsify data -->
+        <!-- FIXME -->
         <cleaner module="salsify_connect">
           <title>DELETE DATA (Mostly Salsify, but really most data)</title>
           <sort_order>100</sort_order>
