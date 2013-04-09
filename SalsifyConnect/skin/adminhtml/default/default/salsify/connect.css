@@ -42,7 +42,7 @@ form#salsify_configuration_edit_form fieldset table tbody tr td.input-ele input 
   margin-right: 2px;
 }
 #salsify-connect-menu li {
-  padding: 0.75em;
+  padding: 0.5em;
 }
 #salsify-connect-menu li.active {
   background-color: rgb(255, 255, 200);
