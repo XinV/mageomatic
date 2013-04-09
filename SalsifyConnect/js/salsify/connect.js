@@ -17,13 +17,11 @@ var salsify = (function (parent) {
       method: 'post',
       loaderArea : false, // don't show the 'Please wait' dialog here
       onSuccess: function(response) {
-        // console.log(response);
         // note that this is unlikely to ever be called since the page will
         // almost always be reloaded before this callback is given a chance.
-        // reloadPage();
+        reloadPage();
       },
       onFailure: function(response) {
-        // console.log(response);
         reloadPage();
       }
     });
