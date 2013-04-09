@@ -195,6 +195,11 @@ function stub_import_export_table($installer, $table_id, $label) {
       'nullable' => true,
       'default'  => NULL,
       ), 'Salsify Connect ' . $label . ' Run End Time')
+    ->addIndex($installer->getIdxName(
+      $installer->getTable('salsify_connect/' . $table_id),
+      array('id'),
+      array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX)
+      ),
     ->setComment('Salsify_Connect salsify_connect/' . $table_id . ' entity table');
 
   return $table;
@@ -203,18 +208,18 @@ function stub_import_export_table($installer, $table_id, $label) {
 $table = stub_import_export_table($installer, 'import_run', 'Import');
 // add extra columns here
 $installer->getConnection()->createTable($table);
-$installer->run("
-  CREATE INDEX salsify_connect_import_run_by_id
-  ON salsify_connect_import_run(id);
-");
+// $installer->run("
+//   CREATE INDEX salsify_connect_import_run_by_id
+//   ON salsify_connect_import_run(id);
+// ");
 
 $table = stub_import_export_table($installer, 'export_run', 'Export');
 // add extra columns here
 $installer->getConnection()->createTable($table);
-$installer->run("
-  CREATE INDEX salsify_connect_export_run_by_id
-  ON salsify_connect_export_run(id);
-");
+// $installer->run("
+//   CREATE INDEX salsify_connect_export_run_by_id
+//   ON salsify_connect_export_run(id);
+// ");
 
 
 // NOTE: this is taken almost directly from the DJJob/jobs.sql

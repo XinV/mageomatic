@@ -4,8 +4,10 @@ Salsify Connect
 Magento Extension for the Salsify Product Content Management system.
 
 
-Magento Versions Supported
+Requirements
 ==========================
+
+## Magento Versions Supported
 
 Currently Salsify Connect only supports Magento 1.7.x.
 
@@ -17,6 +19,6 @@ Currently Salsify Connect only supports Magento 1.7.x.
 Installing
 ==========
 
-# Modman
+## Modman
 
 Under Settings -> Developer -> Template Settings -> Allow Symlinks

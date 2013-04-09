@@ -153,6 +153,8 @@ class Salsify_Connect_Model_ImageMapping
         $existing_mapping = self::_get_mapping_by_sku_and_salsify_id($sku, $id);
         if ($existing_mapping) {
           // we already have that image. skipping...
+          // FIXME we must make sure that the urls match up or else something
+          //       may have changed.
           continue;
         }
 
