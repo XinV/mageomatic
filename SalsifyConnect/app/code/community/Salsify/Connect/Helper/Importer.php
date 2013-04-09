@@ -1,5 +1,5 @@
 <?php
-require_once BP.DS.'lib'.DS.'JsonStreamingParser'.DS.'Listener.php';
+require_once BP.DS.'lib'.DS.'salsify'.DS.'JsonStreamingParser'.DS.'Listener.php';
 
 /**
  * Parses the Salsify JSON data format and loads the resulting data into

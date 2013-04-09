@@ -1,7 +1,6 @@
 <?php
 require_once BP.DS.'lib'.DS.'salsify'.DS.'MultipartUploader'.DS.'Uploader.php';
 
-
 /**
  * This class is the gateway to Salsify. It should be the only class that knows
  * anything about Salsify's API (though other classes know about the Salsify
