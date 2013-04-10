@@ -128,18 +128,22 @@ class Salsify_Connect_Helper_SalsifyAPI
       'name' => 'Export to Magento ' . date('m/d/y h:i:s', $now)
     )));
     $mes = $request->send();
-    $response = json_decode($mes->getBody(),true);
+    $response_json = json_decode($mes->getBody(),true);
 
     if (!$this->_response_valid($mes)) {
-      $error = $response['errors'][0];
+      if (array_key_exists('errors', $response_json)) {
+        $error = $response_json['errors'][0];
+      } else {
+        $error = "No details provided by Salsify.";
+      }
       self::_log("Error received from Salsify when creating export configuration: " . $error);
       throw new Exception("Error received from Salsify when creating export configuration: " . $error);
     }
 
-    if (!array_key_exists('id', $response)) {
+    if (!array_key_exists('id', $response_json)) {
       throw new Exception("Error: no token returned when creating Salsify export.");
     }
-    $token = $response['id'];
+    $token = $response_json['id'];
     self::_log("SUCCESS creating export. Salsify export token: " . $token);
 
     return $token;
