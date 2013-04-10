@@ -101,7 +101,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $salsify_export_run_id = $this->_start_salsify_export_run($salsify_export_id);
 
     // next we can check the status until it's done...
-    $url = $this->_wait_for_salsify_to_finish_preparing_export();
+    $url = $this->_wait_for_salsify_to_finish_preparing_export($salsify_export_run_id);
 
     self::_log("Done downloading export from salsify");
     return $url;
