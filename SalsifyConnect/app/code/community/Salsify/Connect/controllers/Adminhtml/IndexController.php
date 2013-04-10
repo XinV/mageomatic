@@ -169,8 +169,6 @@ class Salsify_Connect_Adminhtml_IndexController
 
         if (array_key_exists('url', $config_data)) {
           $config->setUrl($config_data['url']);
-        } else {
-          $config->setUrl('');
         }
 
         $config->save();
