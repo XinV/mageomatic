@@ -189,7 +189,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   private function _wait_for_salsify_to_finish_preparing_export($id) {
     do {
       sleep(5);
-      $url = $this->is_salsify_done_preparing_export($id);
+      $url = $this->_is_salsify_done_preparing_export($id);
     } while (!$url);
     return $url;
   }
