@@ -171,18 +171,15 @@ class Salsify_Connect_Helper_SalsifyAPI
 
   // returns the JSON document from salsify as a php array that describes what
   // the status of the import with the given token is.
-  private function _get_salsify_export($id) {
-    if (!$this->_base_url || !$this->_api_key) {
-      throw new Exception("Base URL and API key must be set to create a new import.");
-    }
-    $url = $this->_get_salsify_export_url($id);
+  private function _get_salsify_export_run($id) {
+    $url = $this->_get_check_salsify_export_run_url($id);
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
 
     if (!$this->_response_valid($mes)) {
       throw new Exception("Error received from Salsify: " . $mes->getResponseStatus());
     }
-self::_log("FIXME HERE");
+
     return json_decode($mes->getBody(), true);
   }
 
@@ -203,7 +200,8 @@ self::_log("FIXME HERE");
   // return the url of the document if it's done.
   // throw an Exception if anything strange occurs.
   private function _is_salsify_done_preparing_export($id) {
-    $export = $this->_get_salsify_export($id);
+    $export = $this->_get_salsify_export_run($id);
+    self::_log("EXPORT RUN: " . var_export($export,true));
 
     if (!array_key_exists('status', $export)) {
       throw new Exception('Malformed document returned from Salsify: ' . var_export($export,true));
