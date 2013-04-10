@@ -50,14 +50,22 @@ class Salsify_Connect_Helper_SalsifyAPI
 
   // returns the Salsify service URL to start Salsify exporting its data for
   // importing into Magento
-  private function _get_create_import_url() {
+  private function _get_create_salsify_export_url() {
     return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . $this->_get_url_suffix();
   }
 
   // returns the Salsify service URL to get details about a specific Salsify
   // export (Magento import).
-  private function _get_import_url($salsify_export_id) {
+  private function _get_salsify_export_url($salsify_export_id) {
     return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . '/' . $salsify_export_id . $this->_get_url_suffix();
+  }
+
+  private function _get_start_salsify_export_run_url($salsify_export_id) {
+    return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . '/' . $salsify_export_id . '/runs' . $this->_get_url_suffix();
+  }
+
+  private function _get_check_salsify_export_run_url($salsify_export_run_id) {
+    return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . '/runs/' . $salsify_export_run_id . $this->_get_url_suffix();
   }
 
   // the first thing we need when sending data to Salsify is what it thinks of
@@ -68,7 +76,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   }
 
   // gets the base service URL for Salsify imports (Magento export)
-  private function _get_create_export_url() {
+  private function _get_create_salsify_import_url() {
     return $this->_base_url . self::EXPORT_TO_SALSIFY_PATH . $this->_get_url_suffix();
   }
 
@@ -81,18 +89,35 @@ class Salsify_Connect_Helper_SalsifyAPI
   }
 
 
+  public function download_product_data_from_salsify() {
+    self::_log("Importing data from Salsify.");
+
+    // first we need to create the actual import in Salsify
+    self::_log("Creating export configuration in Salsify for exported data...");
+    $salsify_export_id = $this->_create_salsify_export();
+
+    // second we have to get Salsify to actually create the export
+    self::_log("Kicking off import run in Salsify...");
+    $salsify_export_run_id = $this->_start_salsify_export_run($salsify_export_id);
+
+    // next we can check the status until it's done...
+    $url = $this->_wait_for_salsify_to_finish_preparing_export();
+
+    self::_log("Done downloading export from salsify");
+    return $url;
+  }
+
+
   // creates an actual import in Salsify that can be referred to by its token.
   //
   // TODO make this configurable with "compressed" vs. not once we figure out
   //      how to deal with GZipped stuff in PHP.
-  public function create_import() {
-    self::_log("creating Salsify import...");
-
+  private function _create_salsify_export() {
     if (!$this->_base_url || !$this->_api_key) {
       throw new Exception("Base URL and API key must be set to create a new import.");
     }
 
-    $url = $this->_get_create_import_url();
+    $url = $this->_get_create_salsify_export_url();
     $req = new HttpRequest($url, HTTP_METH_POST);
     $mes = $req->send();
 
@@ -106,17 +131,29 @@ class Salsify_Connect_Helper_SalsifyAPI
     }
     $token = $import['id'];
     self::_log("SUCCESS creating import. Salsify import token: " . $token);
+
     return $token;
+  }
+
+
+  private function _start_salsify_export_run($id) {
+    $request = new HttpRequest($this->_get_start_salsify_export_run_url($id), HTTP_METH_POST);
+    $response = $request->send();
+    if (!$this->_response_valid($response)) {
+      throw new Exception("ERROR: could not start Salsify export: " . var_export($response,true));
+    }
+    $response_json = json_decode($response->getBody(), true);
+    return $response_json['id'];
   }
 
 
   // returns the JSON document from salsify as a php array that describes what
   // the status of the import with the given token is.
-  public function get_import($id) {
+  private function _get_salsify_export($id) {
     if (!$this->_base_url || !$this->_api_key) {
       throw new Exception("Base URL and API key must be set to create a new import.");
     }
-    $url = $this->_get_import_url($id);
+    $url = $this->_get_salsify_export_url($id);
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
 
@@ -132,13 +169,13 @@ class Salsify_Connect_Helper_SalsifyAPI
   // return null if not.
   // return the url of the document if it's done.
   // throw an Exception if anything strange occurs.
-  public function is_salsify_done_preparing_export($id) {
-    $import = $this->get_import($id);
+  private function _is_salsify_done_preparing_export($id) {
+    $export = $this->_get_salsify_export($id);
 
-    if (!array_key_exists('status', $import)) {
-      throw new Exception('Malformed import document returned from Salsify: ' . var_export($import,true));
+    if (!array_key_exists('status', $export)) {
+      throw new Exception('Malformed import document returned from Salsify: ' . var_export($export,true));
     }
-    $status = $import['status'];
+    $status = $export['status'];
     if ($status === 'running') {
       // still going
       return null;
@@ -146,14 +183,14 @@ class Salsify_Connect_Helper_SalsifyAPI
       // extremely unlikely. this would be an internal error in Salsify
       throw new Exception('Salsify failed to produce an export for Magento.');
     } elseif ($status !== 'completed') {
-      throw new Exception('Malformed import document returned from Salsify. Unknown status: ' . $import['status']);
-    } elseif (!array_key_exists('url', $import)) {
+      throw new Exception('Malformed import document returned from Salsify. Unknown status: ' . $export['status']);
+    } elseif (!array_key_exists('url', $export)) {
       throw new Exception('Malformed import document returned from Salsify. No URL returned for successful Salsify export.');
     }
 
-    $url = $import['url'];
+    $url = $export['url'];
     if (!$url) {
-      $this->set_error(new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $this.getToken()));
+      throw new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $id);
     }
 
     return $url;
@@ -162,7 +199,7 @@ class Salsify_Connect_Helper_SalsifyAPI
 
   // waits until salsify is done preparing the given export, and returns the URL
   // when done. throws an exception if anything funky occurs.
-  public function wait_for_salsify_to_finish_preparing_export($id) {
+  private function _wait_for_salsify_to_finish_preparing_export($id) {
     do {
       sleep(5);
       $url = $this->is_salsify_done_preparing_export($id);
@@ -195,7 +232,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $salsify_import_run_id = $this->_start_salsify_import_run($salsify_import_id);
 
     // finally we can check the status until it's done...
-    while ($this->_still_running($salsify_import_run_id)) {
+    while ($this->_salsify_import_still_running($salsify_import_run_id)) {
       self::_log("Salsify import not yet done...");
       sleep(10);
     }
@@ -261,7 +298,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   //
   // Returns the ID of the Salsify import for later reference.
   private function _create_salsify_import($key, $export_file) {
-    $request = new HttpRequest($this->_get_create_export_url(), HTTP_METH_POST);
+    $request = new HttpRequest($this->_get_create_salsify_import_url(), HTTP_METH_POST);
     $request->addHeaders(array('Content-Type' => 'application/json'));
     $request->setBody(json_encode(array(
       'import_format' => array(
@@ -308,7 +345,7 @@ class Salsify_Connect_Helper_SalsifyAPI
 
 
   // returns whether the salsify import run is still going
-  private function _still_running($salsify_import_run_id) {
+  private function _salsify_import_still_running($salsify_import_run_id) {
     $import = $this->_get_salsify_import_details($salsify_import_run_id);
     $status = $import['status'];
 

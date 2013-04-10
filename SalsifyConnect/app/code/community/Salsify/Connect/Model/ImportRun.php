@@ -63,10 +63,7 @@ class Salsify_Connect_Model_ImportRun
       $this->_set_status(self::STATUS_SALSIFY_PREPARING);
       $this->_set_start_time();
       $this->save();
-      $token = $salsify_api->create_import();
-      $this->setToken($token);
-      $this->save();
-      $url = $salsify_api->wait_for_salsify_to_finish_preparing_export($token);
+      $url = $salsify_api->download_product_data_from_salsify();
 
       // 1) fetch data from salsify
       self::_log("downloading export document from Salsify.");
