@@ -122,6 +122,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $mes = $req->send();
 
     if (!$this->_response_valid($mes)) {
+      self::_log("RESPONSE: " . var_export($mes,true));
       throw new Exception("Error received from Salsify when creating import: " . $mes->getResponseStatus());
     }
 
@@ -165,7 +166,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   }
 
 
-  // checks whether salsify is done preparing the import with the given id.
+  // checks whether salsify is done preparing the data export with the given id.
   // return null if not.
   // return the url of the document if it's done.
   // throw an Exception if anything strange occurs.
@@ -173,7 +174,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $export = $this->_get_salsify_export($id);
 
     if (!array_key_exists('status', $export)) {
-      throw new Exception('Malformed import document returned from Salsify: ' . var_export($export,true));
+      throw new Exception('Malformed document returned from Salsify: ' . var_export($export,true));
     }
     $status = $export['status'];
     if ($status === 'running') {
@@ -183,9 +184,9 @@ class Salsify_Connect_Helper_SalsifyAPI
       // extremely unlikely. this would be an internal error in Salsify
       throw new Exception('Salsify failed to produce an export for Magento.');
     } elseif ($status !== 'completed') {
-      throw new Exception('Malformed import document returned from Salsify. Unknown status: ' . $export['status']);
+      throw new Exception('Malformed document returned from Salsify. Unknown status: ' . $export['status']);
     } elseif (!array_key_exists('url', $export)) {
-      throw new Exception('Malformed import document returned from Salsify. No URL returned for successful Salsify export.');
+      throw new Exception('Malformed document returned from Salsify. No URL returned for successful Salsify export.');
     }
 
     $url = $export['url'];
