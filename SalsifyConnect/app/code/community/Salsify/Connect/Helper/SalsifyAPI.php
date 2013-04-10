@@ -64,8 +64,8 @@ class Salsify_Connect_Helper_SalsifyAPI
     return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . '/' . $salsify_export_id . '/runs' . $this->_get_url_suffix();
   }
 
-  private function _get_check_salsify_export_run_url($salsify_export_run_id) {
-    return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . '/runs/' . $salsify_export_run_id . $this->_get_url_suffix();
+  private function _get_check_salsify_export_run_url($salsify_export_id, $salsify_export_run_id) {
+    return $this->_base_url . self::IMPORT_FROM_SALSIFY_PATH . '/' . $salsify_export_id . '/runs/' . $salsify_export_run_id . $this->_get_url_suffix();
   }
 
   // the first thing we need when sending data to Salsify is what it thinks of
@@ -102,7 +102,7 @@ class Salsify_Connect_Helper_SalsifyAPI
 
     // next we can check the status until it's done...
     self::_log("Waiting for Salsify to finish preparing the export...");
-    $url = $this->_wait_for_salsify_to_finish_preparing_export($salsify_export_run_id);
+    $url = $this->_wait_for_salsify_to_finish_preparing_export($salsify_export_id, $salsify_export_run_id);
 
     self::_log("Done downloading export from salsify");
     return $url;
@@ -151,7 +151,7 @@ class Salsify_Connect_Helper_SalsifyAPI
 
 
   private function _start_salsify_export_run($id) {
-    $request = new HttpRequest($this->_get_start_salsify_export_run_url($id), HTTP_METH_POST);
+    $request = new HttpRequest($this->_get_start_salsify_export_run_url($salsify_export_id, $id), HTTP_METH_POST);
     $response = $request->send();
     $response_json = json_decode($response->getBody(), true);
     if (!$this->_response_valid($response)) {
@@ -186,10 +186,10 @@ class Salsify_Connect_Helper_SalsifyAPI
 
   // waits until salsify is done preparing the given export, and returns the URL
   // when done. throws an exception if anything funky occurs.
-  private function _wait_for_salsify_to_finish_preparing_export($id) {
+  private function _wait_for_salsify_to_finish_preparing_export($salsify_export_id, $id) {
     do {
       sleep(5);
-      $url = $this->_is_salsify_done_preparing_export($id);
+      $url = $this->_is_salsify_done_preparing_export($salsify_export_id, $id);
     } while (!$url);
     return $url;
   }
@@ -199,8 +199,8 @@ class Salsify_Connect_Helper_SalsifyAPI
   // return null if not.
   // return the url of the document if it's done.
   // throw an Exception if anything strange occurs.
-  private function _is_salsify_done_preparing_export($id) {
-    $export = $this->_get_salsify_export_run($id);
+  private function _is_salsify_done_preparing_export($salsify_export_id, $id) {
+    $export = $this->_get_salsify_export_run($salsify_export_id, $id);
     self::_log("EXPORT RUN: " . var_export($export,true));
 
     if (!array_key_exists('status', $export)) {
