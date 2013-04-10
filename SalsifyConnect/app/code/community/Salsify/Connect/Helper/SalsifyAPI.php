@@ -201,7 +201,6 @@ class Salsify_Connect_Helper_SalsifyAPI
   // throw an Exception if anything strange occurs.
   private function _is_salsify_done_preparing_export($salsify_export_id, $id) {
     $export = $this->_get_salsify_export_run($salsify_export_id, $id);
-    self::_log("EXPORT RUN: " . var_export($export,true));
 
     if (!array_key_exists('status', $export)) {
       throw new Exception('Malformed document returned from Salsify: ' . var_export($export,true));
