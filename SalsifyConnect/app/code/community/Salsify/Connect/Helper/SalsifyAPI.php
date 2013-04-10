@@ -118,8 +118,12 @@ class Salsify_Connect_Helper_SalsifyAPI
     }
 
     $url = $this->_get_create_salsify_export_url();
-    $req = new HttpRequest($url, HTTP_METH_POST);
-    $mes = $req->send();
+    $request = new HttpRequest($url, HTTP_METH_POST);
+    $now = Mage::getModel('core/date')->timestamp(time());
+    $request->setBody(json_encode(array(
+      'name' => 'Export to Magento ' . date('m/d/y h:i:s', $now)
+    )));
+    $mes = $request->send();
     $response = json_decode($mes->getBody(),true);
 
     if (!$this->_response_valid($mes)) {
