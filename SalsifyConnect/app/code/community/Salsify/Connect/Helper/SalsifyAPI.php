@@ -123,7 +123,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $response = json_decode($mes->getBody(),true);
 
     if (!$this->_response_valid($mes)) {
-      $error = $response['Errors'][0];
+      $error = $response['errors'][0];
       self::_log("Error received from Salsify when creating export configuration: " . $error);
       throw new Exception("Error received from Salsify when creating export configuration: " . $error);
     }
