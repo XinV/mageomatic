@@ -267,7 +267,7 @@ class Salsify_Connect_Adminhtml_IndexController
   /*
    * Causes all Salsify (and other) data to be cleared from the system.
    * DEVONLY
-   *
+   */
   public function cleanerAction() {
     $this->_start_render('salsify_connect_menu/cleaner');
 

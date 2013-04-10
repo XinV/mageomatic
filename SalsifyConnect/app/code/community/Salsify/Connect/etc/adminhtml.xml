@@ -36,11 +36,11 @@
         </test> -->
 
         <!-- DEVONLY useful for cleaning Salsify data -->
-        <!-- <cleaner module="salsify_connect">
+        <cleaner module="salsify_connect">
           <title>DELETE DATA (Mostly Salsify, but really most data)</title>
           <sort_order>100</sort_order>
           <action>salsify/adminhtml_index/cleaner</action>
-        </cleaner> -->
+        </cleaner>
 
       </children>
     </salsify_connect_menu>
