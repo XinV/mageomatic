@@ -120,19 +120,18 @@ class Salsify_Connect_Helper_SalsifyAPI
     $url = $this->_get_create_salsify_export_url();
     $req = new HttpRequest($url, HTTP_METH_POST);
     $mes = $req->send();
+    $response = json_decode($mes->getBody(),true);
 
     if (!$this->_response_valid($mes)) {
-      $json = json_decode($mes->getBody());
-      $error = $json['Errors'][0];
+      $error = $response['Errors'][0];
       self::_log("Error received from Salsify when creating export configuration: " . $error);
       throw new Exception("Error received from Salsify when creating export configuration: " . $error);
     }
 
-    $import = json_decode($mes->getBody(), true);
-    if (!array_key_exists('id', $import)) {
+    if (!array_key_exists('id', $response)) {
       throw new Exception("Error: no token returned when creating Salsify import.");
     }
-    $token = $import['id'];
+    $token = $response['id'];
     self::_log("SUCCESS creating import. Salsify import token: " . $token);
 
     return $token;
