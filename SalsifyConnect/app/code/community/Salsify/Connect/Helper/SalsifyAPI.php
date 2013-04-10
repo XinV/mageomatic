@@ -151,7 +151,7 @@ class Salsify_Connect_Helper_SalsifyAPI
 
 
   private function _start_salsify_export_run($id) {
-    $request = new HttpRequest($this->_get_start_salsify_export_run_url($salsify_export_id, $id), HTTP_METH_POST);
+    $request = new HttpRequest($this->_get_start_salsify_export_run_url($id), HTTP_METH_POST);
     $response = $request->send();
     $response_json = json_decode($response->getBody(), true);
     if (!$this->_response_valid($response)) {
@@ -171,8 +171,8 @@ class Salsify_Connect_Helper_SalsifyAPI
 
   // returns the JSON document from salsify as a php array that describes what
   // the status of the import with the given token is.
-  private function _get_salsify_export_run($id) {
-    $url = $this->_get_check_salsify_export_run_url($id);
+  private function _get_salsify_export_run($salsify_export_id, $id) {
+    $url = $this->_get_check_salsify_export_run_url($salsify_export_id, $id);
     $req = new HttpRequest($url, HTTP_METH_GET);
     $mes = $req->send();
 
