@@ -97,7 +97,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $salsify_export_id = $this->_create_salsify_export();
 
     // second we have to get Salsify to actually create the export
-    self::_log("Kicking off import run in Salsify...");
+    self::_log("Kicking off export run in Salsify...");
     $salsify_export_run_id = $this->_start_salsify_export_run($salsify_export_id);
 
     // next we can check the status until it's done...
@@ -114,7 +114,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   //      how to deal with GZipped stuff in PHP.
   private function _create_salsify_export() {
     if (!$this->_base_url || !$this->_api_key) {
-      throw new Exception("Base URL and API key must be set to create a new import.");
+      throw new Exception("Base URL and API key must be set to create a new export.");
     }
 
     $url = $this->_get_create_salsify_export_url();
@@ -136,10 +136,10 @@ class Salsify_Connect_Helper_SalsifyAPI
     }
 
     if (!array_key_exists('id', $response)) {
-      throw new Exception("Error: no token returned when creating Salsify import.");
+      throw new Exception("Error: no token returned when creating Salsify export.");
     }
     $token = $response['id'];
-    self::_log("SUCCESS creating import. Salsify import token: " . $token);
+    self::_log("SUCCESS creating export. Salsify export token: " . $token);
 
     return $token;
   }
@@ -148,11 +148,19 @@ class Salsify_Connect_Helper_SalsifyAPI
   private function _start_salsify_export_run($id) {
     $request = new HttpRequest($this->_get_start_salsify_export_run_url($id), HTTP_METH_POST);
     $response = $request->send();
-    if (!$this->_response_valid($response)) {
-      throw new Exception("ERROR: could not start Salsify export: " . var_export($response,true));
-    }
     $response_json = json_decode($response->getBody(), true);
-    return $response_json['id'];
+    if (!$this->_response_valid($response)) {
+      if (array_key_exists('errors', $response_json)) {
+        $error = $resopnse_json['errors'][0];
+      } else {
+        $error = "No details provided by Salsify.";
+      }
+      throw new Exception("Could not start Salsify export: " . var_export($error, true));
+    }
+
+    $id = $response_json['id'];
+    self::_log("Export run started. ID: " . $id);
+    return $id;
   }
 
 
@@ -180,6 +188,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   // throw an Exception if anything strange occurs.
   private function _is_salsify_done_preparing_export($id) {
     $export = $this->_get_salsify_export($id);
+    self::_log("FIXME: HERE");
 
     if (!array_key_exists('status', $export)) {
       throw new Exception('Malformed document returned from Salsify: ' . var_export($export,true));
