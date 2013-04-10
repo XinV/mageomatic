@@ -101,6 +101,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $salsify_export_run_id = $this->_start_salsify_export_run($salsify_export_id);
 
     // next we can check the status until it's done...
+    self::_log("Waiting for Salsify to finish preparing the export...");
     $url = $this->_wait_for_salsify_to_finish_preparing_export($salsify_export_run_id);
 
     self::_log("Done downloading export from salsify");
@@ -177,8 +178,19 @@ class Salsify_Connect_Helper_SalsifyAPI
     if (!$this->_response_valid($mes)) {
       throw new Exception("Error received from Salsify: " . $mes->getResponseStatus());
     }
-
+self::_log("FIXME HERE");
     return json_decode($mes->getBody(), true);
+  }
+
+
+  // waits until salsify is done preparing the given export, and returns the URL
+  // when done. throws an exception if anything funky occurs.
+  private function _wait_for_salsify_to_finish_preparing_export($id) {
+    do {
+      sleep(5);
+      $url = $this->is_salsify_done_preparing_export($id);
+    } while (!$url);
+    return $url;
   }
 
 
@@ -188,7 +200,6 @@ class Salsify_Connect_Helper_SalsifyAPI
   // throw an Exception if anything strange occurs.
   private function _is_salsify_done_preparing_export($id) {
     $export = $this->_get_salsify_export($id);
-    self::_log("FIXME: HERE");
 
     if (!array_key_exists('status', $export)) {
       throw new Exception('Malformed document returned from Salsify: ' . var_export($export,true));
@@ -211,17 +222,6 @@ class Salsify_Connect_Helper_SalsifyAPI
       throw new Exception("Processing done but no public URL. Check for errors with Salsify administrator. Export job ID: " . $id);
     }
 
-    return $url;
-  }
-
-
-  // waits until salsify is done preparing the given export, and returns the URL
-  // when done. throws an exception if anything funky occurs.
-  private function _wait_for_salsify_to_finish_preparing_export($id) {
-    do {
-      sleep(5);
-      $url = $this->is_salsify_done_preparing_export($id);
-    } while (!$url);
     return $url;
   }
 
