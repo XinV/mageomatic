@@ -124,7 +124,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $now = Mage::getModel('core/date')->timestamp(time());
     # this is necessary due to a bug in Salsify that had issues with export
     # names with '/' in them
-    $export_run_name = 'Export to Magento ' . preg_replace('/','-',date('m/d/y h:i:s', $now));
+    $export_run_name = 'Export to Magento ' . preg_replace('/\//','-',date('m/d/y h:i:s', $now));
     $request->setBody(json_encode(array(
       'filter' => null,
       'compress' => false,
