@@ -122,10 +122,13 @@ class Salsify_Connect_Helper_SalsifyAPI
     $request = new HttpRequest($url, HTTP_METH_POST);
     $request->addHeaders(array('Content-Type' => 'application/json'));
     $now = Mage::getModel('core/date')->timestamp(time());
+    # this is necessary due to a bug in Salsify that had issues with export
+    # names with '/' in them
+    $export_run_name = 'Export to Magento ' . preg_match('/','-',date('m/d/y h:i:s', $now));
     $request->setBody(json_encode(array(
       'filter' => null,
       'compress' => false,
-      'name' => 'Export to Magento ' . date('m/d/y h:i:s', $now)
+      'name' => $export_run_name,
     )));
     $mes = $request->send();
     $response_json = json_decode($mes->getBody(),true);
