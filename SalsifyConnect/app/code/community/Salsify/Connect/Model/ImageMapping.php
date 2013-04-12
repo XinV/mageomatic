@@ -136,6 +136,8 @@ class Salsify_Connect_Model_ImageMapping
     // our salsify data helper has the download capability.
     $salsify = Mage::helper('salsify_connect');
 
+    $acceptable_filetypes = array('jpg','jpeg','gif','png');
+
     foreach ($digital_assets as $sku => $das) {
       $prod =  Mage::getModel('catalog/product')
                    ->loadByAttribute('sku', $sku);
@@ -149,6 +151,13 @@ class Salsify_Connect_Model_ImageMapping
                      ->load($prod->getId());
 
       foreach ($das as $da) {
+        $url = $da['url'];
+        $filetype = $this->_url_filetype($url);
+        if (!in_array($filetype, $acceptable_filetypes)) {
+          // future feature request
+          continue;
+        }
+
         $id = $da['id'];
         $existing_mapping = self::_get_mapping_by_sku_and_salsify_id($sku, $id);
         if ($existing_mapping) {
@@ -158,7 +167,6 @@ class Salsify_Connect_Model_ImageMapping
           continue;
         }
 
-        $url = $da['url'];
         $filename = self::_get_local_filename_for_image($sku, $da);
         if (!$filename) {
           // very rare
@@ -249,6 +257,14 @@ class Salsify_Connect_Model_ImageMapping
       // take effect.
       $product->save();
     }
+  }
+
+
+  private function _url_filetype($url) {
+    $foo = parse_url($url);
+    $foo = pathinfo($foo['path']);
+    $foo = $foo['extension'];
+    return strtolower($foo);
   }
 
 
