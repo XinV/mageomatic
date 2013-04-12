@@ -153,7 +153,7 @@ class Salsify_Connect_Model_ImageMapping
       foreach ($das as $da) {
         $url = $da['url'];
         $filetype = self::_url_filetype($url);
-        if (!in_array($filetype, $acceptable_filetypes)) {
+        if (!$filetype || !in_array($filetype, $acceptable_filetypes)) {
           // future feature request
           continue;
         }
@@ -262,6 +262,9 @@ class Salsify_Connect_Model_ImageMapping
   private static function _url_filetype($url) {
     $foo = parse_url($url);
     $foo = pathinfo($foo['path']);
+    if (!array_key_exists('extension', $foo)) {
+      return nil;
+    }
     $foo = $foo['extension'];
     return strtolower($foo);
   }
