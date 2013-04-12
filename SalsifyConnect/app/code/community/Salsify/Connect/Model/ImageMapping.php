@@ -263,7 +263,7 @@ class Salsify_Connect_Model_ImageMapping
     $foo = parse_url($url);
     $foo = pathinfo($foo['path']);
     if (!array_key_exists('extension', $foo)) {
-      return nil;
+      return null;
     }
     $foo = $foo['extension'];
     return strtolower($foo);
