@@ -151,12 +151,15 @@ class Salsify_Connect_Model_ImageMapping
                      ->load($prod->getId());
 
       foreach ($das as $da) {
+        self::_log("HERE");
         $url = $da['url'];
         $filetype = $this->_url_filetype($url);
         if (!in_array($filetype, $acceptable_filetypes)) {
           // future feature request
+          self::_log("SKIPPING");
           continue;
         }
+        self::_log("THERE");
 
         $id = $da['id'];
         $existing_mapping = self::_get_mapping_by_sku_and_salsify_id($sku, $id);
