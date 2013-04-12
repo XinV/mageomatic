@@ -128,6 +128,7 @@ class Salsify_Connect_Helper_SalsifyAPI
     $request->setBody(json_encode(array(
       'filter' => null,
       'compress' => false,
+      'format' => 'json',
       'name' => $export_run_name,
     )));
     $mes = $request->send();
