@@ -89,68 +89,6 @@ class Salsify_Connect_Adminhtml_IndexController
   }
 
 
-  // this is useful for testing new features. commented out for production
-  // DEVONLY comment out
-  /*
-  public function testAction() {
-    $this->_start_render('salsify_connect_menu/exports');
-
-    $salsify = Mage::helper('salsify_connect');
-    $export_file = $salsify->export_data();
-    $this->_render_html('Exported data: ' . $export_file);
-
-
-    // $products = Mage::getModel('catalog/product')
-    //                 ->getCollection();
-    // $this->_render_html("<ul>");
-    // foreach($products as $product) {
-    //   $id = $product->getId();
-    //   $product = Mage::getModel('catalog/product')->load($id);
-
-    //   $url = $product->getUrlPath();
-    //   $this->_render_html('<li><a href="/'.$url. '">'.$url.'</a></li>');
-    // }
-    // $this->_render_html("</ul>");
-
-    // $accessorycategorymapper = Mage::getModel('salsify_connect/accessorycategorymapping');
-    // $values = $accessorycategorymapper->getSalsifyAttributeValues();
-    // self::_log("VALUES: " . var_export($values,true));
-
-
-    // $categories = Mage::getModel('catalog/category')
-    //                   ->getCollection();
-    // foreach($categories as $category) {
-    //   $magento_id = $category->getId();
-    //   $salsify_id = Mage::getResourceModel('catalog/category')
-    //                     ->getAttributeRawValue($magento_id, 'salsify_category_id', 0);
-    //   $this->_render_html('salsify id: ' . $salsify_id . '<br/>');
-    // }
-
-
-    // $sku = '15825261';
-    // $url = 'http://res.cloudinary.com/salsify/image/upload/amsskkckauueek4audgm.jpg';
-
-    // $this->_render_html("Trying to filter all the mappings<br/>");
-    // self::_log("1");
-    // $mappings = Mage::getModel('salsify_connect/imagemapping')
-    //                 ->getCollection()
-    //                 ->addFieldToFilter('sku', array('eq' => $sku))
-    //                 ->addFieldToFilter('url', array('eq' => $url));
-    // self::_log("2");
-    // $this->_render_html("Got collection...<br/>");
-    // $mapping = $mappings->getFirstItem();
-    // self::_log("3");
-    // $this->_render_html("Got first item...<br/>");
-    // if (!$mapping || !$mapping->getId()) {
-    //   $this->_render_html("No matching mapping found...<br/>");
-    // } else {
-    //   $this->_render_html("Matching mapping found...<br/>");
-    // }
-
-    $this->_end_render();
-  }/**/
-
-
   /**
    * Action for displaying and editing Salsify account details.
    */
@@ -260,6 +198,20 @@ class Salsify_Connect_Adminhtml_IndexController
 
     $this->_respond_with_json(array('success' => true));
   }
+
+
+  // this is useful for testing new features. commented out for production
+  // DEVONLY comment out
+  /**/
+  public function testAction() {
+    $this->_start_render('salsify_connect_menu/exports');
+
+    $salsify = Mage::helper('salsify_connect');
+    $export_file = $salsify->export_data();
+    $this->_render_html('Exported data: ' . $export_file);
+
+    $this->_end_render();
+  }/**/
 
 
   /*

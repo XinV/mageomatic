@@ -67,11 +67,8 @@ class Salsify_Connect_Model_AttributeMapping
 
 
   // $id is the salsify id
-  //
-  // $roles is an array that follows the structure of roles from a Salsify json
-  //        document. so there are nested arrays for 'products' roles, 'global'
-  //        roles, etc.
-  public static function getCodeForId($id, $roles, $type = self::PRODUCT) {
+  // $role is product_id, product_name, relation_type
+  public static function getCodeForId($id, $role, $type = self::PRODUCT) {
     // try to look up in the DB to see if the mapping already exists
     $mapping = Mage::getModel('salsify_connect/attributemapping')
                    ->loadBySalsifyId($id);
@@ -81,21 +78,15 @@ class Salsify_Connect_Model_AttributeMapping
 
     // there are some special attributes that Magento treats differently from
     // and admin and UI perspective, e.g. name, id, etc. right now there are a
-    // couple that map directly to salsify roles. we'll have to do this until
+    // couple that map directly to salsify role. we'll have to do this until
     // we have a more broad mapping capability.
 
-    if ($roles) {
-      if (array_key_exists('products', $roles)) {
-        $product_roles = $roles['products'];
-        if (in_array('id', $product_roles)) {
-          self::_create_mapping($id, 'sku');
-          return 'sku';
-        }
-        if (in_array('name', $product_roles)) {
-          self::_create_mapping($id, 'name');
-          return 'name';
-        }
-      }
+    if ($role === 'product_id') {
+      self::_create_mapping($id, 'sku');
+      return 'sku';
+    } elseif ($role === 'product_name') {
+      self::_create_mapping($id, 'name');
+      return 'name';
     }
 
     // note: we can't save these mappings yet since we can't handle multiple
@@ -147,36 +138,24 @@ class Salsify_Connect_Model_AttributeMapping
   }
 
 
-  // returns an array as per Salsify json format with roles for the attribute
-  // with the given code.
-  // "roles":{"products":["id"],"accessories":["target_product_id"]}
+  // returns the salsify:role for the attribute with the given magento code.
   //
   // note that we don't have to do the accessory category stuff here since it's
   // dealt with in AccessorycategoryMapping
-  public static function getRolesForMagentoCode($code) {
-    $roles = array();
-
+  public static function getRoleForMagentoCode($code) {
     if ($code === 'sku') {
-      $roles['products'] = array();
-      array_push($roles['products'], 'id');
-    }
-
-    if ($code === 'name') {
-      $roles['products'] = array();
-      array_push($roles['products'], 'name');
-    }
-
-    if (empty($roles)) {
-      return null;
+      return 'product_id';
+    } elseif ($code === 'name') {
+      return 'product_name';
     } else {
-      return $roles;
+      return null;
     }
   }
 
 
   // attribute with target_product_id role
   public static function getAttributeForAccessoryIds() {
-    return 'target_product_id';
+    return 'salsify:target_product_id';
   }
 
 
@@ -420,31 +399,31 @@ class Salsify_Connect_Model_AttributeMapping
   }
 
 
-  public static function loadOrCreateCategoryAttributeBySalsifyId($id, $name, $roles) {
-    $mage_attribute = self::loadCategoryAttributeBySalsifyId($id, $roles);
+  public static function loadOrCreateCategoryAttributeBySalsifyId($id, $name, $role) {
+    $mage_attribute = self::loadCategoryAttributeBySalsifyId($id, $role);
     if ($mage_attribute) {
       return $mage_attribute;
     } else {
-      return self::_createCategoryAttribute($id, $name, $roles);
+      return self::_createCategoryAttribute($id, $name, $role);
     }
   }
 
-  public static function loadOrCreateProductAttributeBySalsifyId($id, $name, $roles) {
-    $mage_attribute = self::loadProductAttributeBySalsifyId($id, $roles);
+  public static function loadOrCreateProductAttributeBySalsifyId($id, $name, $role) {
+    $mage_attribute = self::loadProductAttributeBySalsifyId($id, $role);
     if ($mage_attribute) {
       return $mage_attribute;
     } else {
-      return self::_createProductAttribute($id, $name, $roles);
+      return self::_createProductAttribute($id, $name, $role);
     }
   }
 
 
-  public static function loadCategoryAttributeBySalsifyId($id, $roles) {
-    return self::_loadAttributeBySalsifyId(self::CATEGORY, $id, $roles);
+  public static function loadCategoryAttributeBySalsifyId($id, $role) {
+    return self::_loadAttributeBySalsifyId(self::CATEGORY, $id, $role);
   }
 
-  public static function loadProductAttributeBySalsifyId($id, $roles) {
-    return self::_loadAttributeBySalsifyId(self::PRODUCT, $id, $roles);
+  public static function loadProductAttributeBySalsifyId($id, $role) {
+    return self::_loadAttributeBySalsifyId(self::PRODUCT, $id, $role);
   }
 
   public static function loadCategoryAttributeByMagentoCode($code) {
@@ -459,8 +438,8 @@ class Salsify_Connect_Model_AttributeMapping
   // does not exist.
   //
   // return database model of given attribute
-  private static function _loadAttributeBySalsifyId($attribute_type, $id, $roles) {
-    $code = self::getCodeForId($id, $roles);
+  private static function _loadAttributeBySalsifyId($attribute_type, $id, $role) {
+    $code = self::getCodeForId($id, $role);
     return self::_loadAttributeByMagentoCode($attribute_type, $code);
   }
 
@@ -483,29 +462,29 @@ class Salsify_Connect_Model_AttributeMapping
   }
 
 
-  public static function deleteCategoryAttribute($id, $roles) {
-    self::_delete_attribute(self::CATEGORY, $id, $roles);
+  public static function deleteCategoryAttribute($id, $role) {
+    self::_delete_attribute(self::CATEGORY, $id, $role);
   }
 
-  public static function deleteProductAttribute($id, $roles) {
-    self::_delete_attribute(self::PRODUCT, $id, $roles);
+  public static function deleteProductAttribute($id, $role) {
+    self::_delete_attribute(self::PRODUCT, $id, $role);
   }
 
   // Deletes an attribute with the given Salsify ID from the system if present.
-  private static function _delete_attribute($attribute_type, $id, $roles) {
-    $attribute = self::_loadAttributeBySalsifyId($attribute_type, $id, $roles);
+  private static function _delete_attribute($attribute_type, $id, $role) {
+    $attribute = self::_loadAttributeBySalsifyId($attribute_type, $id, $role);
     if ($attribute) {
       $attribute->delete();
     }
   }
 
 
-  private static function _createCategoryAttribute($id, $name, $roles) {
-    return self::_createAttribute(self::CATEGORY, $id, $name, $roles);
+  private static function _createCategoryAttribute($id, $name, $role) {
+    return self::_createAttribute(self::CATEGORY, $id, $name, $role);
   }
 
-  private static function _createProductAttribute($id, $name, $roles) {
-    return self::_createAttribute(self::PRODUCT, $id, $name, $roles);
+  private static function _createProductAttribute($id, $name, $role) {
+    return self::_createAttribute(self::PRODUCT, $id, $name, $role);
   }
 
   // creates the given attribute in Magento.
@@ -515,8 +494,8 @@ class Salsify_Connect_Model_AttributeMapping
   //
   // More docs:
   // http://www.magentocommerce.com/wiki/5_-_modules_and_development/catalog/programmatically_adding_attributes_and_attribute_sets
-  private static function _createAttribute($attribute_type, $id, $name, $roles) {
-    $code = self::getCodeForId($id, $roles);
+  private static function _createAttribute($attribute_type, $id, $name, $role) {
+    $code = self::getCodeForId($id, $role);
 
     // At the moment we only get text properties from Salsify. In fact, since
     // we don't enforce datatypes in Salsify a single attribute could, in
@@ -795,8 +774,8 @@ class Salsify_Connect_Model_AttributeMapping
   public static function getAccessoryAttribute() {
     return array(
       array(
-        "id" => self::_get_accessory_attribute_id(),
-        "roles" => array("global" => array("accessory_label"))
+        "salsify:id" => self::_get_accessory_attribute_id(),
+        "salsify:role" => "relation_type",
       )
     );
   }

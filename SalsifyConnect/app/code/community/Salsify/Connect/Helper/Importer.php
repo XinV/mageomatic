@@ -21,15 +21,13 @@ require_once BP.DS.'lib'.DS.'salsify'.DS.'JsonStreamingParser'.DS.'Listener.php'
  *
  * NOTE this assumes that the accessory category hierarchy and product category
  *      hierarchy(s) are necessarily distinct.
- *
- * TODO respect Salsify JSON header info (truncate, upsert, etc.).
  */
 class Salsify_Connect_Helper_Importer
       extends Mage_Core_Helper_Abstract
       implements \JsonStreamingParser\Listener
 {
 
-  private function _log($msg) {
+  private static function _log($msg) {
     Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
   }
 
@@ -121,7 +119,7 @@ class Salsify_Connect_Helper_Importer
 
 
   public function start_document() {
-    $this->_log("Starting document load.");
+    self::_log("Starting document load.");
 
     $this->_key_stack = array();
     $this->_value_stack = array();
@@ -131,16 +129,19 @@ class Salsify_Connect_Helper_Importer
     $this->_in_attributes = false;
     $this->_in_attribute_values = false;
     $this->_in_products = false;
+
+    $mapper = $this->_get_attribute_mapper();
+    $this->_target_product_attribute = $mapper::getAttributeForAccessoryIds();
   }
 
 
   public function end_document() {
-    $this->_log("Finished parsing document. Flushing final product data and reindexing.");
+    self::_log("Finished parsing document. Flushing final product data and reindexing.");
 
     $this->_flush_batch();
     $this->_reindex();
 
-    $this->_log("Finished parsing, loading, and reindexing. Only digital assets remain, and left as an exercise to the caller.");
+    self::_log("Finished parsing, loading, and reindexing. Only digital assets remain, and left as an exercise to the caller.");
   }
 
 
@@ -148,7 +149,7 @@ class Salsify_Connect_Helper_Importer
   // since most indexes update almost instantly, and the ones that don't we have
   // to update anyway.
   private function _reindex() {
-    $this->_log("Rebuilding all indexes.");
+    self::_log("Rebuilding all indexes.");
 
     $processCollection = Mage::getSingleton('index/indexer')
                              ->getProcessesCollection(); 
@@ -208,27 +209,14 @@ class Salsify_Connect_Helper_Importer
     } elseif ($this->_in_attribute_values) {
       $this->_attribute['type'] = self::CATEGORY;
     } else {
-      $this->_log("ERROR: _start_attribute when not in attributes or attribute values");
+      self::_log("ERROR: _start_attribute when not in attributes or attribute values");
     }
   }
 
   private function _end_attribute() {
-    $roles = $this->_get_attribute_roles($this->_attribute);
-    
-    if ($roles && array_key_exists('accessories', $roles)) {
-      $accessory_roles = $roles['accessories'];
-      if (in_array('target_product_id', $accessory_roles)) {
-        $this->_target_product_attribute = $this->_attribute['id'];
-      }
-    }
-
-    if ($roles && array_key_exists('global', $roles)) {
-      // given attribute is the attribute associated with a product relationship
-      // hierarchy (as opposed to a product hierarchy).
-      $global_roles = $roles['global'];
-      if (in_array('accessory_label', $global_roles)) {
-        array_push($this->_relationship_attributes, $this->_attribute['id']);
-      }
+    $role = $this->_get_attribute_role($this->_attribute);
+    if ($role === "relation_type") {
+      array_push($this->_relationship_attributes, $this->_attribute['salsify:id']);
     }
 
     // NOTE: if the attribute turns out to be a category--other than a product
@@ -245,17 +233,17 @@ class Salsify_Connect_Helper_Importer
   }
 
   private function _end_category() {
-    if (!array_key_exists('attribute_id', $this->_category)) {
-      $this->_log("ERROR: no attribute_id specified for category, so skipping: " . var_export($this->_category, true));
-    } elseif (!array_key_exists('id', $this->_category)) {
-      $this->_log("ERROR: no id specified for category, so skipping: " . var_export($this->_category, true));
+    if (!array_key_exists('salsify:attribute_id', $this->_category)) {
+      self::_log("ERROR: no salsify:attribute_id specified for category, so skipping: " . var_export($this->_category, true));
+    } elseif (!array_key_exists('salsify:id', $this->_category)) {
+      self::_log("ERROR: no id specified for category, so skipping: " . var_export($this->_category, true));
     } else {
-      $attribute_id = $this->_category['attribute_id'];
-      $id = $this->_category['id'];
+      $attribute_id = $this->_category['salsify:attribute_id'];
+      $id = $this->_category['salsify:id'];
 
-      if (!array_key_exists('name', $this->_category)) {
-        $this->_log("WARNING: name not given for category. using ID as name: " . var_export($this->_category, true));
-        $this->_category['name'] = $id;
+      if (!array_key_exists('salsify:name', $this->_category)) {
+        self::_log("WARNING: salsify:name not given for category. using ID as name: " . var_export($this->_category, true));
+        $this->_category['salsify:name'] = $id;
       }
 
       $this->_categories[$attribute_id][$id] = $this->_category;
@@ -301,14 +289,14 @@ class Salsify_Connect_Helper_Importer
   //       single value.
   private function _prepare_product($product) {
     if (!array_key_exists('sku', $product)) {
-      $this->_log("ERROR: product must have a SKU and does not: " . var_export($product, true));
+      self::_log("ERROR: product must have a SKU and does not: " . var_export($product, true));
       return null;
     }
 
     // SKU can only be 64 characters in Magento. We fail for now on this...
     $sku = $product['sku'];
     if (strlen($sku) > 64) {
-      $this->_log("ERROR: product SKU must be at most 64 characters long. Skipping product: " . $sku);
+      self::_log("ERROR: product SKU must be at most 64 characters long. Skipping product: " . $sku);
       return null;
     }
 
@@ -316,25 +304,21 @@ class Salsify_Connect_Helper_Importer
     $extra_product_values = array();
 
     foreach ($product as $key => $value) {
-      if ($key === 'accessories') {
+      if ($key === 'salsify:relations') {
         // process accessory relationships for the product
-        if ($this->_target_product_attribute) {
-          $accessory_skus = $this->_prepare_product_accessories($product['sku'], $value);
-          if (!empty($accessory_skus)) {
-            $product['_links_crosssell_sku'] = array_pop($accessory_skus);
-            foreach ($accessory_skus as $accessory_sku) {
-              array_push($extra_product_values,
-                         $this->_row_for_extra_product_value('_links_crosssell_sku',
-                                                             $accessory_sku));
-            }
+        $accessory_skus = $this->_prepare_product_accessories($product['sku'], $value);
+        if (!empty($accessory_skus)) {
+          $product['_links_crosssell_sku'] = array_pop($accessory_skus);
+          foreach ($accessory_skus as $accessory_sku) {
+            array_push($extra_product_values,
+                       $this->_row_for_extra_product_value('_links_crosssell_sku',
+                                                           $accessory_sku));
           }
-        } else {
-          $this->_log("WARNING: accessories for product when no attribute for role target_product_id was set: " . var_export($product, true));
         }
-        unset($product['accessories']);
-      } elseif ($key === 'digital_assets') {
+        unset($product['salsify:relations']);
+      } elseif ($key === 'salsify:digital_assets') {
         $this->_digital_assets[$product['sku']] = $value;
-        unset($product['digital_assets']);
+        unset($product['salsify:digital_assets']);
       } elseif ($key === '_category') {
         // support for multiple category assignments
         $categories = $product[$key];
@@ -501,15 +485,15 @@ class Salsify_Connect_Helper_Importer
       if ($this->_in_attributes) {
         $this->_attribute[$key] = $value;
       } elseif ($this->_in_attribute_values) {
-        $this->_log("ERROR: in a nested object in attribute_values, but shouldn't be: " . var_export($this->_category, true));
-        $this->_log("ERROR: nested thing for above error: " . var_export($value, true));
+        self::_log("ERROR: in a nested object in attribute_values, but shouldn't be: " . var_export($this->_category, true));
+        self::_log("ERROR: nested thing for above error: " . var_export($value, true));
       } elseif ($this->_in_products) {
         if (array_key_exists($key, $this->_attributes)) {
           $code = $this->_get_attribute_code($this->_attributes[$key]);
           $this->_product[$code] = $value;
-        } elseif ($key === 'accessories') {
+        } elseif ($key === 'salsify:relations') {
           $this->_product[$key] = $value;
-        } elseif ($key === 'digital_assets') {
+        } elseif ($key === 'salsify:digital_assets') {
           $this->_product[$key] = $value;
         } elseif (array_key_exists($key, $this->_categories)) {
           // multiple categories
@@ -517,7 +501,7 @@ class Salsify_Connect_Helper_Importer
             $this->_add_category_to_product($key, $catid);
           }
         } else {
-          $this->_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
+          self::_log("ERROR: product has key of undeclared attribute. skipping attribute: " . $key);
         }
       }
     } else {
@@ -552,7 +536,7 @@ class Salsify_Connect_Helper_Importer
       if ($key === 'attributes') {
         // starting to parse attribute section of import document
 
-        $this->_log("Starting to parse attributes.");
+        self::_log("Starting to parse attributes.");
         $this->_in_attributes = true;
         $this->_attributes = array();
         $this->_relationship_attributes = array();
@@ -564,14 +548,14 @@ class Salsify_Connect_Helper_Importer
         // starting to parse attribute_values (e.g. categories) section of
         // import document
 
-        $this->_log("Starting to parse categories (attribute_values).");
+        self::_log("Starting to parse categories (attribute_values).");
         $this->_in_attribute_values = true;
         $this->_categories = array();
 
       } elseif ($key === 'products') {
         // starting to parse products section of import document
 
-        $this->_log("Starting to parse products.");
+        self::_log("Starting to parse products.");
         $this->_in_products = true;
         $this->_batch = array();
         $this->_batch_accessories = array();
@@ -604,7 +588,7 @@ class Salsify_Connect_Helper_Importer
             $this->_product[$code] = $value;
           }
         } else {
-          $this->_log('WARNING: skipping unrecognized attribute id on product: ' . $key);
+          self::_log('WARNING: skipping unrecognized attribute id on product: ' . $key);
         }
       }
     } elseif ($this->_nesting_level > self::ITEM_NESTING_LEVEL) {
@@ -622,20 +606,20 @@ class Salsify_Connect_Helper_Importer
       }
       array_push($this->_product['_category'], $this->_get_category_path($category));
     } else {
-      $this->_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
+      self::_log("WARNING: product category assignment to unknown category. Skipping: " . $key . '=' . $value);
     }
   }
 
 
   private function _flush_batch() {
     if (empty($this->_batch)) {
-      $this->_log("Connecting to an empty Salsify. Skipping batch.");
+      self::_log("Connecting to an empty Salsify. Skipping batch.");
       return null;
     }
 
 
     // first save the products in the bulk API
-    $this->_log("Flushing product batch of size: " . count($this->_batch));
+    self::_log("Flushing product batch of size: " . count($this->_batch));
     try {
       Mage::getSingleton('fastsimpleimport/import')
           ->setBehavior(Mage_ImportExport_Model_Import::BEHAVIOR_APPEND)
@@ -647,8 +631,8 @@ class Salsify_Connect_Helper_Importer
       $this->_batch = array();
     } catch (Exception $e) {
       $error_msg = 'ERROR: could not flush batch: ' . $e->getMessage();
-      $this->_log($error_msg);
-      $this->_log('BACKTRACE:' . $e->getTraceAsString());
+      self::_log($error_msg);
+      self::_log('BACKTRACE:' . $e->getTraceAsString());
       throw new Exception($error_msg);
     }
 
@@ -657,13 +641,13 @@ class Salsify_Connect_Helper_Importer
     try {
       $accessory_mapper = Mage::getSingleton('salsify_connect/accessorymapping');
       $count = $accessory_mapper::bulkLoadMappings($this->_batch_accessories);
-      $this->_log("Successfully loaded " . $count . " new accessory mappings.");
+      self::_log("Successfully loaded " . $count . " new accessory mappings.");
       unset($this->_batch_accessories);
       $this->_batch_accessories = array();
     } catch (Exception $e) {
       $error_msg = 'ERROR: could not flush batch of accessory mappings: ' . $e->getMessage();
-      $this->_log($error_msg);
-      $this->_log('BACKTRACE:' . $e->getTraceAsString());
+      self::_log($error_msg);
+      self::_log('BACKTRACE:' . $e->getTraceAsString());
       throw new Exception($error_msg);
     }
   }
@@ -679,7 +663,7 @@ class Salsify_Connect_Helper_Importer
   // this creates the EAV attributes in the system for storing Salsify IDs for
   // products and categories if they don't already exist.
   private function _create_salsify_id_attributes_if_needed() {
-    $this->_log("ensuring that Salsify ID attributes exist in Magento...");
+    self::_log("ensuring that Salsify ID attributes exist in Magento...");
 
     $mapper = $this->_get_attribute_mapper();
     $mapper::createSalsifyIdAttributes();
@@ -688,7 +672,7 @@ class Salsify_Connect_Helper_Importer
     $this->_salsify_attribute_id_code = $mapper::SALSIFY_CATEGORY_ATTRIBUTE_ID;
     $this->_salsify_id_product_attribute_code = $mapper::SALSIFY_PRODUCT_ID;
 
-    $this->_log("done ensuring that Salsify ID attributes exist in Magento.");
+    self::_log("done ensuring that Salsify ID attributes exist in Magento.");
   }
 
   private function _get_attribute_code($attribute) {
@@ -697,14 +681,14 @@ class Salsify_Connect_Helper_Importer
     }
 
     $mapper = $this->_get_attribute_mapper();
-    $id = $attribute['id'];
-    $roles = $this->_get_attribute_roles($attribute);
+    $id = $attribute['salsify:id'];
+    $roles = $this->_get_attribute_role($attribute);
     return $mapper::getCodeForId($id, $roles);
   }
 
   // creates the given attribute in Magento if it doesn't already exist.
   private function _get_or_create_attribute($attribute) {
-    $id = $attribute['id'];
+    $id = $attribute['salsify:id'];
     if (!array_key_exists($id, $this->_attributes)) {
       $attribute = $this->_load_or_create_dbattribute($attribute);
       if ($attribute) {
@@ -721,22 +705,22 @@ class Salsify_Connect_Helper_Importer
       return $attribute;
     }
 
-    $id = $attribute['id'];
+    $id = $attribute['salsify:id'];
 
-    if (array_key_exists('name', $attribute)) {
-      $name = $attribute['name'];
+    if (array_key_exists('salsify:name', $attribute)) {
+      $name = $attribute['salsify:name'];
     } else {
       $name = $id;
     }
 
-    $roles = $this->_get_attribute_roles($attribute);
+    $role = $this->_get_attribute_role($attribute);
 
     $mapper = $this->_get_attribute_mapper();
     $type = $this->_get_attribute_type($attribute);
     if ($type === self::CATEGORY) {
-      $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name, $roles);
+      $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name, $role);
     } elseif ($type === self::PRODUCT) {
-      $dbattribute = $mapper::loadOrCreateProductAttributeBySalsifyId($id, $name, $roles);
+      $dbattribute = $mapper::loadOrCreateProductAttributeBySalsifyId($id, $name, $role);
     }
 
     if (!$dbattribute) {
@@ -749,7 +733,7 @@ class Salsify_Connect_Helper_Importer
   }
 
   private function _delete_attribute_with_salsify_id($attribute_id) {
-    $this->_log("attribute " . $attribute_id . " is really a category. deleting.");
+    self::_log("attribute " . $attribute_id . " is really a category. deleting.");
 
     $roles = null;
 
@@ -759,15 +743,13 @@ class Salsify_Connect_Helper_Importer
 
     unset($this->_attributes[$attribute_id]);
 
-    $this->_log("attribute " . $attribute_id . " deleted.");
+    self::_log("attribute " . $attribute_id . " deleted.");
   }
 
 
-  private function _get_attribute_roles($attribute) {
-    if (array_key_exists('roles', $attribute)) {
-      return $attribute['roles'];
-    } else {
-      return null;
+  private function _get_attribute_role($attribute) {
+    if (array_key_exists('salsify:role', $attribute)) {
+      return $attribute['salsify:role'];
     }
   }
 
@@ -777,7 +759,7 @@ class Salsify_Connect_Helper_Importer
     if (array_key_exists('type', $attribute)) {
       return $attribute['type'];
     } else {
-      $this->_log("WARNING: no type (product, category, etc.) stored in given attribute: " . var_export($attribute, true));
+      self::_log("WARNING: no type (product, category, etc.) stored in given attribute: " . var_export($attribute, true));
       return self::PRODUCT;
     }
   }
@@ -790,7 +772,7 @@ class Salsify_Connect_Helper_Importer
   // exception if something goes wrong. it is assumed that if we cannot import
   // categories it is simply not worth continuing on to import products.
   private function _import_categories() {
-    $this->_log("Done parsing category data. Ensuring they are in database.");
+    self::_log("Done parsing category data. Ensuring they are in database.");
 
     $categories_for_import = $this->_prepare_categories_for_import();
     if (!empty($categories_for_import)) {
@@ -798,7 +780,7 @@ class Salsify_Connect_Helper_Importer
       try {
         $import->processCategoryImport($categories_for_import);
       } catch (Exception $e) {
-        $this->_log("ERROR: loading categories into the database. aborting load: " . $e->getMessage());
+        self::_log("ERROR: loading categories into the database. aborting load: " . $e->getMessage());
         throw $e;
       }
     }
@@ -808,7 +790,7 @@ class Salsify_Connect_Helper_Importer
     //      the categories are not expandable in the product detail pages. this
     //      fix is from the bug filing:
     //      https://github.com/avstudnitz/AvS_FastSimpleImport/issues/26
-    $this->_log("Running children_count fix sql...");
+    self::_log("Running children_count fix sql...");
     $sql = "START TRANSACTION;
     DROP TABLE IF EXISTS `catalog_category_entity_tmp`;
     CREATE TABLE catalog_category_entity_tmp LIKE catalog_category_entity;
@@ -829,12 +811,12 @@ class Salsify_Connect_Helper_Importer
                 ->getConnection('core_write');
       $db->query($sql);
     } catch (Exception $e) {
-      $this->_log("FAIL: " . $e->getMessage());
+      self::_log("FAIL: " . $e->getMessage());
       throw $e;
     }
-    $this->_log("Done. Hopefully it worked and you can expand categories on product detail pages.");
+    self::_log("Done. Hopefully it worked and you can expand categories on product detail pages.");
 
-    $this->_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
+    self::_log("Done ensuring categories are in Magento. Number of new categories created: " . count($categories_for_import) . " new categories imported.");
   }
 
 
@@ -876,14 +858,14 @@ class Salsify_Connect_Helper_Importer
 
     $prepped_categories = array();
     foreach ($categories as $category) {
-      if (in_array($category['attribute_id'], $this->_relationship_attributes)) {
+      if (in_array($category['salsify:attribute_id'], $this->_relationship_attributes)) {
         $mapping = $accessory_category_mapper::getOrCreateMapping(
-                     $category['attribute_id'],
-                     $category['id'],
+                     $category['salsify:attribute_id'],
+                     $category['salsify:id'],
                      null
                    );
         if (!$mapping) {
-          $this->_log("WARNING: could not create AccessorycategoryMapping for accessory category: " . var_export($category,true));
+          self::_log("WARNING: could not create AccessorycategoryMapping for accessory category: " . var_export($category,true));
         }
 
         // don't bother loading categories for accessory attributes
@@ -903,7 +885,7 @@ class Salsify_Connect_Helper_Importer
 
         if (!$this->_create_category($category)) {
           $msg = "ERROR: could not create root category. Aborting import: " . var_export($category, true);
-          $this->_log($msg);
+          self::_log($msg);
           throw new Exception($msg);
         }
       } else {
@@ -918,7 +900,7 @@ class Salsify_Connect_Helper_Importer
   //         null otherwise.
   private function _get_category($category) {
     return Mage::getModel('catalog/category')
-               ->loadByAttribute($this->_salsify_id_category_attribute_code, $category['id']);
+               ->loadByAttribute($this->_salsify_id_category_attribute_code, $category['salsify:id']);
   }
 
 
@@ -939,14 +921,14 @@ class Salsify_Connect_Helper_Importer
       return $category;
     }
 
-    $category['name'] = preg_replace('/\//', '|', $category['name']);
+    $category['salsify:name'] = preg_replace('/\//', '|', $category['salsify:name']);
 
-    $id = $category['id'];
-    $attribute_id = $category['attribute_id'];
-    if (array_key_exists('parent_id', $category)) {
-      $parent_id = $category['parent_id'];
+    $id = $category['salsify:id'];
+    $attribute_id = $category['salsify:attribute_id'];
+    if (array_key_exists('salsify:parent_id', $category)) {
+      $parent_id = $category['salsify:parent_id'];
       if (!array_key_exists($parent_id, $this->_categories[$attribute_id])) {
-        $this->_log("WARNING: parent_id for category refers to an unknown parent. Skipping: " . var_export($category, true));
+        self::_log("WARNING: salsify:parent_id for category refers to an unknown parent. Skipping: " . var_export($category, true));
         return null;
       }
 
@@ -963,15 +945,15 @@ class Salsify_Connect_Helper_Importer
       $category['__depth'] = $parent_depth + 1;
       if ($parent_depth == 0) {
         // path is relative not to the root, but to the first child of the root...
-        $category['__path'] = $category['name'];
+        $category['__path'] = $category['salsify:name'];
       } else {
-        $category['__path'] = $parent_category['__path'] . '/' . $category['name'];
+        $category['__path'] = $parent_category['__path'] . '/' . $category['salsify:name'];
       }
     } else {
       // root category
-      $category['__root']  = $category['name'];
+      $category['__root']  = $category['salsify:name'];
       $category['__depth'] = 0;
-      $category['__path']  = $category['name'];
+      $category['__path']  = $category['salsify:name'];
     }
     return $category;
   }
@@ -984,7 +966,7 @@ class Salsify_Connect_Helper_Importer
     return array(
       '_root' => $category['__root'],
       '_category' => $category['__path'],
-      'name' => $category['name'],
+      'name' => $category['salsify:name'],
       'description' => 'Created during import from Salsify.',
       'is_active' => 'yes',
       'include_in_menu' => 'yes',
@@ -996,10 +978,10 @@ class Salsify_Connect_Helper_Importer
 
       // optional
       'url_key' => $this->_get_url_key($category),
-      // 'meta_description' => $category['name'],
+      // 'meta_description' => $category['salsify:name'],
 
-      $this->_salsify_id_category_attribute_code => $category['id'],
-      $this->_salsify_attribute_id_code => $category['attribute_id'],
+      $this->_salsify_id_category_attribute_code => $category['salsify:id'],
+      $this->_salsify_attribute_id_code => $category['salsify:attribute_id'],
     );
   }
 
@@ -1010,7 +992,7 @@ class Salsify_Connect_Helper_Importer
   // and urlencode the result in case there are unfriendly characters in the
   // name.
   private function _get_url_key($category) {
-    $key = strtolower($category['name']);
+    $key = strtolower($category['salsify:name']);
     $key = preg_replace('/\s\s+/', '-', $key);
     return urlencode($key);
   }
@@ -1047,8 +1029,8 @@ class Salsify_Connect_Helper_Importer
   // helper method that frees other parts of the code from having to worry about
   // the crazy nested array structure we've built up.
   private function _get_category_path($category) {
-    $attribute_id = $category['attribute_id'];
-    $id = $category['id'];
+    $attribute_id = $category['salsify:attribute_id'];
+    $id = $category['salsify:id'];
     return $this->_categories[$attribute_id][$id]['__path'];
   }
 
@@ -1061,9 +1043,9 @@ class Salsify_Connect_Helper_Importer
     // multi-store
     // $category->setStoreId(0);
 
-    $dbcategory->setName($category['name']);
-    $dbcategory->setSalsifyCategoryId($category['id']);
-    $dbcategory->setSalsifyAttributeId($category['attribute_id']);
+    $dbcategory->setName($category['salsify:name']);
+    $dbcategory->setSalsifyCategoryId($category['salsify:id']);
+    $dbcategory->setSalsifyAttributeId($category['salsify:attribute_id']);
     $dbcategory->setDescription('Created during Salsify import.');
 
     // TODO what are the other options? is this a reasonable default that I
@@ -1076,7 +1058,7 @@ class Salsify_Connect_Helper_Importer
     // TODO what is this?
     $dbcategory->setIsAnchor('0');
 
-    if (array_key_exists('parent_id', $category)) {
+    if (array_key_exists('salsify:parent_id', $category)) {
       $parent_category = $this->_get_parent_category($category);
       $parent_dbcategory = $this->_get_category($parent_category);
     } else {
@@ -1102,7 +1084,7 @@ class Salsify_Connect_Helper_Importer
       $dbcategory->save();
       return $dbcategory;
     } catch (Exception $e) {
-      $this->_log("ERROR: creating category: " . $e->getMessage());
+      self::_log("ERROR: creating category: " . $e->getMessage());
       return null;
     }
   }
@@ -1112,13 +1094,13 @@ class Salsify_Connect_Helper_Importer
   // i like to keep it around since the method can be used (and has been) to
   // create the entire category hierarchy in Magento.
   private function _get_parent_category($category) {
-    if (array_key_exists('parent_id', $category)) {
-      $parent_id = $category['parent_id'];
-      $attribute_id = $category['attribute_id'];
+    if (array_key_exists('salsify:parent_id', $category)) {
+      $parent_id = $category['salsify:parent_id'];
+      $attribute_id = $category['salsify:attribute_id'];
       if (array_key_exists($parent_id, $this->_categories[$attribute_id])) {
         return $this->_categories[$attribute_id][$parent_id];
       }
-      $this->_log("ERROR: parent_id mentioned in category but not seen in import: " . var_export($category, true));
+      self::_log("ERROR: salsify:parent_id mentioned in category but not seen in import: " . var_export($category, true));
     }
     return null;
   }

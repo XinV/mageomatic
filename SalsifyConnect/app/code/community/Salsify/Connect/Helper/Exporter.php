@@ -118,8 +118,7 @@ class Salsify_Connect_Helper_Exporter
   private function _start_header() {
     // makes this a little more readable
     $this->_write('{"header":{');
-    $this->_write('"version":"2012-12"');
-    $this->_write(',"update_semantics":"truncate"');
+    $this->_write('"version":"2013-04"');
     $this->_write(',"scope":["all"]');
     $this->_write('}}');
   }
@@ -205,9 +204,9 @@ class Salsify_Connect_Helper_Exporter
     }
     $attribute_json['name'] = $name;
 
-    $roles = $mapper::getRolesForMagentoCode($code);
-    if ($roles) {
-      $attribute_json['roles'] = $roles;
+    $role = $mapper::getRoleForMagentoCode($code);
+    if ($role) {
+      $attribute_json['salsify:role'] = $role;
     }
 
     $this->_write_object($attribute_json);
