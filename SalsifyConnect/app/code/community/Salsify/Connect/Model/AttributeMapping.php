@@ -705,7 +705,7 @@ class Salsify_Connect_Model_AttributeMapping
           (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0))
       {
         Mage::getModel('eav/entity_attribute')
-            ->load($attribute['attribute_id'])
+            ->load($attribute['salsify:attribute_id'])
             ->delete();
 
         $deleted_attribute_count++;
@@ -792,29 +792,29 @@ class Salsify_Connect_Model_AttributeMapping
 
     $attribute_values = array(
       array(
-        "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
-        "name" => "Cross-sell",
-        "attribute_id" => $attribute_id,
+        "salsify:id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
+        "salsify:name" => "Cross-sell",
+        "salsify:attribute_id" => $attribute_id,
         "type" => $accessory_mapper::CROSS_SELL
       ),
       array(
-        "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL),
-        "name" => "Up-sell",
-        "attribute_id" => $attribute_id,
+        "salsify:id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL),
+        "salsify:name" => "Up-sell",
+        "salsify:attribute_id" => $attribute_id,
         "type" => $accessory_mapper::UP_SELL
       ),
       array(
-        "id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT),
-        "name" => "Related Product",
-        "attribute_id" => $attribute_id,
+        "salsify:id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT),
+        "salsify:name" => "Related Product",
+        "salsify:attribute_id" => $attribute_id,
         "type" => $accessory_mapper::RELATED_PRODUCT
       )
     );
 
     foreach ($attribute_values as $attrv) {
       // make sure the mappings exist
-      $accessorycategory_mapper::getOrCreateMapping($attrv['attribute_id'],
-                                                    $attrv['id'],
+      $accessorycategory_mapper::getOrCreateMapping($attrv['salsify:attribute_id'],
+                                                    $attrv['salsify:id'],
                                                     $attrv['type']);
     }
 
@@ -822,9 +822,9 @@ class Salsify_Connect_Model_AttributeMapping
     $values = $accessorycategory_mapper::getSalsifyAttributeValues();
     foreach ($values as $value) {
       $attribute_values[] = array(
-        "id" => $value,
+        "salsify:id" => $value,
         // we can skip the name since presumably Salsify already had this
-        "attribute_id" => $attribute_id
+        "salsify:attribute_id" => $attribute_id
       );
     }
 
