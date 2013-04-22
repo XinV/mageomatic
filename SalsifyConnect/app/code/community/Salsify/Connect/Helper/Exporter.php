@@ -188,7 +188,7 @@ class Salsify_Connect_Helper_Exporter
       self::_log("ERROR: could not load attribute for export. skipping: " . var_export($attribute,true));
       return null;
     }
-    $attribute_json['id'] = $id;
+    $attribute_json['salsify:id'] = $id;
 
     $this->_attribute_map[$code] = $id;
 
@@ -202,7 +202,7 @@ class Salsify_Connect_Helper_Exporter
         $name = $id;
       }
     }
-    $attribute_json['name'] = $name;
+    $attribute_json['salsify:name'] = $name;
 
     $role = $mapper::getRoleForMagentoCode($code);
     if ($role) {
@@ -264,10 +264,10 @@ class Salsify_Connect_Helper_Exporter
       $this->_load_category_mapping($category);
     }
     $salsify_id = $this->_category_mapping[$magento_id];
-    $category_json['id'] = $salsify_id;
+    $category_json['salsify:id'] = $salsify_id;
 
     $name = $category->getName();
-    $category_json['name'] = $name;
+    $category_json['salsify:name'] = $name;
 
     // level is relative to the root. so these are local roots.
     if ($level > 1) {
@@ -277,10 +277,10 @@ class Salsify_Connect_Helper_Exporter
                                ->load($parent_id);
         $this->_load_category_mapping($parent_category);
       }
-      $category_json['parent_id'] = $this->_category_mapping[$parent_id];
+      $category_json['salsify:parent_id'] = $this->_category_mapping[$parent_id];
     }
 
-    $category_json['attribute_id'] = $category_attribute;
+    $category_json['salsify:attribute_id'] = $category_attribute;
 
     $this->_write_object($category_json);
   }
@@ -374,13 +374,13 @@ class Salsify_Connect_Helper_Exporter
     
     $digital_assets = $this->_get_digital_assets_json($product);
     if (!empty($digital_assets)) {
-      $product_json['digital_assets'] = $digital_assets;
+      $product_json['salsify:digital_assets'] = $digital_assets;
     }
 
 
     $accessories = $this->_get_accessories_json($product);
     if (!empty($accessories)) {
-      $product_json['accessories'] = $accessories;
+      $product_json['salsify:relations'] = $accessories;
     }
 
 
@@ -399,18 +399,18 @@ class Salsify_Connect_Helper_Exporter
 
     foreach ($gallery_images as $image) {
       $da = array();
-      $da["name"] = $image->getLabel();
+      $da["salsify:name"] = $image->getLabel();
 
       $url = $image->getUrl();
-      $da["url"] = $url;
+      $da["salsify:url"] = $url;
 
       $mapping = $image_mapper::get_mapping_by_sku_and_image($sku, $image);
       if ($mapping) {
-        $da["id"] = $mapping->getSalsifyId();
-        $da["source_url"] = $mapping->getSourceUrl();
+        $da["salsify:id"] = $mapping->getSalsifyId();
+        $da["salsify:source_url"] = $mapping->getSourceUrl();
       } else {
         $image_mapper->init_by_sku_and_image($sku, $image);
-        $da["id"] = $image_mapper->getMagentoId();
+        $da["salsify:id"] = $image_mapper->getMagentoId();
       }
 
       // NOTE can't get this info from the $image object. it will have to be a
