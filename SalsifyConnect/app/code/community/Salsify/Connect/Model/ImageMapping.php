@@ -75,7 +75,7 @@ class Salsify_Connect_Model_ImageMapping
   // Ensures that the file doesn't already exist.
   private static function _get_local_filename_for_image($sku, $digital_asset) {
     $import_dir = Mage::getBaseDir('media') . DS . 'import/';
-    $pathinfo = pathinfo($digital_asset['url']);
+    $pathinfo = pathinfo($digital_asset['salsify:url']);
     $filename = $import_dir . $sku . '--' . $pathinfo['basename'];
 
     if (file_exists($filename)) {
@@ -151,14 +151,14 @@ class Salsify_Connect_Model_ImageMapping
                      ->load($prod->getId());
 
       foreach ($das as $da) {
-        $url = $da['url'];
+        $url = $da['salsify:url'];
         $filetype = self::_url_filetype($url);
         if (!$filetype || !in_array($filetype, $acceptable_filetypes)) {
           // future feature request
           continue;
         }
 
-        $id = $da['id'];
+        $id = $da['salsify:id'];
         $existing_mapping = self::_get_mapping_by_sku_and_salsify_id($sku, $id);
         if ($existing_mapping) {
           // we already have that image. skipping...
@@ -244,7 +244,7 @@ class Salsify_Connect_Model_ImageMapping
         $image_mapping->setMagentoId(self::get_image_mapping_id_from_url($sku, $last_image['file']));
         $image_mapping->setSalsifyId($id);
         $image_mapping->setUrl($url);
-        $image_mapping->setSourceUrl($da['source_url']);
+        $image_mapping->setSourceUrl($da['salsify:source_url']);
         $image_mapping->setChecksum($checksum);
         $image_mapping->save();
 
