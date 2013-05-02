@@ -12,9 +12,8 @@
 abstract class Salsify_Connect_Model_SyncRun
          extends Mage_Core_Model_Abstract
 {
-
   protected static function _log($msg) {
-    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
+    Mage::log("Salsify_Connect_Model_SyncRun" . ': ' . $msg, null, 'salsify.log', true);
   }
 
   protected static function _log_current_time($msg = "TIMING") {

@@ -15,7 +15,7 @@ class Salsify_Connect_Helper_Data
 {
 
   private static function _log($msg) {
-    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
+    Mage::log("Salsify_Connect_Helper_Data" . ': ' . $msg, null, 'salsify.log', true);
   }
 
 

@@ -8,7 +8,7 @@ class Salsify_Connect_Adminhtml_IndexController
 {
 
   private static function _log($msg) {
-    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
+    Mage::log("Salsify_Connect_Adminhtml_IndexController" . ': ' . $msg, null, 'salsify.log', true);
   }
 
 

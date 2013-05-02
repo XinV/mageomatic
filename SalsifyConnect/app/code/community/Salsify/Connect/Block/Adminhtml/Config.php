@@ -6,7 +6,7 @@ class Salsify_Connect_Block_Adminhtml_Config
 {
 
   private static function _log($msg) {
-    Mage::log(get_called_class() . ': ' . $msg, null, 'salsify.log', true);
+    Mage::log("Salsify_Connect_Block_Adminhtml_Config" . ': ' . $msg, null, 'salsify.log', true);
   }
 
 
