@@ -15,7 +15,7 @@ var salsify = (function (parent) {
   function createWorker(workerUrl) {
     new Ajax.Request(workerUrl, {
       method: 'post',
-      loaderArea : false, // don't show the 'Please wait' dialog here
+      // loaderArea : false, // don't show the 'Please wait' dialog here
       onSuccess: function(response) {
         // reloadPage();
       },
