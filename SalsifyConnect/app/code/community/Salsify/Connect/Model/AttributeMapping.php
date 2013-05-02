@@ -706,7 +706,7 @@ class Salsify_Connect_Model_AttributeMapping
       {
         self::_log("attribute: " . var_export($attribute,true));
         Mage::getModel('eav/entity_attribute')
-            ->load($attribute['salsify:attribute_id'])
+            ->load($attribute['attribute_id'])
             ->delete();
 
         $deleted_attribute_count++;
