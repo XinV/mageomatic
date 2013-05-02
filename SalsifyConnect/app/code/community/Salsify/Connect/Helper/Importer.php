@@ -24,7 +24,7 @@ require_once BP.DS.'lib'.DS.'salsify'.DS.'JsonStreamingParser'.DS.'Listener.php'
  */
 class Salsify_Connect_Helper_Importer
       extends Mage_Core_Helper_Abstract
-      implements \JsonStreamingParser\Listener
+      implements JsonStreamingParser_Listener
 {
 
   private static function _log($msg) {

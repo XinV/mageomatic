@@ -297,7 +297,7 @@ class Salsify_Connect_Helper_SalsifyAPI
   // Returns the 'key' returned from Salsify, which is required to get Salsify
   // to actually import the data.
   private function _upload_export_to_salsify($mount_response, $export_file) {
-    $uploader = new \MultipartUploader\Uploader($mount_response['url']);
+    $uploader = new MultipartUploader_Uploader($mount_response['url']);
 
     $form_data = $mount_response['formData'];
     $uploader->addPart('key', $form_data['key']);
