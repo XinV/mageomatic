@@ -704,7 +704,6 @@ class Salsify_Connect_Model_AttributeMapping
           (strcasecmp($code, self::SALSIFY_CATEGORY_ATTRIBUTE_ID) === 0) ||
           (strcasecmp($code, self::SALSIFY_PRODUCT_ID) === 0))
       {
-        self::_log("attribute: " . var_export($attribute,true));
         Mage::getModel('eav/entity_attribute')
             ->load($attribute['attribute_id'])
             ->delete();
