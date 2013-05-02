@@ -17,7 +17,7 @@ var salsify = (function (parent) {
       method: 'post',
       loaderArea : false, // don't show the 'Please wait' dialog here
       onSuccess: function(response) {
-        reloadPage();
+        // reloadPage();
       },
       onFailure: function(response) {
         reloadPage();
