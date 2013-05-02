@@ -84,7 +84,7 @@ class Salsify_Connect_Model_ImportRun
       $this->save();
       $importer = $salsify->get_importer();
       $image_mapper = Mage::getModel('salsify_connect/imagemapping');
-      $image_mapper::load_digital_assets($importer->get_digital_assets());
+      Salsify_Connect_Model_ImageMapping::load_digital_assets($importer->get_digital_assets());
 
       // DONE!
       $this->_set_done();
