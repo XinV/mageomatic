@@ -97,7 +97,9 @@ class Salsify_Connect_Helper_Data
     $stream = fopen($file, 'r');
     try {
       $this->_importer = Mage::helper('salsify_connect/importer');
-      $parser = new \JsonStreamingParser\Parser($stream, $this->_importer);
+      // Removing since PHP 5.2 doesn't support namespaces...
+      // $parser = new \JsonStreamingParser\Parser($stream, $this->_importer);
+      $parser = new Parser($stream, $this->_importer);
       $parser->parse();
     } catch (Exception $e) {
       fclose($stream);
