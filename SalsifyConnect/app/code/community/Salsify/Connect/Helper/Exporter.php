@@ -36,15 +36,13 @@ class Salsify_Connect_Helper_Exporter
 
 
   private function _init_skip_list() {
-    $mapper = $this->_salsify->get_attribute_mapper();
-    $this->_attribute_codes_to_skip = $mapper::getMagentoOwnedAttributeCodes();
-    array_push($this->_attribute_codes_to_skip, $mapper::getSalsifyProductIdAttributeCode());
+    $this->_attribute_codes_to_skip = Salsify_Connect_Model_AttributeMapping::getMagentoOwnedAttributeCodes();
+    array_push($this->_attribute_codes_to_skip, Salsify_Connect_Model_AttributeMapping::getSalsifyProductIdAttributeCode());
   }
 
 
   private function _ensure_salsify_attributes() {
-    $mapper = $this->_salsify->get_attribute_mapper();
-    $mapper::createSalsifyIdAttributes();
+    Salsify_Connect_Model_AttributeMapping::createSalsifyIdAttributes();
   }
 
 
@@ -162,28 +160,27 @@ class Salsify_Connect_Helper_Exporter
   }
 
   private function _write_attributes() {
-    $mapper = $this->_salsify->get_attribute_mapper();
-    $attributes = $mapper::getProductAttributes();
+    $attributes = Salsify_Connect_Model_AttributeMapping::getProductAttributes();
     foreach ($attributes as $attribute) {
-      $this->_write_attribute($mapper, $attribute);
+      $this->_write_attribute($attribute);
     }
 
     // need to do the accessory attributes separately because they don't exist
     // in magento as attributes, so we'd get errors trying to load them up and
     // examine their metadata.
-    $accessory_attribute = $mapper::getAccessoryAttribute();
+    $accessory_attribute = Salsify_Connect_Model_AttributeMapping::getAccessoryAttribute();
     $this->_write_object($accessory_attribute);
   }
 
-  private function _write_attribute($mapper, $attribute) {
+  private function _write_attribute($attribute) {
     $attribute_json = array();
 
     $code = $attribute['code'];
     // need to load the full model here. to this point it's only a small array
     // with some key items.
-    $attribute = $mapper::loadProductAttributeByMagentoCode($code);
+    $attribute = Salsify_Connect_Model_AttributeMapping::loadProductAttributeByMagentoCode($code);
 
-    $id = $mapper::getIdForCode($code);
+    $id = Salsify_Connect_Model_AttributeMapping::getIdForCode($code);
     if (!$id) {
       self::_log("ERROR: could not load attribute for export. skipping: " . var_export($attribute,true));
       return null;
@@ -194,7 +191,7 @@ class Salsify_Connect_Helper_Exporter
 
     $name = $attribute->getFrontendLabel();
     if (!$name) {
-      $category_attribute_code = $mapper::getCategoryAssignemntMagentoCode();
+      $category_attribute_code = Salsify_Connect_Model_AttributeMapping::getCategoryAssignemntMagentoCode();
       // if we find any other special cases we should move this to the mapper
       if ($code === $category_attribute_code) {
         $name = 'Category';
@@ -204,7 +201,7 @@ class Salsify_Connect_Helper_Exporter
     }
     $attribute_json['salsify:name'] = $name;
 
-    $role = $mapper::getRoleForMagentoCode($code);
+    $role = Salsify_Connect_Model_AttributeMapping::getRoleForMagentoCode($code);
     if ($role) {
       $attribute_json['salsify:role'] = $role;
     }
@@ -238,8 +235,7 @@ class Salsify_Connect_Helper_Exporter
       $this->_write_category($category, $category_attribute);
     }
 
-    $mapper = $this->_salsify->get_attribute_mapper();
-    $accessory_attribute_values = $mapper::getAccessoryAttributeValues();
+    $accessory_attribute_values = Salsify_Connect_Model_AttributeMapping::getAccessoryAttributeValues();
     foreach ($accessory_attribute_values as $attrv) {
       $this->_write_object($attrv);
     }
@@ -404,7 +400,7 @@ class Salsify_Connect_Helper_Exporter
       $url = $image->getUrl();
       $da["salsify:url"] = $url;
 
-      $mapping = $image_mapper::get_mapping_by_sku_and_image($sku, $image);
+      $mapping = Salsify_Connect_Model_ImageMapping::get_mapping_by_sku_and_image($sku, $image);
       if ($mapping) {
         $da["salsify:id"] = $mapping->getSalsifyId();
         $da["salsify:source_url"] = $mapping->getSourceUrl();
@@ -432,17 +428,14 @@ class Salsify_Connect_Helper_Exporter
 
     $sku = $product->getSku();
 
-    $mapper = $this->_salsify->get_attribute_mapper();
-    $id_attribute = $mapper::getAttributeForAccessoryIds();
-    $default_category = $mapper::getDefaultAccessoryAttribute();
-
-    $accessory_mapper = $this->_salsify->get_accessory_mapper();
+    $id_attribute = Salsify_Connect_Model_AttributeMapping::getAttributeForAccessoryIds();
+    $default_category = Salsify_Connect_Model_AttributeMapping::getDefaultAccessoryAttribute();
 
     $cross_sell_ids = $product->getCrossSellProductIds();
     $cross_sell_json = $this->_get_accessories_json_for_ids(
       $sku,
       $default_category,
-      $accessory_mapper::CROSS_SELL,
+      Salsify_Connect_Model_AccessoryMapping::CROSS_SELL,
       $id_attribute,
       $cross_sell_ids
     );
@@ -452,7 +445,7 @@ class Salsify_Connect_Helper_Exporter
     $up_sell_json = $this->_get_accessories_json_for_ids(
       $sku,
       $default_category,
-      $accessory_mapper::UP_SELL,
+      Salsify_Connect_Model_AccessoryMapping::UP_SELL,
       $id_attribute,
       $up_sell_ids
     );
@@ -462,7 +455,7 @@ class Salsify_Connect_Helper_Exporter
     $related_json = $this->_get_accessories_json_for_ids(
       $sku,
       $default_category,
-      $accessory_mapper::RELATED_PRODUCT,
+      Salsify_Connect_Model_AccessoryMapping::RELATED_PRODUCT,
       $id_attribute,
       $related_ids
     );
@@ -493,15 +486,13 @@ class Salsify_Connect_Helper_Exporter
                             ->addAttributeToFilter('entity_id',
                                                    array('in' => $related_product_ids));
 
-    $accessory_mapper = $this->_salsify->get_accessory_mapper();
-
     if ($related_products) {
       foreach ($related_products as $rp) {
         $target_sku = $rp->getSku();
 
         // a single relationship in Magento may have originated from several in
         // Salsify.
-        $mappings = $accessory_mapper::getOrCreateMappings(
+        $mappings = Salsify_Connect_Model_AccessoryMapping::getOrCreateMappings(
           $sku, $rp->getSku(), $default_category, $relation_type
         );
         foreach($mappings as $mapping) {

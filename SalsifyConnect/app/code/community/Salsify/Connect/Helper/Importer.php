@@ -130,8 +130,7 @@ class Salsify_Connect_Helper_Importer
     $this->_in_attribute_values = false;
     $this->_in_products = false;
 
-    $mapper = $this->_get_attribute_mapper();
-    $this->_target_product_attribute = $mapper::getAttributeForAccessoryIds();
+    $this->_target_product_attribute = Salsify_Connect_Model_AttributeMapping::getAttributeForAccessoryIds();
   }
 
 
@@ -400,8 +399,7 @@ class Salsify_Connect_Helper_Importer
   private $_required_attributes;
   private function _get_required_attributes() {
     if (!$this->_required_attributes) {
-      $mapper = $this->_get_attribute_mapper();
-      $this->_required_attributes = $mapper::getRequiredProductAttributesWithDefaults();
+      $this->_required_attributes = Salsify_Connect_Model_AttributeMapping::getRequiredProductAttributesWithDefaults();
     }
     return $this->_required_attributes;
   }
@@ -580,11 +578,10 @@ class Salsify_Connect_Helper_Importer
         } elseif (array_key_exists($key, $this->_attributes)) {
           $attribute = $this->_attributes[$key];
           $code = $this->_get_attribute_code($attribute);
-          $mapper = $this->_get_attribute_mapper();
 
           // make sure to skip attributes that are owned by Magento
-          if (!$mapper::isAttributeMagentoOwned($code)) {
-            $value = $mapper::castValueByBackendType($value, $attribute['__backend_type']);
+          if (!Salsify_Connect_Model_AttributeMapping::isAttributeMagentoOwned($code)) {
+            $value = Salsify_Connect_Model_AttributeMapping::castValueByBackendType($value, $attribute['__backend_type']);
             $this->_product[$code] = $value;
           }
         } else {
@@ -639,8 +636,7 @@ class Salsify_Connect_Helper_Importer
 
     // next flush the accessory mappings via our own bulk API
     try {
-      $accessory_mapper = Mage::getSingleton('salsify_connect/accessorymapping');
-      $count = $accessory_mapper::bulkLoadMappings($this->_batch_accessories);
+      $count = Salsify_Connect_Model_AccessoryMapping::bulkLoadMappings($this->_batch_accessories);
       self::_log("Successfully loaded " . $count . " new accessory mappings.");
       unset($this->_batch_accessories);
       $this->_batch_accessories = array();
@@ -653,24 +649,15 @@ class Salsify_Connect_Helper_Importer
   }
 
 
-  // returns an instance of the attribute mapping model, which is the primary
-  // interface between this loader and the Magento attribute database structure.
-  private function _get_attribute_mapper() {
-    return Mage::helper('salsify_connect')
-               ->get_attribute_mapper();
-  }
-
   // this creates the EAV attributes in the system for storing Salsify IDs for
   // products and categories if they don't already exist.
   private function _create_salsify_id_attributes_if_needed() {
     self::_log("ensuring that Salsify ID attributes exist in Magento...");
 
-    $mapper = $this->_get_attribute_mapper();
-    $mapper::createSalsifyIdAttributes();
-
-    $this->_salsify_id_category_attribute_code = $mapper::SALSIFY_CATEGORY_ID;
-    $this->_salsify_attribute_id_code = $mapper::SALSIFY_CATEGORY_ATTRIBUTE_ID;
-    $this->_salsify_id_product_attribute_code = $mapper::SALSIFY_PRODUCT_ID;
+    Salsify_Connect_Model_AttributeMapping::createSalsifyIdAttributes();
+    $this->_salsify_id_category_attribute_code = Salsify_Connect_Model_AttributeMapping::SALSIFY_CATEGORY_ID;
+    $this->_salsify_attribute_id_code = Salsify_Connect_Model_AttributeMapping::SALSIFY_CATEGORY_ATTRIBUTE_ID;
+    $this->_salsify_id_product_attribute_code = Salsify_Connect_Model_AttributeMapping::SALSIFY_PRODUCT_ID;
 
     self::_log("done ensuring that Salsify ID attributes exist in Magento.");
   }
@@ -680,10 +667,9 @@ class Salsify_Connect_Helper_Importer
       return $attribute['__code'];
     }
 
-    $mapper = $this->_get_attribute_mapper();
     $id = $attribute['salsify:id'];
     $roles = $this->_get_attribute_role($attribute);
-    return $mapper::getCodeForId($id, $roles);
+    return Salsify_Connect_Model_AttributeMapping::getCodeForId($id, $roles);
   }
 
   // creates the given attribute in Magento if it doesn't already exist.
@@ -715,12 +701,11 @@ class Salsify_Connect_Helper_Importer
 
     $role = $this->_get_attribute_role($attribute);
 
-    $mapper = $this->_get_attribute_mapper();
     $type = $this->_get_attribute_type($attribute);
     if ($type === self::CATEGORY) {
-      $dbattribute = $mapper::loadOrCreateCategoryAttributeBySalsifyId($id, $name, $role);
+      $dbattribute = Salsify_Connect_Model_AttributeMapping::loadOrCreateCategoryAttributeBySalsifyId($id, $name, $role);
     } elseif ($type === self::PRODUCT) {
-      $dbattribute = $mapper::loadOrCreateProductAttributeBySalsifyId($id, $name, $role);
+      $dbattribute = Salsify_Connect_Model_AttributeMapping::loadOrCreateProductAttributeBySalsifyId($id, $name, $role);
     }
 
     if (!$dbattribute) {
@@ -737,9 +722,8 @@ class Salsify_Connect_Helper_Importer
 
     $roles = null;
 
-    $mapper = $this->_get_attribute_mapper();
-    $mapper::deleteCategoryAttribute($attribute_id, $roles);
-    $mapper::deleteProductAttribute($attribute_id, $roles);
+    Salsify_Connect_Model_AttributeMapping::deleteCategoryAttribute($attribute_id, $roles);
+    Salsify_Connect_Model_AttributeMapping::deleteProductAttribute($attribute_id, $roles);
 
     unset($this->_attributes[$attribute_id]);
 
@@ -854,12 +838,11 @@ class Salsify_Connect_Helper_Importer
     $this->_categories = $cleaned_categories;
 
     $categories = $this->_sort_categories_by_depth($categories);
-    $accessory_category_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
 
     $prepped_categories = array();
     foreach ($categories as $category) {
       if (in_array($category['salsify:attribute_id'], $this->_relationship_attributes)) {
-        $mapping = $accessory_category_mapper::getOrCreateMapping(
+        $mapping = Salsify_Connect_Model_AccessorycategoryMapping::getOrCreateMapping(
                      $category['salsify:attribute_id'],
                      $category['salsify:id'],
                      null

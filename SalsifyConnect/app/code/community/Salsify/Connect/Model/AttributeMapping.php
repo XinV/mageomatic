@@ -757,8 +757,7 @@ class Salsify_Connect_Model_AttributeMapping
 
 
   private static function _get_accessory_attribute_id() {
-    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
-    $id = $accessorycategory_mapper::getSalsifyAttributeId();
+    $id = Salsify_Connect_Model_AccessorycategoryMapping::getSalsifyAttributeId();
     if (!$id) {
       $id = self::getDefaultAccessoryAttribute();
     }
@@ -785,41 +784,40 @@ class Salsify_Connect_Model_AttributeMapping
   // consistent with the Salsify json document format, the set of attribute
   // values that are used in accessory relationships.
   public static function getAccessoryAttributeValues() {
-    $accessorycategory_mapper = Mage::getModel('salsify_connect/accessorycategorymapping');
-    $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
-
     $attribute_id = self::_get_accessory_attribute_id();
 
     $attribute_values = array(
       array(
-        "salsify:id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::CROSS_SELL),
+        "salsify:id" => Salsify_Connect_Model_AccessoryMapping::getAccessoryLabelIdForMagentoType(Salsify_Connect_Model_AccessoryMapping::CROSS_SELL),
         "salsify:name" => "Cross-sell",
         "salsify:attribute_id" => $attribute_id,
-        "type" => $accessory_mapper::CROSS_SELL
+        "type" => Salsify_Connect_Model_AccessoryMapping::CROSS_SELL
       ),
       array(
-        "salsify:id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::UP_SELL),
+        "salsify:id" => Salsify_Connect_Model_AccessoryMapping::getAccessoryLabelIdForMagentoType(Salsify_Connect_Model_AccessoryMapping::UP_SELL),
         "salsify:name" => "Up-sell",
         "salsify:attribute_id" => $attribute_id,
-        "type" => $accessory_mapper::UP_SELL
+        "type" => Salsify_Connect_Model_AccessoryMapping::UP_SELL
       ),
       array(
-        "salsify:id" => $accessory_mapper::getAccessoryLabelIdForMagentoType($accessory_mapper::RELATED_PRODUCT),
+        "salsify:id" => Salsify_Connect_Model_AccessoryMapping::getAccessoryLabelIdForMagentoType(Salsify_Connect_Model_AccessoryMapping::RELATED_PRODUCT),
         "salsify:name" => "Related Product",
         "salsify:attribute_id" => $attribute_id,
-        "type" => $accessory_mapper::RELATED_PRODUCT
+        "type" => Salsify_Connect_Model_AccessoryMapping::RELATED_PRODUCT
       )
     );
 
     foreach ($attribute_values as $attrv) {
       // make sure the mappings exist
-      $accessorycategory_mapper::getOrCreateMapping($attrv['salsify:attribute_id'],
-                                                    $attrv['salsify:id'],
-                                                    $attrv['type']);
+      Salsify_Connect_Model_AccessorycategoryMapping::getOrCreateMapping(
+        $attrv['salsify:attribute_id'],
+        $attrv['salsify:id'],
+        $attrv['type']
+      );
     }
 
     $attribute_values = array();
-    $values = $accessorycategory_mapper::getSalsifyAttributeValues();
+    $values = Salsify_Connect_Model_AccessorycategoryMapping::getSalsifyAttributeValues();
     foreach ($values as $value) {
       $attribute_values[] = array(
         "salsify:id" => $value,

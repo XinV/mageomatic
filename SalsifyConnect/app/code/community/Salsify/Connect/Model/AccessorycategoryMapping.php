@@ -92,8 +92,7 @@ class Salsify_Connect_Model_AccessorycategoryMapping
     $mapper = self::_get_accessory_mapper();
     if (!$magento_relation_type) {
       // default to cross-sell
-      $accessory_mapper = Mage::getModel('salsify_connect/accessorymapping');
-      $magento_relation_type = $accessory_mapper::CROSS_SELL;
+      $magento_relation_type = Salsify_Connect_Model_AccessoryMapping::CROSS_SELL;
     }
     $mapping = self::_get_mapping($salsify_category_id, $salsify_category_value, $magento_relation_type);
     

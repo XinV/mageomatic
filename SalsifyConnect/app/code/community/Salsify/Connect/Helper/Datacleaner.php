@@ -133,8 +133,7 @@ class Salsify_Connect_Helper_Datacleaner
 
   private function _delete_attributes() {
     self::_log("deleting attributes...");
-    $mapper = Mage::getModel('salsify_connect/attributemapping');
-    $this->_total_attributes = $mapper::deleteSalsifyAttributes();
+    $this->_total_attributes = Salsify_Connect_Model_AttributeMapping::deleteSalsifyAttributes();
     self::_log($this->_total_attributes . "attributes deleted.");
 
     return $this;
